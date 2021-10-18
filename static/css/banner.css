@@ -1,0 +1,28 @@
+div#banner {
+  background-color: black;
+  background-image: url("/banner.png");
+}
+
+div#header {
+  color: white;
+  padding: 1em 0em 1em 2em;
+  padding-bottom: 0px;
+  margin-bottom: 0px;
+}
+
+nav#menu li {
+  background: black;
+  display: inline-block;
+  margin-top: 0;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+nav#menu a {
+  color: white;
+  text-decoration: none;
+}
+
+nav#menu a:hover {
+  font-weight: bold;
+}

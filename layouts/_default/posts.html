@@ -1,0 +1,20 @@
+{{ partial "header.html" . }}
+
+<main>
+
+  <h1>{{ .Title }}</h1>
+  {{ .Content }}
+
+  <h2>Latest posts</h2>
+
+  <ul>
+    {{ range ( where .Site.RegularPages "Type" "post" ).ByDate }}
+      <li>
+        <p>[{{ .Date.Format "2006-01-02" }}] <a href="{{ .Permalink }}">{{ .Title }}</a> </p>
+      </li>
+    {{ end }}
+  </ul>
+
+</main>
+
+{{ partial "footer.html" . }}

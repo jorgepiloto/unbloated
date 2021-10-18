@@ -1,0 +1,16 @@
+@import "banner.css";
+@import "content.css";
+@import "footer.css";
+
+html {
+  background: #e4e4e4;
+  font-family: monospace;
+  font-size: 120%;
+}
+
+body {
+  max-width: 800px;
+  margin: auto;
+  background: white;
+  box-shadow: 0 0 5px 5px #bbb;
+}

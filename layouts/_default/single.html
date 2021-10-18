@@ -1,0 +1,16 @@
+{{ partial "header.html" . }}
+
+<main>
+  {{ if eq .Section "posts" }}
+    <div id="metadata">
+      <h1>{{ .Title }}</h1>
+      <p>{{ .Params.author }}</p>
+      <p>{{ .Date.Format "January 2, 2006" }}</p>
+    </div>
+  {{ else }}
+    <h1>{{ .Title }}</h1>
+  {{ end }}
+  {{ .Content }}
+</main>
+
+{{ partial "footer.html" . }}

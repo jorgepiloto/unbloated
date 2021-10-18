@@ -1,0 +1,71 @@
+main {
+  padding: 1em 2em 1em 2em;
+}
+
+main div#metadata {
+  text-align: center;
+  margin-bottom: 35px;
+}
+
+main ul li {
+  padding-right: 1.5em;
+}
+
+main pre {
+  border: 1px solid #ddd;
+  box-shadow: 5px 5px 5px #eee;
+  padding: 1em;
+  overflow-x: auto;
+}
+
+main blockquote {
+  background: #f9f9f9;
+  border-left: 5px solid #ccc;
+  padding: 3px 1em 3px;
+}
+
+main p img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 640px;
+  max-height: 480px;
+}
+
+main p code {
+  background-color: #f5f5f5;
+  border: 1px solid #ebebeb;
+  padding: 0 5px;
+  color: #c33;
+}
+
+main table, th, td{
+  margin: auto;
+  border: 1px solid black;
+  border-collapse: collapse;
+  padding: 2px;
+}
+
+main a.footnote-ref::before {
+  content: '[';
+}
+
+main a.footnote-ref::after {
+  content: ']';
+}
+
+main a.footnote-ref {
+  text-decoration: none;
+}
+
+main section.footnotes hr {
+  display: none;
+}
+
+span.katex {
+  font-size: 95%;
+}
+
+span.katex-display {
+    font-size: 95%;
+}

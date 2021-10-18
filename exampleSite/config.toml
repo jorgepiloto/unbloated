@@ -1,0 +1,41 @@
+baseURL = '/'
+languageCode = 'en-us'
+title = "Unbloated"
+theme = "unbloated"
+
+[permalinks]
+  posts = "/:sections/:title"
+
+[menu]
+  [[menu.main]]
+    name = "Home"
+    url = ""
+    weight = 1
+  [[menu.main]]
+    name = "Posts"
+    url = "/posts"
+    weight = 2
+  [[menu.main]]
+    name = "Categories"
+    url = "/categories"
+    weight = 3
+  [[menu.main]]
+    name = "Tags"
+    url = "/tags"
+    weight = 4
+  [[menu.main]]
+    name = "Contact"
+    url = "/contact"
+    weight = 5
+  [[menu.main]]
+    name = "About"
+    url = "/about"
+    weight = 6
+
+[params]
+  description = "A simple Hugo theme"
+  footer = "&copy; [Unbloated theme](https://github.com/jorgepiloto/unbloated) was created by [Jorge Martínez](https://github.com/jorgepiloto/)"
+
+[markup]
+  [markup.highlight]
+    style = "friendly"
