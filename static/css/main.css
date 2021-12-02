@@ -1,11 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap');
+
 @import "banner.css";
 @import "content.css";
 @import "footer.css";
 
 html {
   background: #e4e4e4;
-  font-family: monospace;
-  font-size: 120%;
+  font-family: 'Source Code Pro', monospace;
+  font-size: 95%;
 }
 
 body {
