@@ -10,7 +10,7 @@
   <ul>
     {{ range ( first 3 ( where .Site.RegularPages "Section" "posts" ).ByDate.Reverse ) }}
       <li>
-        <p>[{{ .Date.Format "2006-01-02" }}] <a href="{{ .Permalink }}">{{ .Title }}</a> </p>
+        [{{ .Date.Format "2006-01-02" }}] <a href="{{ .Permalink }}">{{.Title }}</a>
       </li>
     {{ end }}
   </ul>

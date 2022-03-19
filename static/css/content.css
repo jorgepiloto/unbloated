@@ -8,6 +8,7 @@ main div#metadata {
 }
 
 main ul li {
+  margin-top: 1em;
   padding-right: 1.5em;
 }
 
