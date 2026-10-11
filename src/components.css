@@ -1,4 +1,8 @@
 /* SPDX-License-Identifier: LGPL-3.0-only */
+/* Optional appearance classes. Load tokens.css before this file. Components
+ * supply surfaces and spacing; adapters supply layout and interaction behavior.
+ */
+/* Panels and callouts share the same bordered surface and inner spacing. */
 :where(.unbloat-panel, .unbloat-callout) {
   padding: var(--unbloat-space-3);
   color: var(--unbloat-color-text);
@@ -6,11 +10,13 @@
   border: var(--unbloat-border-width) solid var(--unbloat-color-border);
 }
 
+/* Panels, buttons, and tags use a hard shadow; callouts do not. */
 :where(.unbloat-panel, .unbloat-button, .unbloat-tag) {
   box-shadow: var(--unbloat-shadow-offset) var(--unbloat-shadow-offset) 0
     var(--unbloat-color-shadow);
 }
 
+/* Use button for actions, anchor for navigation, and span for static tags. */
 :where(.unbloat-button, .unbloat-tag) {
   display: inline-block;
   font: inherit;
@@ -21,6 +27,7 @@
   text-decoration: none;
 }
 
+/* Enabled button hover, linked tags, and selected tabs use inverse colors. */
 :where(
   .unbloat-button:hover,
   a.unbloat-tag:hover,
@@ -35,15 +42,18 @@
   background: var(--unbloat-color-surface-muted);
 }
 
+/* Wrapping tab layout only; the consumer manages ARIA state, focus, and panels. */
 :where(.unbloat-tabs) {
   display: flex;
   flex-wrap: wrap;
   gap: var(--unbloat-space-2);
 }
 
+/* The thicker logical leading edge distinguishes a callout from a panel. */
 :where(.unbloat-callout) {
   border-inline-start-width: 3px;
 }
+/* Invert the current surface. Nested elements with explicit colors need overrides. */
 :where(.unbloat-inverse) {
   color: var(--unbloat-color-inverse-text);
   background: var(--unbloat-color-inverse-surface);

@@ -7,6 +7,10 @@ type, black and white surfaces, grayscale details, and square corners. It
 contains no runtime JavaScript, runtime dependencies, remote fonts, or remote
 assets.
 
+The [documentation](docs/index.md) covers installation, design tokens, source
+modules, and components with live style examples. Build it locally with MkDocs
+using the [documentation prerequisites](docs/getting-started/prerequisites.md).
+
 Design values live in `src/tokens.json`. A dependency-free build generates CSS
 custom properties, Sass variables, and a complete stylesheet. Websites and
 themes keep their own layouts and adapters for generated HTML.
@@ -210,12 +214,30 @@ Browser tests check grayscale colors, typography, square corners, focus,
 hover, narrow viewports, and consumer overrides. They save screenshots for
 inspection; they do not compare screenshot baselines.
 
-The workflows run on pull requests, pushes to `main`, and nightly. The npm
-tarball includes the generated files even though Git ignores them. A published
-GitHub release builds and verifies a tarball in CI, then publishes that artifact
-through `release.yml`. See
+The workflows run on pull requests, version tags, and daily at 08:00 in
+`Europe/Madrid`. The npm tarball includes the generated files even though Git
+ignores them. Pushing a stable version tag triggers `release.yml`, which checks
+the source, builds the tarball, publishes it to npm through trusted publishing,
+and creates a GitHub release with the same tarball attached. See
 [Contributing](CONTRIBUTING.md), [Release Setup](docs/releasing.md), and
 [Security](SECURITY.md).
+
+### Build the Documentation
+
+Install the locked MkDocs dependencies, then build and serve the documentation:
+
+```sh
+python3 -m venv .venv-docs
+.venv-docs/bin/python -m pip install --require-hashes -r docs/requirements.txt
+npm run docs:build
+npm run docs:preview
+```
+
+Open `http://127.0.0.1:4174`. Use `npm run docs:dev` for Markdown editing with
+live reload at `http://127.0.0.1:8000`. The site has Home, Getting Started, and
+Components sections. Source comments and the
+[Source Reference](docs/reference/source.md) describe the implementation.
+`npm run test:docs` checks navigation, live styles, tab behavior, and mobile layout.
 
 ## License
 

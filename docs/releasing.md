@@ -14,7 +14,7 @@ not reserve it. Nothing is published by building or testing locally.
    and configure required reviewers for publication.
 3. If npm requires an initial publication to create the package, perform that
    bootstrap release through your authenticated npm account with two-factor
-   authentication using the reviewed tarball produced by the Main workflow.
+   authentication using the reviewed tarball produced by the pull-request workflow.
    Complete this npm setup before relying on OIDC publication in `release.yml`.
 4. In the npm package settings, add a GitHub Actions trusted publisher with
    owner `jorgepiloto`, repository `unbloated-css`, workflow `release.yml`, and
@@ -38,19 +38,29 @@ for provenance generation.
 1. Update `package.json`, the lockfile, and `CHANGELOG.md` on a reviewed branch.
    Update versioned documentation examples when appropriate.
 2. Run `npm run build`, `npm run verify`, and `npm audit --audit-level=high`.
-3. Merge to `main` and wait for the Main workflow to pass.
-4. Create a tag `v<version>` on the reviewed commit and publish a stable GitHub
-   release targeting `main`.
-5. Approve the `npm` environment deployment. The release workflow verifies the
-   tag against `package.json`, checks that the commit belongs to `main`, builds
-   `dist/` from the source, and runs the checks in a job without publishing
-   permission. That job packs and uploads the verified distribution. A separate
-   job downloads and publishes the verified tarball after environment approval.
+3. Wait for the pull-request checks to pass and merge to `main`.
+4. Create a tag `v<version>` on the reviewed commit and push the tag. This
+   triggers `release.yml`.
+5. Wait for the checks and build to pass, then approve the `npm` environment
+   deployment. The `code-style` job runs pre-commit before `tests`.
+   `actions-style` runs zizmor in parallel. The `tests` job verifies the tag
+   against `package.json`, checks that the commit belongs to `main`, and runs
+   the unit tests, browser tests, documentation checks, build checks, and dependency audits.
+   `build-library` waits for both `tests` and `actions-style`, then builds and
+   uploads the npm tarball.
+6. Confirm that `release-npm` publishes the tarball through trusted publishing.
+   After npm publication succeeds, `release-github` creates a GitHub release
+   with generated release notes and attaches the same tarball. Only the npm
+   job receives OIDC permission, and only the GitHub release job receives
+   permission to write repository contents.
 
 Prereleases are intentionally excluded from this workflow. npm versions cannot
 be overwritten; fix a failed release through the appropriate configuration or
 publish a new version when the package content must change. Retain the source
 commit and release artifact for each published version.
+
+If GitHub release creation fails after npm publication succeeds, rerun only the
+failed job. Rerunning `release-npm` would try to publish an existing version.
 
 ## Download Artifacts
 
@@ -59,7 +69,7 @@ workflows explicitly build the distribution because dependency installation and
 packaging disable lifecycle scripts with `--ignore-scripts`. The npm `files`
 list includes `dist/`, so generated assets are included in published packages.
 
-The Main workflow saves an npm tarball per tested Node.js version. The Release
-workflow saves the published tarball. These are GitHub Actions artifacts, not
-public GitHub release attachments. You can attach the reviewed tarball to the
-GitHub release manually if you want that download option.
+The pull-request and Night workflows save tarballs after their checks pass.
+Night runs manually or daily at 08:00 in `Europe/Madrid`, including daylight
+saving changes. The Release workflow saves the published tarball as a GitHub
+Actions artifact and attaches it to the public GitHub release.

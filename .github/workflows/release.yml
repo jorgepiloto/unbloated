@@ -1,15 +1,42 @@
 name: Release
 on:
-  release:
-    types: [published]
+  push:
+    tags: ["v*"]
 permissions:
   contents: read
 concurrency:
   group: npm-release
   cancel-in-progress: false
 jobs:
-  verify:
-    if: github.event.release.prerelease == false && github.event.release.target_commitish == 'main'
+  code-style:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "24"
+          package-manager-cache: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.12"
+      - run: npm ci --ignore-scripts
+      - run: python -m pip install pre-commit==4.6.2
+      - run: pre-commit run --all-files --show-diff-on-failure
+  actions-style:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: zizmorcore/zizmor-action@cc914d7f3750a2d13d75c7f184a1060aa0e9d482 # v0.6.4
+        with:
+          advanced-security: false
+  tests:
+    needs: code-style
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
@@ -17,14 +44,16 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 0
-          ref: ${{ github.event.release.tag_name }}
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: "24"
           package-manager-cache: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.12"
       - name: Validate release tag and branch
         env:
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          RELEASE_TAG: ${{ github.ref_name }}
         run: |
           node --input-type=module <<'NODE'
             import { readFileSync } from "node:fs";
@@ -35,11 +64,30 @@ jobs:
           NODE
           git merge-base --is-ancestor HEAD origin/main
       - run: npm ci --ignore-scripts
+      - run: python -m pip install --require-hashes -r docs/requirements.txt
       - run: npm run build
       - run: npx --no-install playwright install --with-deps chromium firefox webkit
-      - run: npm run verify
+      - run: npm run build:check
+      - run: npm test
+      - run: npm run docs:build
+      - run: npm run test:docs
+      - run: npm run test:browser
       - run: npm audit signatures
       - run: npm audit --audit-level=high
+  build-library:
+    needs: [tests, actions-style]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "24"
+          package-manager-cache: false
+      - run: npm ci --ignore-scripts
+      - run: npm run build
       - run: npm pack --ignore-scripts
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
@@ -47,8 +95,8 @@ jobs:
           path: unbloated-*.tgz
           if-no-files-found: error
           retention-days: 30
-  publish:
-    needs: verify
+  release-npm:
+    needs: build-library
     runs-on: ubuntu-24.04
     environment: npm
     timeout-minutes: 5
@@ -65,3 +113,19 @@ jobs:
           name: release-package
       - name: Publish verified tarball through npm trusted publishing
         run: npm publish unbloated-*.tgz --ignore-scripts --access public --provenance
+  release-github:
+    needs: [build-library, release-npm]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
+        with:
+          name: release-package
+      - name: Create GitHub release with the published tarball
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: gh release create "$RELEASE_TAG" unbloated-*.tgz --verify-tag --generate-notes --title "$RELEASE_TAG" --latest

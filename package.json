@@ -57,12 +57,23 @@
     "format:check": "prettier --check .",
     "test": "node --test tests/*.test.mjs",
     "test:browser": "playwright test",
-    "verify": "npm run format:check && npm run build:check && npm test && npm run test:browser",
+    "verify": "npm run format:check && npm run lint && npm run build:check && npm test && npm run test:browser",
     "prepack": "npm run build",
-    "preview": "node scripts/serve.mjs"
+    "preview": "node scripts/serve.mjs",
+    "lint:js": "eslint . --max-warnings=0",
+    "lint:css": "biome lint src examples docs/assets/site.css --error-on-warnings",
+    "lint": "npm run lint:js && npm run lint:css",
+    "docs:build": "node scripts/docs.mjs build",
+    "docs:dev": "node scripts/docs.mjs serve",
+    "docs:preview": "node scripts/docs.mjs preview",
+    "test:docs": "playwright test --config playwright.docs.config.mjs"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.5.15",
+    "@eslint/js": "10.0.1",
     "@playwright/test": "1.64.0",
+    "eslint": "10.12.0",
+    "globals": "17.13.0",
     "prettier": "3.9.10",
     "sass": "1.105.1"
   }

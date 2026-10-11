@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: LGPL-3.0-only
+/** Build, pack, install, and inspect a source-only checkout as a package consumer. */
 import assert from "node:assert/strict";
 import { execFile as execFileCallback } from "node:child_process";
 import {

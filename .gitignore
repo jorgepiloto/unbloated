@@ -3,5 +3,8 @@ dist/
 playwright-report/
 test-results/
 coverage/
+site/
+.venv-docs/
+docs/assets/unbloat.css
 *.tgz
 .DS_Store

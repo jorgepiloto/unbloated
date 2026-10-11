@@ -1,4 +1,9 @@
 /* SPDX-License-Identifier: LGPL-3.0-only */
+/* Semantic element styles. Load tokens.css first, or use the complete stylesheet.
+ * :where() keeps specificity low so a consuming adapter can override these rules.
+ * Layout widths and platform-specific selectors belong to the consuming site.
+ */
+/* Root typography and grayscale surfaces; controls share the same accent color. */
 :where(html) {
   color-scheme: light;
   font-family: var(--unbloat-font-family);
@@ -9,6 +14,7 @@
   accent-color: var(--unbloat-color-text);
 }
 
+/* Include pseudo-elements in the box model and square-corner rule. */
 :where(*, *::before, *::after) {
   box-sizing: border-box;
   border-radius: var(--unbloat-border-radius);
@@ -19,6 +25,7 @@
   font-size: var(--unbloat-font-size);
 }
 
+/* Heading sizes, block spacing, and word wrapping come from the token schema. */
 :where(h1, h2, h3, h4, h5, h6) {
   line-height: var(--unbloat-line-height-heading);
   margin-block: var(--unbloat-space-4) var(--unbloat-space-2);
@@ -48,6 +55,7 @@
   margin-block: 0 var(--unbloat-space-3);
 }
 
+/* Keep links identifiable without color and retain visible keyboard focus. */
 :where(a) {
   color: inherit;
   text-decoration: underline;
@@ -64,6 +72,7 @@
   outline-offset: var(--unbloat-focus-offset);
 }
 
+/* Native form controls retain their semantics; adapters own labels and layout. */
 :where(button, input, select, textarea) {
   font: inherit;
   color: inherit;
@@ -98,6 +107,7 @@
 :where(textarea) {
   resize: vertical;
 }
+/* Square selection controls use an inset border to show the checked state. */
 :where(input[type="checkbox"], input[type="radio"]) {
   appearance: none;
   inline-size: 1em;
@@ -111,6 +121,7 @@
   box-shadow: inset 0 0 0 2px var(--unbloat-color-surface);
 }
 
+/* Code shares the monospace stack; long preformatted lines scroll horizontally. */
 :where(code, kbd, samp, pre) {
   font-family: var(--unbloat-font-family);
 }
@@ -127,15 +138,18 @@
   border: var(--unbloat-border-width) solid var(--unbloat-color-border);
 }
 
+/* Avoid nested padding and surfaces inside a preformatted block. */
 :where(pre code) {
   padding: 0;
   background: transparent;
 }
+/* Logical edges follow the writing direction for quotations and separators. */
 :where(blockquote) {
   margin-inline: 0;
   border-inline-start: 3px solid var(--unbloat-color-border);
   padding-inline-start: var(--unbloat-space-3);
 }
+/* Media fits its container without imposing a document or figure width. */
 :where(img, video, svg) {
   max-width: 100%;
   height: auto;
@@ -143,6 +157,7 @@
 :where(figure) {
   margin-inline: 0;
 }
+/* Semantic tables use collapsed borders and a muted surface for header cells. */
 :where(table) {
   border-collapse: collapse;
   text-align: start;
@@ -164,6 +179,7 @@
   cursor: pointer;
 }
 
+/* Preserve visible selection with system colors in forced-color environments. */
 @media (forced-colors: active) {
   :where(:focus-visible) {
     outline-color: Highlight;

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: LGPL-3.0-only
+/** Check token validation, deterministic output, Sass consumption, and contrast. */
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";

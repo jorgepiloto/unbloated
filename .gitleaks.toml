@@ -1,0 +1,8 @@
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Dependencies and generated files"
+paths = [
+  '''(^|/)(\.git|node_modules|dist|playwright-report|test-results|coverage|site|\.venv-docs)/''',
+]

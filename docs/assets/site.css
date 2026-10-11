@@ -1,0 +1,125 @@
+/* SPDX-License-Identifier: LGPL-3.0-only */
+/* Site layout stays separate from the shared component appearance. */
+body {
+  margin: 0;
+}
+
+.site-header,
+.site-footer {
+  padding: var(--unbloat-space-3) var(--unbloat-space-4);
+  border-block-end: var(--unbloat-border-width) solid
+    var(--unbloat-color-border);
+}
+
+.site-header,
+.site-header nav,
+.page-navigation {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--unbloat-space-3);
+  align-items: center;
+  justify-content: space-between;
+}
+
+.site-title,
+.section-title,
+[aria-current] {
+  font-weight: bold;
+}
+
+.site-layout {
+  display: grid;
+  grid-template-columns: 17rem minmax(0, 1fr);
+  max-width: 80rem;
+  margin-inline: auto;
+}
+
+.site-sidebar {
+  padding: var(--unbloat-space-4);
+  border-inline-end: var(--unbloat-border-width) solid
+    var(--unbloat-color-border);
+}
+
+.site-sidebar ul {
+  padding-inline-start: var(--unbloat-space-3);
+}
+
+main {
+  padding: var(--unbloat-space-4);
+  min-width: 0;
+}
+
+main > :first-child {
+  margin-block-start: 0;
+}
+
+.component-demo {
+  padding: var(--unbloat-space-3);
+  margin-block: var(--unbloat-space-3);
+  border: var(--unbloat-border-width) dashed var(--unbloat-color-border);
+}
+
+.component-demo > :last-child {
+  margin-block-end: 0;
+}
+
+.demo-controls {
+  display: grid;
+  gap: var(--unbloat-space-2);
+}
+
+.demo-controls
+  :where(input:not([type="checkbox"], [type="radio"]), select, textarea) {
+  width: 100%;
+}
+
+.page-navigation {
+  margin-block-start: var(--unbloat-space-5);
+  padding-block-start: var(--unbloat-space-3);
+  border-block-start: var(--unbloat-border-width) solid
+    var(--unbloat-color-border);
+}
+
+.site-footer {
+  border-block-start: var(--unbloat-border-width) solid
+    var(--unbloat-color-border);
+  border-block-end: 0;
+}
+
+.skip-link {
+  position: absolute;
+  inset-inline-start: var(--unbloat-space-3);
+  top: -5rem;
+  padding: var(--unbloat-space-2);
+  background: var(--unbloat-color-surface);
+}
+
+.skip-link:focus {
+  top: var(--unbloat-space-2);
+}
+
+table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.headerlink {
+  margin-inline-start: var(--unbloat-space-2);
+}
+
+[role="tabpanel"] {
+  padding-block-start: var(--unbloat-space-3);
+}
+
+@media (width <= 48rem) {
+  .site-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .site-sidebar {
+    border-inline-end: 0;
+    border-block-end: var(--unbloat-border-width) solid
+      var(--unbloat-color-border);
+  }
+}

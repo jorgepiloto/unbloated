@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: LGPL-3.0-only
+/** Verify the shared appearance, native control behavior, and preview boundaries. */
 import { expect, test } from "@playwright/test";
 
 test.beforeEach(async ({ page }) => {

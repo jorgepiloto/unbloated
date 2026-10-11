@@ -1,0 +1,77 @@
+minimum_pre_commit_version: "4.6.2"
+default_install_hook_types: [pre-commit, pre-push]
+default_stages: [pre-commit]
+exclude: ^(node_modules|dist|playwright-report|test-results|coverage|site|\.venv-docs)/|^docs/assets/unbloat\.css$
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c # v6.0.0
+    hooks:
+      - id: check-added-large-files
+        args: [--maxkb=500]
+      - id: check-case-conflict
+      - id: check-illegal-windows-names
+      - id: check-merge-conflict
+        args: [--assume-in-merge]
+      - id: check-symlinks
+      - id: destroyed-symlinks
+      - id: check-executables-have-shebangs
+      - id: check-shebang-scripts-are-executable
+      - id: check-json
+      - id: check-yaml
+      - id: check-toml
+      - id: detect-private-key
+      - id: fix-byte-order-marker
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+      - id: mixed-line-ending
+        args: [--fix=lf]
+  - repo: https://github.com/rhysd/actionlint
+    rev: 914e7df21a07ef503a81201c76d2b11c789d3fca # v1.7.12
+    hooks:
+      - id: actionlint
+  - repo: https://github.com/zizmorcore/zizmor-pre-commit
+    rev: fa412071e4f5d44d44f9e365f4676f9df92456a2 # v1.30.1
+    hooks:
+      - id: zizmor
+        args: [--offline, --strict-collection, --no-progress]
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: 83d9cd684c87d95d656c1458ef04895a7f1cbd8e # v8.30.1
+    hooks:
+      - id: gitleaks
+        entry: gitleaks dir --config .gitleaks.toml --redact --no-banner --log-level error .
+        always_run: true
+  - repo: local
+    hooks:
+      - id: prettier
+        name: Check formatting
+        entry: npm run format:check
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: eslint
+        name: Lint JavaScript
+        entry: npm run lint:js
+        language: system
+        files: (\.[cm]?js$|^package(-lock)?\.json$)
+        pass_filenames: false
+      - id: biome-css
+        name: Lint CSS
+        entry: npm run lint:css
+        language: system
+        files: (\.css$|^biome\.json$|^package(-lock)?\.json$)
+        pass_filenames: false
+      - id: build-check
+        name: Validate tokens and reproducible builds
+        entry: npm run build:check
+        language: system
+        files: ^(src/|scripts/build\.mjs$|package(-lock)?\.json$)
+        pass_filenames: false
+      - id: npm-audit
+        name: Audit npm dependencies
+        entry: npm audit --audit-level=high
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-push, manual]

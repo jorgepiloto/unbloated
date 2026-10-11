@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: LGPL-3.0-only
+/** Test the allowlisted reference server in desktop and mobile browser projects. */
 import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({

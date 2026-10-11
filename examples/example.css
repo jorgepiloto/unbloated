@@ -1,4 +1,7 @@
 /* SPDX-License-Identifier: LGPL-3.0-only */
+/* Reference-page adapter: constrain the layout, space sections, arrange the form,
+ * and reveal the skip link on focus. These rules are not part of the library.
+ */
 html {
   background: var(--unbloat-color-canvas);
 }

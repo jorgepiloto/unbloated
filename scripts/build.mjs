@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: LGPL-3.0-only
+/** Validate design tokens and generate the CSS and Sass distribution. */
 import {
   mkdir,
   mkdtemp,
@@ -11,9 +12,11 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
+/** Repository root used to resolve source and output paths. @type {URL} */
 export const root = new URL("../", import.meta.url);
 const banner =
   "/*! unbloated | Copyright (C) 2026 Jorge Martinez | LGPL-3.0-only */\n";
+// These groups define the supported token schema. Names become CSS and Sass names.
 const groups = new Set([
   "color",
   "font",
@@ -25,6 +28,13 @@ const groups = new Set([
   "focus",
 ]);
 
+/**
+ * Validate the supported token groups, safe names and values, and square corners.
+ * Values are restricted before interpolation into generated CSS and Sass.
+ * @param {unknown} tokens Parsed design-token data.
+ * @returns {Record<string, Record<string, string>>} The validated input object.
+ * @throws {Error} If groups, names, values, or the border radius are invalid.
+ */
 export function validateTokens(tokens) {
   if (!tokens || typeof tokens !== "object" || Array.isArray(tokens)) {
     throw new Error("Tokens must be an object.");
@@ -68,6 +78,12 @@ export function validateTokens(tokens) {
   return tokens;
 }
 
+/**
+ * Read canonical tokens and CSS sources, then render the five distribution files.
+ * Check that source styles only reference token names defined in tokens.json.
+ * @returns {Promise<Map<string, string>>} Output filenames and their contents.
+ * @throws {Error} If tokens, CSS references, or source-file reads are invalid.
+ */
 export async function render() {
   const tokens = validateTokens(
     JSON.parse(await readFile(new URL("src/tokens.json", root), "utf8")),
@@ -100,6 +116,13 @@ export async function render() {
   ]);
 }
 
+/**
+ * Write the rendered CSS and Sass files to an output directory.
+ * Reject extra files so stale or unexpected assets cannot pass a build check.
+ * @param {{directory?: string}} [options] Destination, defaulting to dist/.
+ * @returns {Promise<void>}
+ * @throws {Error} If source validation, filesystem operations, or output checks fail.
+ */
 export async function build({
   directory = fileURLToPath(new URL("dist/", root)),
 } = {}) {
@@ -113,6 +136,12 @@ export async function build({
     throw new Error("Unexpected file in dist/.");
 }
 
+/**
+ * Compare two fresh builds in independent temporary directories byte for byte.
+ * Remove both outputs on success or failure; an existing dist/ is not required.
+ * @returns {Promise<void>}
+ * @throws {Error} If builds differ or source validation and filesystem operations fail.
+ */
 export async function checkBuild() {
   const temporary = await mkdtemp(join(tmpdir(), "unbloated-build-"));
   try {
@@ -137,6 +166,7 @@ export async function checkBuild() {
   }
 }
 
+// Importing this module has no build side effects. The CLI accepts only --check.
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const args = process.argv.slice(2);
   if (args.some((arg) => arg !== "--check"))
