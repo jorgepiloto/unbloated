@@ -1,0 +1,37 @@
+<!doctype html>
+{{/* Hugo shell follows web's masthead, button navigation, single column, and footer.
+     Fingerprinted local assets use this checkout's CSS and support URL prefixes. */}}
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="{{ .Site.Params.description }}" />
+    <title>{{ .Title }} | {{ .Site.Title }}</title>
+    {{ range slice "unbloat.css" "site.css" }}
+      {{ with resources.Get . | fingerprint "sha256" }}
+        <link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" />
+      {{ end }}
+    {{ end }}
+    {{ with resources.Get "tabs.js" | fingerprint "sha256" }}
+      <script defer src="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}"></script>
+    {{ end }}
+  </head>
+  <body>
+    <a class="skip-link" href="#content">Skip to content</a>
+    <header class="site-header unbloat-inverse">
+      <a class="site-title" href="{{ .Site.Home.RelPermalink }}">{{ .Site.Title }}</a>
+      <p class="site-description">{{ .Site.Params.description }}</p>
+      {{ partial "social.html" . }}
+    </header>
+    {{ partial "navigation.html" . }}
+    <div class="site-layout">
+      <main id="content" tabindex="-1">
+        {{ block "main" . }}{{ end }}
+        {{ partial "page-navigation.html" . }}
+      </main>
+    </div>
+    <footer class="site-footer unbloat-inverse">
+      {{ .Site.Title }} {{ hugo.Data.package.version }}. LGPL-3.0-only.
+    </footer>
+  </body>
+</html>

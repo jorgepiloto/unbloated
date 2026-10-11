@@ -1,4 +1,6 @@
-# Buttons and Tags
+---
+title: Buttons and Tags
+---
 
 ## Buttons
 

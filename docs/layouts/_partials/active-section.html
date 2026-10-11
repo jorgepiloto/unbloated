@@ -1,0 +1,18 @@
+{{- /* Find the logical navigation parent, including reference and release pages.
+       Section indexes use the same group as their explicitly listed children. */ -}}
+{{- $current := . -}}
+{{- $section := dict -}}
+{{- range hugo.Data.navigation -}}
+  {{- $candidate := . -}}
+  {{- if .children -}}
+    {{- if eq ($current.Site.GetPage .page) $current -}}{{- $section = $candidate -}}{{- end -}}
+    {{- range .children -}}
+      {{- $target := $current.Site.GetPage .page -}}
+      {{- if not $target -}}{{- errorf "Navigation page not found: %s" .page -}}{{- end -}}
+      {{- if or (eq $target $current) (and $current.IsSection (eq $target.Parent $current)) -}}
+        {{- $section = $candidate -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- return $section -}}

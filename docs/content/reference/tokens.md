@@ -1,4 +1,6 @@
-# Design Tokens
+---
+title: Design Tokens
+---
 
 `src/tokens.json` is the canonical design source. The build turns each
 `group.name` into a CSS property `--unbloat-group-name` and a Sass variable

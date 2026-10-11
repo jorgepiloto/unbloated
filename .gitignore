@@ -4,7 +4,11 @@ playwright-report/
 test-results/
 coverage/
 site/
-.venv-docs/
 docs/assets/unbloat.css
 *.tgz
 .DS_Store
+docs/data/package.json
+.cache/
+docs/resources/
+docs/.hugo_build.lock
+.venv*/

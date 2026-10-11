@@ -1,4 +1,6 @@
-# Installation
+---
+title: Installation
+---
 
 Version `0.1.0` is the initial package version. The npm and CDN examples work
 after that version is published. You can build and install a local tarball now.

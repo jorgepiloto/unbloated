@@ -1,4 +1,8 @@
-# About
+---
+title: About
+---
+
+Monospace grayscale CSS library for engineers.
 
 Unbloated provides a shared appearance for websites, documentation, and
 presentation themes. Its design uses system monospace fonts, black and white

@@ -1,0 +1,33 @@
+# Page paths resolve through Hugo, including when hosted under a URL prefix.
+- title: Home
+  page: /
+- title: Getting Started
+  page: /getting-started
+  children:
+    - title: About
+      page: /getting-started/about
+    - title: Prerequisites
+      page: /getting-started/prerequisites
+    - title: Installation
+      page: /getting-started/installation
+    - title: Design Tokens
+      page: /reference/tokens
+    - title: Source Reference
+      page: /reference/source
+    - title: Release Setup
+      page: /releasing
+- title: Components
+  page: /components
+  children:
+    - title: Typography
+      page: /components/typography
+    - title: Form Controls
+      page: /components/controls
+    - title: Buttons and Tags
+      page: /components/buttons
+    - title: Panels and Callouts
+      page: /components/panels
+    - title: Tabs
+      page: /components/tabs
+    - title: Tables and Details
+      page: /components/content

@@ -1,7 +1,7 @@
 minimum_pre_commit_version: "4.6.2"
 default_install_hook_types: [pre-commit, pre-push]
 default_stages: [pre-commit]
-exclude: ^(node_modules|dist|playwright-report|test-results|coverage|site|\.venv-docs)/|^docs/assets/unbloat\.css$
+exclude: ^(node_modules|dist|playwright-report|test-results|coverage|site|\.cache|docs/resources|\.venv[^/]*)/|^docs/(assets/unbloat\.css|data/package\.json)$
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks

@@ -1,13 +1,14 @@
-# Home
+---
+title: Home
+---
 
-Unbloated is a CSS library for monospace type, grayscale surfaces, and square
-components. Load one stylesheet to style semantic HTML, then use the optional
+Monospace grayscale CSS library for engineers. Load one stylesheet to style semantic HTML, then use the optional
 classes for panels, buttons, tags, callouts, tabs, and inverse surfaces.
 
 Start with [About](getting-started/about.md), check the
 [Prerequisites](getting-started/prerequisites.md), and follow
 [Installation](getting-started/installation.md). The
-[Components](components/index.md) pages pair live examples with their HTML and
+[Components](components/_index.md) pages pair live examples with their HTML and
 explain hover, focus, disabled, and selected states.
 
 <div class="component-demo">

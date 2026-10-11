@@ -65,14 +65,14 @@ and documented classes as the public interface. Changes to those names require
 a migration note. Record intentional visual changes in the changelog and
 inspect the reference page on desktop and mobile.
 
-Documentation uses MkDocs and the generated library stylesheet. Install the
-locked Python dependencies as shown in
-[Documentation Prerequisites](docs/getting-started/prerequisites.md), then run
+Documentation uses Hugo and the generated library stylesheet. Install the
+pinned Hugo version as shown in
+[Documentation Prerequisites](docs/content/getting-started/prerequisites.md), then run
 `npm run docs:dev` to edit pages with live reload. Restart that command after
 changing the shared CSS or tokens so it rebuilds the stylesheet.
 
 Document public inputs, return values, errors, and side effects in source
-comments. Update the [Source Reference](docs/reference/source.md), token table,
+comments. Update the [Source Reference](docs/content/reference/source.md), token table,
 and component examples when behavior changes. Run `npm run docs:build` and
 `npm run test:docs` before submitting documentation changes. CI runs both checks
 in each test job. Generated documentation assets and `site/` stay out of Git.

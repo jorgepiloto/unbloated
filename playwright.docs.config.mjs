@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: LGPL-3.0-only
-/** Check the built MkDocs site and its examples in Chromium. Build docs first. */
+/** Check the Hugo site and its examples in Chromium. Build docs first. */
 import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({

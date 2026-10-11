@@ -1,4 +1,6 @@
-# Tabs
+---
+title: Tabs
+---
 
 `unbloat-tabs` lays out tab controls in a wrapping flex row with a `0.5rem` gap.
 Controls with `aria-selected="true"` use inverse colors. The CSS package does

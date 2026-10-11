@@ -1,0 +1,11 @@
+{{/* Local SVG icons and the social destinations used by web. Email opens a mail client;
+     other links open a separate tab. Attribution remains in the generated HTML. */}}
+<nav class="social-links" aria-label="Social links">
+  <!-- Icons by Fonticons, Inc. (https://fontawesome.com), CC BY 4.0.
+       Adapted from web. License: {{ "licenses/font-awesome-LICENSE.txt" | relURL }} -->
+  {{ range hugo.Data.social }}
+    <a href="{{ .url | safeURL }}" aria-label="{{ .name }}"{{ if not (strings.HasPrefix .url "mailto:") }} target="_blank" rel="noopener noreferrer"{{ end }}>
+      {{ partial (printf "icons/%s.html" .icon) . }}
+    </a>
+  {{ end }}
+</nav>

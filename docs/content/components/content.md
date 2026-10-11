@@ -1,4 +1,6 @@
-# Tables and Details
+---
+title: Tables and Details
+---
 
 ## Tables
 

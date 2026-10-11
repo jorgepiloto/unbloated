@@ -1,4 +1,6 @@
-# Panels and Callouts
+---
+title: Panels and Callouts
+---
 
 ## Panels
 

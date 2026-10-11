@@ -1,4 +1,6 @@
-# Components
+---
+title: Components
+---
 
 Every preview uses the generated `unbloat.css` from this checkout. The dashed
 border marks the preview area; it is a documentation layout rule.

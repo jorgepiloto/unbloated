@@ -1,7 +1,7 @@
 {
   "name": "unbloated",
   "version": "0.1.0",
-  "description": "Monospace grayscale theme for engineers.",
+  "description": "Monospace grayscale CSS library for engineers",
   "license": "LGPL-3.0-only",
   "author": "Jorge Martinez",
   "repository": {
@@ -66,7 +66,8 @@
     "docs:build": "node scripts/docs.mjs build",
     "docs:dev": "node scripts/docs.mjs serve",
     "docs:preview": "node scripts/docs.mjs preview",
-    "test:docs": "playwright test --config playwright.docs.config.mjs"
+    "test:docs": "playwright test --config playwright.docs.config.mjs",
+    "docs:setup": "node scripts/docs.mjs setup"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.15",

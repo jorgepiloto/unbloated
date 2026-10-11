@@ -3,11 +3,15 @@ node_modules/
 playwright-report/
 test-results/
 site/
-.venv-docs/
 docs/assets/unbloat.css
-# MkDocs uses Jinja templates, which the HTML formatter does not parse.
-docs/theme/*.html
+# Hugo templates use Go template syntax.
+docs/layouts/**/*.html
 package-lock.json
 LICENSE
 COPYING
 NOTICE
+docs/data/package.json
+.cache/
+docs/resources/
+docs/.hugo_build.lock
+.venv*/

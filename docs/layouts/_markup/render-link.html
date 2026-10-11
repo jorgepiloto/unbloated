@@ -1,0 +1,28 @@
+{{- /* Resolve Markdown source links to Hugo pages and fail on broken references.
+       Heading fragments remain usable even though headings have no permalink links. */ -}}
+{{- $url := urls.Parse .Destination -}}
+{{- $href := .Destination -}}
+{{- if and (not $url.IsAbs) (not $url.Host) -}}
+  {{- $target := .Page -}}
+  {{- if $url.Path -}}
+    {{- $path := $url.Path -}}
+    {{- if strings.HasSuffix $path "/_index.md" -}}
+      {{- $path = strings.TrimSuffix "/_index.md" $path -}}
+    {{- end -}}
+    {{- $target = .Page.GetPage $path -}}
+    {{- if not $target -}}
+      {{- errorf "Page %s links to missing page %s" .Page.Path .Destination -}}
+    {{- else -}}
+      {{- $href = $target.RelPermalink -}}
+      {{- with $url.RawQuery -}}{{- $href = printf "%s?%s" $href . -}}{{- end -}}
+      {{- with $url.Fragment -}}{{- $href = printf "%s#%s" $href . -}}{{- end -}}
+    {{- end -}}
+  {{- end -}}
+  {{- if and $target $url.Fragment -}}
+    {{- if and (ne $url.Fragment (anchorize $target.Title)) (not ($target.Fragments.Identifiers.Contains $url.Fragment)) -}}
+      {{- errorf "Page %s links to missing heading %s" .Page.Path .Destination -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+<a href="{{ $href | safeURL }}"{{ with .Title }} title="{{ . }}"{{ end }}>{{ .Text }}</a>
+{{- /* Trim trailing whitespace for inline links. */ -}}

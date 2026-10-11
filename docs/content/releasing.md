@@ -1,4 +1,6 @@
-# Release Setup
+---
+title: Release Setup
+---
 
 The package metadata assumes the public repository will be
 `https://github.com/jorgepiloto/unbloated-css`. Update `package.json` if the final

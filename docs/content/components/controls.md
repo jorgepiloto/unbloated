@@ -1,4 +1,6 @@
-# Form Controls
+---
+title: Form Controls
+---
 
 Inputs, selects, textareas, and buttons inherit the document font. They use a
 white surface, a `1px` black border, square corners, and the shared focus outline.

@@ -12,7 +12,9 @@ export default defineConfig([
     "test-results/",
     "coverage/",
     "site/",
-    ".venv-docs/",
+    ".cache/",
+    "docs/resources/",
+    ".venv*/",
   ]),
   {
     files: ["**/*.{js,mjs,cjs}"],

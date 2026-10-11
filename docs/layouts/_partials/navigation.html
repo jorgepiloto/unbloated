@@ -1,0 +1,11 @@
+{{/* Primary section buttons share the active state with the section's child pages. */}}
+{{ $current := . }}
+{{ $section := partial "active-section.html" . }}
+<nav class="main-navigation" aria-label="Main navigation">
+  {{ range hugo.Data.navigation }}
+    {{ $target := $current.Site.GetPage .page }}
+    {{ if not $target }}{{ errorf "Navigation page not found: %s" .page }}{{ end }}
+    {{ $active := or (eq $target $current) (eq .title $section.title) }}
+    <a class="unbloat-button" href="{{ $target.RelPermalink }}"{{ if $active }} aria-current="{{ if eq $target $current }}page{{ else }}true{{ end }}"{{ end }}>{{ .title }}</a>
+  {{ end }}
+</nav>

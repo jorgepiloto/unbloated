@@ -1,0 +1,9 @@
+{{/* The active section's sibling links use the library's button appearance.
+     Hugo renders them in place, with no client-side movement or menu script. */}}
+{{ $current := .page }}
+<nav class="subnav" aria-label="Sections">
+  {{ range .section.children }}
+    {{ $target := $current.Site.GetPage .page }}
+    <a class="unbloat-button" href="{{ $target.RelPermalink }}"{{ if eq $target $current }} aria-current="page"{{ end }}>{{ .title }}</a>
+  {{ end }}
+</nav>

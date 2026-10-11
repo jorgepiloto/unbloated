@@ -1,56 +1,170 @@
 /* SPDX-License-Identifier: LGPL-3.0-only */
-/* Site layout stays separate from the shared component appearance. */
-body {
-  margin: 0;
+/* The web-inspired shell uses shared tokens. Prose overrides target the article's
+ * direct children so live component examples retain the library's appearance.
+ */
+html {
+  background: var(--unbloat-color-canvas);
 }
 
+body {
+  display: flex;
+  flex-direction: column;
+  max-width: 800px;
+  min-height: calc(100vh - 2rem);
+  margin: var(--unbloat-space-3) auto;
+  background: var(--unbloat-color-surface);
+  box-shadow: var(--unbloat-shadow-offset) var(--unbloat-shadow-offset)
+    var(--unbloat-color-shadow);
+}
+
+/* White text on the black masthead and footer mirrors the reference website. */
 .site-header,
 .site-footer {
-  padding: var(--unbloat-space-3) var(--unbloat-space-4);
-  border-block-end: var(--unbloat-border-width) solid
-    var(--unbloat-color-border);
+  padding: var(--unbloat-space-4);
 }
 
-.site-header,
-.site-header nav,
+.site-title {
+  display: inline-block;
+  font-size: var(--unbloat-heading-size-1);
+  font-weight: bold;
+  line-height: var(--unbloat-line-height-heading);
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.site-description {
+  margin-block: var(--unbloat-space-2) 0;
+}
+
+/* Navigation remains ordinary links with the shared button styling.
+ * Section and sibling links work with a keyboard and without JavaScript.
+ */
+.main-navigation,
+.subnav,
 .page-navigation {
   display: flex;
   flex-wrap: wrap;
   gap: var(--unbloat-space-3);
-  align-items: center;
-  justify-content: space-between;
 }
 
-.site-title,
-.section-title,
-[aria-current] {
-  font-weight: bold;
+.main-navigation {
+  padding-inline: var(--unbloat-space-4);
+  margin-block: var(--unbloat-space-4);
+}
+
+.main-navigation a {
+  flex: 1 1 calc(33.333% - var(--unbloat-space-3));
+  text-align: center;
+  overflow-wrap: normal;
+}
+
+/* Selected navigation uses the same inverse tokens as the shared components. */
+.main-navigation a[aria-current],
+.subnav a[aria-current] {
+  color: var(--unbloat-color-inverse-text);
+  background: var(--unbloat-color-inverse-surface);
 }
 
 .site-layout {
-  display: grid;
-  grid-template-columns: 17rem minmax(0, 1fr);
-  max-width: 80rem;
-  margin-inline: auto;
-}
-
-.site-sidebar {
-  padding: var(--unbloat-space-4);
-  border-inline-end: var(--unbloat-border-width) solid
-    var(--unbloat-color-border);
-}
-
-.site-sidebar ul {
-  padding-inline-start: var(--unbloat-space-3);
-}
-
-main {
-  padding: var(--unbloat-space-4);
+  flex: 1;
   min-width: 0;
 }
 
-main > :first-child {
-  margin-block-start: 0;
+/* Parent navigation labels stay smaller than the page's level-one heading. */
+.nav-breadcrumb-title {
+  margin-block: var(--unbloat-space-5) var(--unbloat-space-3);
+  font-size: var(--unbloat-heading-size-2);
+  font-weight: bold;
+  line-height: var(--unbloat-line-height-heading);
+  text-transform: uppercase;
+}
+
+.subnav {
+  margin-block-end: var(--unbloat-space-5);
+}
+
+.subnav a {
+  flex: 1 1 calc(33.333% - var(--unbloat-space-3));
+  min-inline-size: min(100%, 12rem);
+  text-align: center;
+}
+
+/* Header icons are local vectors, with names supplied by their links. */
+.social-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--unbloat-space-3);
+  margin-block-start: var(--unbloat-space-3);
+}
+
+.social-links a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-inline-size: 1.75rem;
+  min-block-size: 1.75rem;
+  text-decoration: none;
+}
+
+.social-links svg {
+  inline-size: 1.2rem;
+  block-size: 1.2rem;
+}
+
+main {
+  padding: 0 2.5rem var(--unbloat-space-4);
+  min-width: 0;
+}
+
+.page-content {
+  container-type: inline-size;
+  display: flow-root;
+}
+
+.page-content > h1 {
+  margin-block: var(--unbloat-space-2) var(--unbloat-space-4);
+  text-transform: uppercase;
+}
+
+.parent-navigation + .page-content > h1 {
+  margin-block-start: 3rem;
+}
+
+/* Section labels and their full-width underline follow web's page-content rules.
+ * Container units keep the underline within the article at every viewport size.
+ */
+.page-content > :is(h2, h3, h4, h5, h6) {
+  position: relative;
+  width: fit-content;
+  max-width: 100%;
+  padding: var(--unbloat-space-1) var(--unbloat-space-2);
+  color: var(--unbloat-color-inverse-text);
+  background: var(--unbloat-color-inverse-surface);
+  text-transform: uppercase;
+}
+
+.page-content > :is(h2, h3, h4, h5, h6)::after {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  bottom: 0;
+  width: 100cqw;
+  height: 2px;
+  background: var(--unbloat-color-border);
+}
+
+/* API names keep their heading's size and contrast without an inline-code box. */
+.page-content > :is(h1, h2, h3, h4, h5, h6) :is(code, kbd, samp) {
+  padding: 0;
+  font-size: inherit;
+  color: inherit;
+  background: transparent;
+}
+
+/* Source paths and command names wrap in prose; preformatted code still scrolls. */
+.page-content > :is(p, ul, ol, dl, table) :is(code, kbd, samp) {
+  overflow-wrap: anywhere;
 }
 
 .component-demo {
@@ -74,28 +188,40 @@ main > :first-child {
 }
 
 .page-navigation {
-  margin-block-start: var(--unbloat-space-5);
-  padding-block-start: var(--unbloat-space-3);
-  border-block-start: var(--unbloat-border-width) solid
-    var(--unbloat-color-border);
+  justify-content: flex-start;
+  margin-block: var(--unbloat-space-4);
+}
+
+/* Parent links use the same button component as the section navigation. */
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--unbloat-space-2);
+}
+
+.back-button svg {
+  flex-shrink: 0;
 }
 
 .site-footer {
-  border-block-start: var(--unbloat-border-width) solid
-    var(--unbloat-color-border);
-  border-block-end: 0;
+  padding: var(--unbloat-space-2) var(--unbloat-space-3);
+  margin-block-start: auto;
+  text-align: center;
 }
 
+/* Fixed positioning keeps the skip link visible when focus returns after scroll. */
 .skip-link {
-  position: absolute;
+  position: fixed;
+  z-index: 1;
   inset-inline-start: var(--unbloat-space-3);
-  top: -5rem;
+  top: var(--unbloat-space-2);
+  clip-path: inset(50%);
   padding: var(--unbloat-space-2);
   background: var(--unbloat-color-surface);
 }
 
 .skip-link:focus {
-  top: var(--unbloat-space-2);
+  clip-path: none;
 }
 
 table {
@@ -104,22 +230,30 @@ table {
   overflow-x: auto;
 }
 
-.headerlink {
-  margin-inline-start: var(--unbloat-space-2);
-}
-
 [role="tabpanel"] {
   padding-block-start: var(--unbloat-space-3);
 }
 
-@media (width <= 48rem) {
-  .site-layout {
-    grid-template-columns: minmax(0, 1fr);
+/* Keep readable text on mobile; only the outer margin and content spacing shrink. */
+@media (width <= 50rem) {
+  body {
+    min-height: 100vh;
+    margin: 0;
+  }
+}
+
+@media (width <= 30rem) {
+  .site-header {
+    padding: var(--unbloat-space-3);
   }
 
-  .site-sidebar {
-    border-inline-end: 0;
-    border-block-end: var(--unbloat-border-width) solid
-      var(--unbloat-color-border);
+  .main-navigation {
+    gap: var(--unbloat-space-2);
+    margin: var(--unbloat-space-3);
+    padding: 0;
+  }
+
+  main {
+    padding-inline: var(--unbloat-space-3);
   }
 }

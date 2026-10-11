@@ -1,9 +1,11 @@
-# Prerequisites
+---
+title: Prerequisites
+---
 
 ## Use the Stylesheet
 
 Use a browser that supports CSS custom properties, `:where()`, and
-`:focus-visible`. You do not need Node.js or Python to load the built CSS.
+`:focus-visible`. You do not need Node.js or Hugo to load the built CSS.
 The library's browser tests target Chromium, Firefox, and WebKit.
 
 ## Build the Library
@@ -20,18 +22,21 @@ The project disables automatic lifecycle scripts in `.npmrc`. Explicit
 
 ## Build the Documentation
 
-Use Python 3.12 or newer for MkDocs. Create an environment and install the
-locked documentation dependencies:
+Use Hugo 0.167.0. On Linux x64 or arm64, install the pinned binary locally:
 
 ```sh
-python3 -m venv .venv-docs
-.venv-docs/bin/python -m pip install --require-hashes -r docs/requirements.txt
+npm run docs:setup
 ```
 
-On Windows, create the environment with `python -m venv .venv-docs` and use
-`.venv-docs\Scripts\python.exe` for the pip command. The npm documentation
-commands detect that environment on both platforms. Set `DOCS_PYTHON` to the
-path of another Python interpreter if you use a different environment.
+This downloads the official Hugo release, verifies its SHA-256 against
+`docs/hugo-lock.json`, and extracts the binary into `.cache/hugo/`. It does not
+install a system package. Initial setup needs network access and `tar`; later
+builds use the cached binary.
+
+On macOS and Windows, install the same version from the
+[official Hugo installation guide](https://gohugo.io/installation/). The runner
+checks `HUGO_BIN`, then the repository cache, then Hugo on PATH. Set `HUGO_BIN`
+to another executable path if needed. Documentation needs no Python environment.
 
 ## Run Checks
 

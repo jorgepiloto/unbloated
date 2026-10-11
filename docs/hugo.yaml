@@ -1,0 +1,16 @@
+# Documentation renders with the same shared stylesheet shipped in the package.
+baseURL: https://example.org/
+locale: en-US
+title: Unbloated
+publishDir: ../site
+disableKinds: [taxonomy, term, RSS, sitemap]
+outputs:
+  home: [HTML]
+params:
+  description: Monospace grayscale CSS library for engineers
+markup:
+  goldmark:
+    renderer:
+      unsafe: true # Repository-owned HTML provides the live component examples.
+  highlight:
+    codeFences: false # Keep examples styled by the shared CSS without inline colors.

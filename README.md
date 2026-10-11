@@ -2,14 +2,16 @@
 
 ## About
 
-Unbloated provides the shared CSS for the unbloat visual identity: monospace
-type, black and white surfaces, grayscale details, and square corners. It
+Monospace grayscale CSS library for engineers.
+
+Unbloated provides shared styles for monospace type, black and white surfaces,
+grayscale details, and square corners. It
 contains no runtime JavaScript, runtime dependencies, remote fonts, or remote
 assets.
 
-The [documentation](docs/index.md) covers installation, design tokens, source
-modules, and components with live style examples. Build it locally with MkDocs
-using the [documentation prerequisites](docs/getting-started/prerequisites.md).
+The [documentation](docs/content/_index.md) covers installation, design tokens, source
+modules, and components with live style examples. Build it locally with Hugo
+using the [documentation prerequisites](docs/content/getting-started/prerequisites.md).
 
 Design values live in `src/tokens.json`. A dependency-free build generates CSS
 custom properties, Sass variables, and a complete stylesheet. Websites and
@@ -219,25 +221,32 @@ The workflows run on pull requests, version tags, and daily at 08:00 in
 ignores them. Pushing a stable version tag triggers `release.yml`, which checks
 the source, builds the tarball, publishes it to npm through trusted publishing,
 and creates a GitHub release with the same tarball attached. See
-[Contributing](CONTRIBUTING.md), [Release Setup](docs/releasing.md), and
+[Contributing](CONTRIBUTING.md), [Release Setup](docs/content/releasing.md), and
 [Security](SECURITY.md).
 
 ### Build the Documentation
 
-Install the locked MkDocs dependencies, then build and serve the documentation:
+Install the pinned Hugo binary, then build and serve the documentation:
 
 ```sh
-python3 -m venv .venv-docs
-.venv-docs/bin/python -m pip install --require-hashes -r docs/requirements.txt
+npm run docs:setup
 npm run docs:build
 npm run docs:preview
 ```
 
+On macOS and Windows, install Hugo 0.167.0 from the
+[official Hugo installation guide](https://gohugo.io/installation/) instead of
+`docs:setup`. Set `HUGO_BIN` if it is not on PATH. Linux setup verifies the archive
+against the SHA-256 in `docs/hugo-lock.json`.
+
 Open `http://127.0.0.1:4174`. Use `npm run docs:dev` for Markdown editing with
 live reload at `http://127.0.0.1:8000`. The site has Home, Getting Started, and
 Components sections. Source comments and the
-[Source Reference](docs/reference/source.md) describe the implementation.
-`npm run test:docs` checks navigation, live styles, tab behavior, and mobile layout.
+[Source Reference](docs/content/reference/source.md) describe the implementation.
+The footer identifies the package version. The site uses this checkout's generated
+CSS with a layout modeled on `web`; heading IDs remain available for links,
+without permalink controls. `npm run test:docs` checks navigation, live styles,
+tab behavior, and mobile layout.
 
 ## License
 

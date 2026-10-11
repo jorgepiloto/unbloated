@@ -1,0 +1,27 @@
+{{/* All pages share semantic article markup; section indexes also list their pages. */}}
+{{ define "main" }}
+  {{ $section := partial "active-section.html" . }}
+  {{ $parent := .Site.Home }}
+  {{ with $section }}{{ $parent = $.Site.GetPage .page }}{{ end }}
+  {{ $isOverview := eq . $parent }}
+  {{ if and $section (not $isOverview) }}
+    <div class="parent-navigation">
+      <p class="nav-breadcrumb-title"><a href="{{ $parent.RelPermalink }}">{{ $section.title }}</a></p>
+      {{ partial "section-navigation.html" (dict "page" . "section" $section) }}
+    </div>
+  {{ end }}
+  <article class="page-content">
+    <h1 id="{{ .Title | anchorize }}">{{ .Title }}</h1>
+    {{ if and $section $isOverview }}
+      {{ partial "section-navigation.html" (dict "page" . "section" $section) }}
+    {{ end }}
+    {{ .Content }}
+    {{ if and .IsSection (not .Content) (not $isOverview) }}
+      <ul>
+        {{ range .Pages.ByTitle }}
+          <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+        {{ end }}
+      </ul>
+    {{ end }}
+  </article>
+{{ end }}

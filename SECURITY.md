@@ -25,7 +25,7 @@ job without OIDC permission. The publish job only downloads and publishes the
 verified tarball; it does not install dependencies or run the package source.
 Configure the external npm
 trust relationship and GitHub environment as described in
-[Release Setup](docs/releasing.md).
+[Release Setup](docs/content/releasing.md).
 
 Consumers should pin a release. For assets loaded from a CDN, use subresource
 integrity when appropriate or serve a verified local copy. CSS overrides and
