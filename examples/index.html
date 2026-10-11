@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Unbloated Reference</title>
+    <link rel="stylesheet" href="../dist/unbloat.css" />
+    <link rel="stylesheet" href="example.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#content">Skip to content</a>
+    <header class="unbloat-inverse">
+      <h1>Unbloated</h1>
+      <p>Monospace. Grayscale. Square corners.</p>
+    </header>
+    <main id="content">
+      <section aria-labelledby="typography">
+        <h2 id="typography">Typography</h2>
+        <p>
+          This page defines the shared appearance for websites, documentation,
+          and presentation themes.
+          <a href="#controls">Inspect the controls</a> or read a
+          <strong>strong statement</strong> with <em>emphasis</em>.
+        </p>
+        <h3>Third-Level Heading</h3>
+        <h4>Fourth-Level Heading</h4>
+        <h5>Fifth-Level Heading</h5>
+        <h6>Sixth-Level Heading</h6>
+        <p>
+          <small>Supporting text remains readable.</small> Use
+          <code>unbloat.css</code> and press <kbd>Tab</kbd> to check focus.
+        </p>
+        <ul>
+          <li>One shared palette.</li>
+          <li>One source for tokens.</li>
+        </ul>
+        <ol>
+          <li>Install the package.</li>
+          <li>Load the stylesheet.</li>
+        </ol>
+        <dl>
+          <dt>Token</dt>
+          <dd>A named design value.</dd>
+        </dl>
+        <blockquote>
+          <p>Keep the content readable and the styles easy to maintain.</p>
+        </blockquote>
+        <pre><code>npm install --save-dev --save-exact unbloated@0.1.0</code></pre>
+      </section>
+      <section aria-labelledby="controls">
+        <h2 id="controls">Controls</h2>
+        <form>
+          <label for="name">Name</label
+          ><input
+            id="name"
+            name="name"
+            placeholder="Your name"
+            autocomplete="name"
+          />
+          <label for="topic">Topic</label
+          ><select id="topic" name="topic">
+            <option>Website</option>
+            <option>Documentation</option>
+          </select>
+          <label for="notes">Notes</label
+          ><textarea id="notes" name="notes" rows="3"></textarea>
+          <label><input type="checkbox" name="preview" /> Show preview</label>
+          <label
+            ><input type="radio" name="mode" checked /> Light appearance</label
+          >
+          <div>
+            <button type="button">Default Button</button>
+            <button type="button" disabled>Disabled Button</button>
+          </div>
+        </form>
+      </section>
+      <section aria-labelledby="components">
+        <h2 id="components">Components</h2>
+        <p>
+          <a class="unbloat-button" href="#typography">Button Link</a>
+          <a class="unbloat-tag" href="#components">Theme</a>
+          <span class="unbloat-tag">CSS</span>
+        </p>
+        <div class="unbloat-panel">
+          <h3>Panel</h3>
+          <p>A border and a hard shadow.</p>
+        </div>
+        <aside class="unbloat-callout">
+          <p>
+            Adapters own the layout. This package owns the shared appearance.
+          </p>
+        </aside>
+        <details>
+          <summary>Package Contents</summary>
+          <p>CSS, Sass tokens, and the source needed to rebuild them.</p>
+        </details>
+      </section>
+      <section aria-labelledby="tables">
+        <h2 id="tables">Tables</h2>
+        <table>
+          <caption>
+            Available Stylesheets
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">File</th>
+              <th scope="col">Purpose</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">unbloat.css</th>
+              <td>Complete stylesheet</td>
+            </tr>
+            <tr>
+              <th scope="row">tokens.css</th>
+              <td>Design values</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+    <footer><p>Unbloated reference page. LGPL-3.0-only.</p></footer>
+  </body>
+</html>

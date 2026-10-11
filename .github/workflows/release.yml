@@ -1,0 +1,67 @@
+name: Release
+on:
+  release:
+    types: [published]
+permissions:
+  contents: read
+concurrency:
+  group: npm-release
+  cancel-in-progress: false
+jobs:
+  verify:
+    if: github.event.release.prerelease == false && github.event.release.target_commitish == 'main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+          ref: ${{ github.event.release.tag_name }}
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "24"
+          package-manager-cache: false
+      - name: Validate release tag and branch
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          node --input-type=module <<'NODE'
+            import { readFileSync } from "node:fs";
+            const { version } = JSON.parse(readFileSync("package.json", "utf8"));
+            if (process.env.RELEASE_TAG !== `v${version}` || !/^\d+\.\d+\.\d+$/.test(version)) {
+              throw new Error("Release tag must match the stable package version.");
+            }
+          NODE
+          git merge-base --is-ancestor HEAD origin/main
+      - run: npm ci --ignore-scripts
+      - run: npm run build
+      - run: npx --no-install playwright install --with-deps chromium firefox webkit
+      - run: npm run verify
+      - run: npm audit signatures
+      - run: npm audit --audit-level=high
+      - run: npm pack --ignore-scripts
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: release-package
+          path: unbloated-*.tgz
+          if-no-files-found: error
+          retention-days: 30
+  publish:
+    needs: verify
+    runs-on: ubuntu-24.04
+    environment: npm
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "24"
+          package-manager-cache: false
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
+        with:
+          name: release-package
+      - name: Publish verified tarball through npm trusted publishing
+        run: npm publish unbloated-*.tgz --ignore-scripts --access public --provenance

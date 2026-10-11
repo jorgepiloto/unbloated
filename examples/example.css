@@ -1,0 +1,38 @@
+/* SPDX-License-Identifier: LGPL-3.0-only */
+html {
+  background: var(--unbloat-color-canvas);
+}
+body {
+  max-width: 50rem;
+  margin: 0 auto;
+  background: var(--unbloat-color-surface);
+}
+header,
+main,
+footer {
+  padding: var(--unbloat-space-4);
+}
+header h1 {
+  margin-top: 0;
+}
+section {
+  margin-block-end: var(--unbloat-space-5);
+}
+form {
+  display: grid;
+  gap: var(--unbloat-space-2);
+}
+.unbloat-panel,
+.unbloat-callout {
+  margin-block: var(--unbloat-space-3);
+}
+.skip-link {
+  position: absolute;
+  inset-inline-start: var(--unbloat-space-3);
+  top: -5rem;
+  padding: var(--unbloat-space-2);
+  background: var(--unbloat-color-surface);
+}
+.skip-link:focus {
+  top: var(--unbloat-space-2);
+}
