@@ -121,6 +121,19 @@
   box-shadow: inset 0 0 0 2px var(--unbloat-color-surface);
 }
 
+/* A mixed checkbox has a horizontal mark distinct from the filled check. */
+:where(input[type="checkbox"]:indeterminate) {
+  background: linear-gradient(currentColor, currentColor) center / 65% 2px
+    no-repeat;
+  box-shadow: none;
+}
+
+@media (forced-colors: active) {
+  :where(input[type="checkbox"], input[type="radio"]) {
+    appearance: auto;
+  }
+}
+
 /* Code shares the monospace stack; long preformatted lines scroll horizontally. */
 :where(code, kbd, samp, pre) {
   font-family: var(--unbloat-font-family);

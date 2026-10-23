@@ -41,7 +41,8 @@ Edit design values in `src/tokens.json`, semantic element rules in
 `src/base.css`, and optional component rules in `src/components.css`. Keep
 layouts and selectors specific to Hugo, Sphinx, or Reveal.js in their adapters.
 
-Run these checks before opening a pull request:
+Run these checks before opening a pull request. The Hugo consumer regressions use
+the pinned binary; install it first with `npm run docs:setup` (or set `HUGO_BIN`).
 
 ```sh
 npx --no-install playwright install --with-deps chromium firefox webkit
@@ -147,3 +148,24 @@ Publish matching core source with releases and retain all bundled notices.
 Use the copies inside this repository for further adapter development. The
 former standalone Sphinx and Quarto repositories remain intact as migration
 sources, not additional sources of theme design values.
+
+### Rendering Regressions
+
+`npm run test:browser` also builds a real Hugo consumer and checks prefixed search,
+script-free links and plant fields, wide content, and repeated plots using local
+script fixtures. `npm run test:docs` serves already built documentation at its
+actual prefix; it does not rebuild the downloaded artifact. Set `DOCS_ARTIFACT_DIR`
+for a different stable or versioned artifact directory.
+
+For Sphinx and Quarto, prepare bundles and install their builders, then run:
+
+```sh
+PYTHON=.venv/bin/python npm run test:adapter-browser
+```
+
+The Python environment must contain the Sphinx adapter. Quarto must be on PATH
+(or selected through `QUARTO_BIN`). These fixtures use the real bundled core CSS.
+They cover notebook outputs, table wrapping, focus, column images, and native
+footer ownership in slide, scroll, and print views. To check only Sphinx when
+Quarto is unavailable, add `-- --grep Sphinx`. Browser checks need an environment
+that permits Chromium and loopback servers; failed launches are not passing tests.

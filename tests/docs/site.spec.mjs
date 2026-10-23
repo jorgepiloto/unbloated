@@ -2,7 +2,11 @@
 /** Verify navigation, actual component styles, tab interaction, and mobile layout. */
 import { expect, test } from "@playwright/test";
 import { readFile, readdir } from "node:fs/promises";
+import { docsArtifact } from "../../scripts/docs-artifact.mjs";
 import { root } from "../../scripts/build.mjs";
+
+const { directory, prefix } = await docsArtifact();
+const localURL = `http://127.0.0.1:4174${prefix}`;
 
 test("Hugo pages keep descriptions, heading IDs, and local links valid", async ({
   page,
@@ -11,11 +15,11 @@ test("Hugo pages keep descriptions, heading IDs, and local links valid", async (
   const { description, version } = JSON.parse(
     await readFile(new URL("package.json", root)),
   );
-  const files = await readdir(new URL("site/", root), { recursive: true });
+  const files = await readdir(directory, { recursive: true });
   const paths = files
     .filter((path) => path.endsWith("index.html"))
     .map(
-      (path) => `/${path.replaceAll("\\", "/").replace(/index\.html$/, "")}`,
+      (path) => path.replaceAll("\\", "/").replace(/index\.html$/, "") || "./",
     );
   const destinations = new Set();
   for (const path of paths) {
@@ -69,7 +73,7 @@ test("Hugo pages keep descriptions, heading IDs, and local links valid", async (
       ).toBe(true);
     }
   }
-  await page.goto("/");
+  await page.goto("./");
   const library = page.locator('link[rel="stylesheet"][href*="/unbloat."]');
   const response = await request.get(await library.getAttribute("href"));
   expect(await response.text()).toBe(
@@ -83,7 +87,7 @@ test("heading levels use the library scale and keep code legible", async ({
   const { heading: sizes } = JSON.parse(
     await readFile(new URL("src/tokens.json", root)),
   );
-  await page.goto("/components/typography/");
+  await page.goto("components/typography/");
   let previousSize = Infinity;
   for (let level = 1; level <= 6; level += 1) {
     const heading =
@@ -109,7 +113,7 @@ test("heading levels use the library scale and keep code legible", async ({
       Number.parseFloat(getComputedStyle(element).fontSize),
     ),
   );
-  await page.goto("/reference/source/");
+  await page.goto("reference/source/");
   for (const heading of await page.locator(".page-content > h3").all()) {
     await expect(heading).toHaveCSS("color", "rgb(255, 255, 255)");
     await expect(heading).toHaveCSS("background-color", "rgb(0, 0, 0)");
@@ -126,7 +130,7 @@ test("heading levels use the library scale and keep code legible", async ({
 test("documentation sections and getting-started pages are reachable", async ({
   page,
 }) => {
-  await page.goto("/");
+  await page.goto("./");
   const navigation = page.getByRole("navigation", { name: "Main navigation" });
   await expect(navigation.getByRole("link")).toHaveText([
     "Home",
@@ -169,7 +173,7 @@ test("social icons retain accessible names, destinations, and local assets", asy
 }) => {
   const requests = [];
   page.on("request", (request) => requests.push(request.url()));
-  await page.goto("/");
+  await page.goto("./");
   const navigation = page.getByRole("navigation", { name: "Social links" });
   const social = JSON.parse(
     await readFile(new URL("docs/data/social.json", root)),
@@ -192,7 +196,7 @@ test("social icons retain accessible names, destinations, and local assets", asy
   expect(
     requests.every((url) => new URL(url).origin === "http://127.0.0.1:4174"),
   ).toBe(true);
-  const license = await request.get("/licenses/font-awesome-LICENSE.txt");
+  const license = await request.get("licenses/font-awesome-LICENSE.txt");
   expect(license.ok()).toBe(true);
   expect(await license.text()).toContain("CC BY 4.0");
 });
@@ -203,7 +207,7 @@ test("section buttons and parent links work without JavaScript", async ({
   const context = await browser.newContext({ javaScriptEnabled: false });
   try {
     const page = await context.newPage();
-    await page.goto("http://127.0.0.1:4174/components/");
+    await page.goto(`${localURL}components/`);
     const sections = page.getByRole("navigation", {
       name: "Sections",
       exact: true,
@@ -230,7 +234,7 @@ test("section buttons and parent links work without JavaScript", async ({
     ).toHaveAttribute("aria-current", "true");
     const parent = page.locator(".nav-breadcrumb-title a");
     await expect(parent).toHaveText("Components");
-    await expect(parent).toHaveAttribute("href", "/components/");
+    await expect(parent).toHaveAttribute("href", `${prefix}components/`);
     expect((await sections.boundingBox()).y).toBeLessThan(
       (
         await page
@@ -264,7 +268,7 @@ test("section buttons and parent links work without JavaScript", async ({
 test("reference pages use Getting Started as their navigation parent", async ({
   page,
 }) => {
-  await page.goto("/reference/source/");
+  await page.goto("reference/source/");
   await expect(page.locator(".nav-breadcrumb-title a")).toHaveText(
     "Getting Started",
   );
@@ -285,7 +289,7 @@ test("reference pages use Getting Started as their navigation parent", async ({
 test("component previews use the built library and retain native states", async ({
   page,
 }) => {
-  await page.goto("/components/panels/");
+  await page.goto("components/panels/");
   const panel = page.locator(".component-demo .unbloat-panel").first();
   await expect(panel).toHaveCSS(
     "box-shadow",
@@ -300,7 +304,7 @@ test("component previews use the built library and retain native states", async 
     "color",
     "rgb(255, 255, 255)",
   );
-  await page.goto("/components/buttons/");
+  await page.goto("components/buttons/");
   const button = page.getByRole("button", { name: "Preview", exact: true });
   await button.hover();
   await expect(button).toHaveCSS("background-color", "rgb(0, 0, 0)");
@@ -312,7 +316,7 @@ test("component previews use the built library and retain native states", async 
 test("tabs support selection, roving focus, and keyboard wrapping", async ({
   page,
 }) => {
-  await page.goto("/components/tabs/");
+  await page.goto("components/tabs/");
   const complete = page.getByRole("tab", { name: "Complete" });
   const tokens = page.getByRole("tab", { name: "Tokens" });
   await tokens.click();
@@ -336,7 +340,7 @@ test("components fit a narrow viewport and keep the skip link visible on focus",
   page,
 }) => {
   await page.setViewportSize({ width: 320, height: 800 });
-  await page.goto("/components/controls/");
+  await page.goto("components/controls/");
   await page.keyboard.press("Tab");
   await expect(
     page.getByRole("link", { name: "Skip to content" }),
@@ -357,11 +361,11 @@ test("components fit a narrow viewport and keep the skip link visible on focus",
     fullPage: true,
   });
   for (const path of [
-    "/getting-started/installation/",
-    "/reference/tokens/",
-    "/reference/source/",
-    "/components/typography/",
-    "/components/content/",
+    "getting-started/installation/",
+    "reference/tokens/",
+    "reference/source/",
+    "components/typography/",
+    "components/content/",
   ]) {
     await page.goto(path);
     expect(
@@ -370,5 +374,22 @@ test("components fit a narrow viewport and keep the skip link visible on focus",
       ),
       `Page overflow at ${path}`,
     ).toBe(true);
+  }
+});
+
+test("both tab panels remain readable when enhancement is unavailable", async ({
+  browser,
+}) => {
+  for (const disabled of [true, false]) {
+    const context = await browser.newContext({ javaScriptEnabled: !disabled });
+    try {
+      const page = await context.newPage();
+      if (!disabled) await page.route("**/tabs.*.js", (route) => route.abort());
+      await page.goto(`${localURL}components/tabs/`);
+      await expect(page.locator("#panel-complete")).toBeVisible();
+      await expect(page.locator("#panel-tokens")).toBeVisible();
+    } finally {
+      await context.close();
+    }
   }
 });

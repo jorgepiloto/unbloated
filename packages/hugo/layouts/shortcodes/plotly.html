@@ -1,13 +1,16 @@
 {{ $json := .Get "json" }}
 {{ $height := .Get "height" | default "200px" }}
+{{ $id := printf "plotly-%d" .Ordinal }}
 {{ if $json }}
-<div id="{{ $json | htmlEscape }}" class="plotly" style="height:{{ $height | htmlEscape }}"></div>
+<div id="{{ $id }}" class="plotly" style="height:{{ $height }}"></div>
 <script>
 document.addEventListener("DOMContentLoaded", async () => {
-    const plotId = {{ $json }};
+    const plotId = {{ $id }};
+    const dataURL = {{ $json }};
     const container = document.getElementById(plotId);
+    if (!container) return;
     try {
-        const response = await fetch(plotId);
+        const response = await fetch(dataURL);
         if (!response.ok) {
             throw new Error(`Unable to load plot: ${response.status}`);
         }

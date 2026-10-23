@@ -6,15 +6,14 @@
       {{ .Content }}
     </section>
 
-    {{ $allPosts := where .Site.RegularPages "Section" "posts" }}
+    {{ $allPosts := where (partial "discoverable-pages.html" .Site.RegularPages) "Section" "posts" }}
     {{ $postsPerYear := $allPosts.GroupByDate "2006" }}
 
-    {{ range $ith_group, $postGroup := $postsPerYear }}
-      {{ $posts := $postGroup.Pages }}
+    {{ range $postsPerYear }}
+      {{ $posts := .Pages }}
       {{ $filteredPosts := where $posts "Params.tags" "intersect" (slice $ThisTag) }}
       {{ if gt (len $filteredPosts) 0 }}
-        {{ $difference := sub 2024 $ith_group }}
-        <h3>Year {{ $difference }}</h3>
+        <h3>Year {{ .Key }}</h3>
         <ul class="posts">
         {{ range $filteredPosts.ByDate.Reverse }}
             <li>

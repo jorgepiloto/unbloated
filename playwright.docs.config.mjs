@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: LGPL-3.0-only
 /** Check the Hugo site and its examples in Chromium. Build docs first. */
+import { docsArtifact } from "./scripts/docs-artifact.mjs";
 import { defineConfig, devices } from "@playwright/test";
+
+const { prefix } = await docsArtifact();
 
 export default defineConfig({
   testDir: "./tests/docs",
@@ -11,12 +14,12 @@ export default defineConfig({
   reporter: "list",
   use: {
     ...devices["Desktop Chrome"],
-    baseURL: "http://127.0.0.1:4174",
+    baseURL: `http://127.0.0.1:4174${prefix}`,
     trace: "retain-on-failure",
   },
   webServer: {
-    command: "npm run docs:preview",
-    url: "http://127.0.0.1:4174",
+    command: "node scripts/serve-docs.mjs",
+    url: `http://127.0.0.1:4174${prefix}`,
     reuseExistingServer: false,
   },
 });

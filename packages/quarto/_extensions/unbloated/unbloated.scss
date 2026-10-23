@@ -78,10 +78,9 @@ li {
 
 .slide img {
   display: block;
-  max-width: 800px !important;
-  max-height: 600px !important;
-  width: auto !important;
-  height: auto !important;
+  max-width: min(100%, 800px);
+  max-height: 600px;
+  height: auto;
   margin: 1rem auto !important;
 }
 

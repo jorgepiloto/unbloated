@@ -22,10 +22,11 @@ test.describe("Navigation", () => {
     await expect(nav).toBeVisible();
   });
 
-  test("nav bar contains buttons", async ({ page }) => {
+  test("nav bar contains single interactive links", async ({ page }) => {
     await page.goto("/index.html");
-    const buttons = page.locator("body > nav button");
-    await expect(buttons).not.toHaveCount(0);
+    const links = page.locator("body > nav a.nav-link");
+    await expect(links).not.toHaveCount(0);
+    await expect(links.locator("button")).toHaveCount(0);
   });
 
   test("nav links navigate to their target pages", async ({ page }) => {

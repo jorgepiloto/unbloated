@@ -11,9 +11,9 @@
 {# Site header #}
 {%- block header %}
 <header>
-  <h1 class="title">{{ project }}</h1>
+  <h1 class="title">{{ project|e }}</h1>
   {%- if theme_site_description %}
-  <p class="description">{{ theme_site_description }}</p>
+  <p class="description">{{ theme_site_description|e }}</p>
   {%- endif %}
   <div class="components">
     {%- if theme_github_url or theme_linkedin_url or theme_youtube_url or theme_rss_url or theme_sponsor_url %}
@@ -70,7 +70,7 @@
 {%- block relbar1 %}
 <nav>
   {%- for label, url, is_active in nav_links %}
-  <a href="{{ url }}"><button{% if is_active %} class="active"{% endif %}>{{ label }}</button></a>
+  <a class="nav-link{% if is_active %} active{% endif %}" href="{{ url|e }}"{% if is_active %} aria-current="{{ 'page' if url == current_page_url else 'true' }}"{% endif %}>{{ label|e }}</a>
   {%- endfor %}
 </nav>
 {%- endblock %}
@@ -101,10 +101,10 @@
     above the Configuration heading.
   #}
   {%- for level in breadcrumb_levels %}
-  <p class="nav-breadcrumb-title"><a href="{{ level.url }}">{{ level.title }}</a></p>
+  <p class="nav-breadcrumb-title"><a href="{{ level.url|e }}">{{ level.title|e }}</a></p>
   <nav class="subnav">
     {%- for label, url, is_active in level.subnav %}
-    <a href="{{ url }}"><button{% if is_active %} class="active"{% endif %}>{{ label }}</button></a>
+    <a class="nav-link{% if is_active %} active{% endif %}" href="{{ url|e }}"{% if is_active %} aria-current="{{ 'page' if url == current_page_url else 'true' }}"{% endif %}>{{ label|e }}</a>
     {%- endfor %}
   </nav>
   {%- endfor %}
@@ -116,7 +116,7 @@
   {%- if subnav_links %}
   <nav class="subnav subnav-current">
     {%- for label, url, is_active in subnav_links %}
-    <a href="{{ url }}"><button{% if is_active %} class="active"{% endif %}>{{ label }}</button></a>
+    <a class="nav-link{% if is_active %} active{% endif %}" href="{{ url|e }}"{% if is_active %} aria-current="{{ 'page' if url == current_page_url else 'true' }}"{% endif %}>{{ label|e }}</a>
     {%- endfor %}
   </nav>
   {%- endif %}

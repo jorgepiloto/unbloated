@@ -1,9 +1,7 @@
 {{ printf "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>" | safeHTML }}
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
-  {{ $pages := .Data.Pages }}
-  {{ $pages = where $pages "Params.private" "!=" true }}
-  {{ $pages = where $pages "Params.noindex" "!=" true }}
+  {{ $pages := partial "discoverable-pages.html" .Data.Pages }}
   {{ range $pages }}
     {{- if .Permalink -}}
     {{- $skip := false -}}
@@ -38,12 +36,12 @@
     <priority>{{ $prio }}</priority>{{ if .IsTranslated }}{{ range .Translations }}
     <xhtml:link
                 rel="alternate"
-                hreflang="{{ .Language.Lang }}"
+                hreflang="{{ (partial "language.html" .Language).locale }}"
                 href="{{ .Permalink }}"
                 />{{ end }}
     <xhtml:link
                 rel="alternate"
-                hreflang="{{ .Language.Lang }}"
+                hreflang="{{ (partial "language.html" .Language).locale }}"
                 href="{{ .Permalink }}"
                 />{{ end }}
   </url>

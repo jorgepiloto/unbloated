@@ -6,7 +6,8 @@
     <h2>Categories</h2>
 
 {{ range $key, $value := .Site.Taxonomies.categories }}
-	<li><a href="/posts/category/{{ $key | urlize  }}">{{ $key | humanize }}</a> ({{ len $value }})</li>
+  {{ $visible := partial "discoverable-pages.html" $value.Pages }}
+  {{ if $visible }}<li><a href="{{ $value.Page.RelPermalink }}">{{ $key | humanize }}</a> ({{ len $visible }})</li>{{ end }}
 {{ end }}
 
 
@@ -14,7 +15,7 @@
     <h2>Posts with <span class="tag">{{ .Title | lower }}</span> tag</h2>
     {{ end }}
     <ul class="posts">
-        {{ range where .Site.RegularPages "Section" "posts" }}
+        {{ range where (partial "discoverable-pages.html" .Site.RegularPages) "Section" "posts" }}
             {{ $title := .Title | lower }}
             {{ if in .Params.tags $CategoryTitle }}
                 <li>

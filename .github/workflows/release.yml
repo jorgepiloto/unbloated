@@ -106,6 +106,13 @@ jobs:
           name: documentation-html
           path: site
       - run: npm run test:docs
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
+        with:
+          name: documentation-versioned
+          path: site-versioned
+      - run: npm run test:docs
+        env:
+          DOCS_ARTIFACT_DIR: site-versioned
       - run: npm run test:browser
       - run: npm audit signatures
       - run: npm audit --audit-level=high

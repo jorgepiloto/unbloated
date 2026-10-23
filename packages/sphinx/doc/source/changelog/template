@@ -1,22 +1,12 @@
 {% if sections[""] %}
-
-.. tab-set::
-
-{%+ for category, val in definitions.items() if category in sections[""] %}
-
-  .. tab-item:: {{ definitions[category]['name'] }}
-
-    .. list-table::
-        :header-rows: 0
-        :widths: auto
+{% for category, val in definitions.items() if category in sections[""] %}
+{{ definitions[category]['name'] }}
+{{ "~" * definitions[category]['name']|length }}
 
 {% for text, values in sections[""][category].items() %}
-        * - {{ text }}
-          - {{ values|join(', ') }}
-
+- {{ text|replace('\n', '\n  ') }} ({{ values|join(', ') }})
 {% endfor %}
 {% endfor %}
-
 {% else %}
 No significant changes.
 {% endif %}

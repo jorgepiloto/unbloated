@@ -3,9 +3,9 @@ title: Release Setup
 ---
 
 The package name is `unbloated`. Before publishing, check that the repository
-URLs in `package.json` match the GitHub repository you publish from. The current
-metadata points to `jorgepiloto/unbloated-css`; this checkout uses
-`jorgepiloto/unbloated`. Registry availability does not reserve the package name.
+URLs in `package.json` match the GitHub repository you publish from. The manifest
+uses `jorgepiloto/unbloated`. Verify the external trusted publisher and provenance
+settings before publication. Registry availability does not reserve the package name.
 
 ## Configure Publishing
 
@@ -43,7 +43,9 @@ update only their documentation subdirectory and preserve the rest of the websit
 
 Every workflow runs `doc-build` and uploads the `documentation-html` artifact.
 Pull requests build documentation without deploying it. Night runs on `main`
-publish development documentation at
+publish development documentation after the required validation and package build
+succeed. Tests serve the downloaded static artifact without rebuilding it.
+Development documentation lives at
 `https://jorgemartinez.space/projects/unbloated/version/dev/`.
 
 After `release-github` succeeds, `doc-deploy-stable` publishes documentation at
@@ -51,7 +53,8 @@ After `release-github` succeeds, `doc-deploy-stable` publishes documentation at
 `https://jorgemartinez.space/projects/unbloated/version/<version>/`, with the
 leading `v` removed from the release tag. The release workflow builds separate
 stable and versioned artifacts so asset and navigation URLs use the correct
-prefix. Deployment jobs share the `website-documentation` concurrency group
+prefix. Tests serve both exact artifacts at those prefixes before release.
+Deployment jobs share the `website-documentation` concurrency group
 to serialize website updates from this repository.
 
 ## Publish a Version

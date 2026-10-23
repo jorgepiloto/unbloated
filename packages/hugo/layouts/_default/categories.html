@@ -1,28 +1,25 @@
 {{ define "main" }}
 <main>
     {{ $ThisCategory := .Title }}
-    <p>This is layouts/_default/categories.html</p>
     <h2>{{ $ThisCategory }} posts</h2>
     <section class="page-content">
       {{ .Content }}
     </section>
 
-    {{ $allPosts := where .Site.RegularPages "Section" "posts" }}
+    {{ $allPosts := where (partial "discoverable-pages.html" .Site.RegularPages) "Section" "posts" }}
     {{ $postsPerYear := $allPosts.GroupByDate "2006" }}
 
-    {{ range $ith_group, $posts := $postsPerYear }}
-      {{ $difference := sub 2024 $ith_group }}
-      <h3>Year {{ $difference }}</h3>
+    {{ range $postsPerYear }}
+      {{ $filteredPosts := where .Pages "Params.categories" "intersect" (slice $ThisCategory) }}
+      {{ if $filteredPosts }}
+      <h3>Year {{ .Key }}</h3>
       <ul class="posts">
-      {{ range $posts.ByDate.Reverse }}
-          {{ if in .Params.categories $ThisCategory }}
-          <li>
-              {{ .Date.Format "2006-01-02" }} - <a href="{{ .Permalink }}">{{ .Title }}{{ if .Params.Subtitle }} - {{ .Params.Subtitle }}{{ end}}</a>
-          </li>
-          {{ end }}
-      {{ end}}
+      {{ range $filteredPosts.ByDate.Reverse }}
+        <li>{{ .Date.Format "2006-01-02" }} - <a href="{{ .Permalink }}">{{ .Title }}{{ with .Params.Subtitle }} - {{ . }}{{ end }}</a></li>
+      {{ end }}
       </ul>
-    {{ end}}
+      {{ end }}
+    {{ end }}
 
 </main>
 {{ end }}

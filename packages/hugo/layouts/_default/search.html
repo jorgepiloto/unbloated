@@ -1,17 +1,9 @@
 {{ define "main" }}
 <main>
   <h2>Search Results</h2>
-  <div id="search-results"></div>
+  <div id="search-results" role="status" aria-live="polite" data-index-url="{{ "index.json" | relURL }}"></div>
 </main>
 
-<script id="search-result-template" type="text/x-js-template">
-  <div class="search-result" id="summary-${key}">
-    <h4><a href="${link}">${title}</a></h4>
-    <p class="search-snippet">${snippet}</p>
-    ${ isset categories }<p class="search-meta">Categories: ${categories}</p>${ end }
-    ${ isset tags }<p class="search-meta">Tags: ${tags}</p>${ end }
-  </div>
-</script>
 {{ end }}
 
 {{ define "footerscripts" }}

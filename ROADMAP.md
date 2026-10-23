@@ -2,8 +2,10 @@
 
 This roadmap records the HTML, CSS, JavaScript, Sphinx, Hugo, and Quarto review
 from 2026-10-23. It covers 31 confirmed findings: one P1, 27 P2, and three P3.
-All tasks are open. Recording a task does not mean its fix has been implemented
-or approved for release.
+Source changes now cover all 31 findings. Checked tasks have passed the available
+acceptance regressions. Unchecked tasks have implementations and regression
+fixtures, with outstanding verification listed below; they are not closed or
+approved for release.
 
 P1 means a high-priority blocker. P2 means a correctness, accessibility,
 integration, or verification defect. P3 means a lower-impact defect. Finding
@@ -37,7 +39,7 @@ Preserve these foundations while making changes:
 
 ### F01: Update the Vulnerable PostCSS Dependency
 
-- [ ] P1: Update the direct PostCSS dependency and lockfile to a reviewed patched version.
+- [x] P1: Update the direct PostCSS dependency and lockfile to a reviewed patched version.
 
 Evidence: `package.json:84` pins `8.5.6`. The review's dependency audit reported
 one high-severity direct development dependency and identified `8.5.31` as an
@@ -49,7 +51,7 @@ proof of runtime exploitation in the published CSS.
 
 ### F25: Stop Sphinx Cleanup From Deleting Existing Source
 
-- [ ] P2: Isolate generated example sources or track exactly which files each build creates.
+- [x] P2: Isolate generated example sources or track exactly which files each build creates.
 
 Evidence: `packages/sphinx/doc/source/conf.py:174-203,265-270` reuses and then
 recursively removes `doc/source/examples`. An isolated reproduction deleted a
@@ -60,7 +62,7 @@ and filename collisions cannot silently overwrite source.
 
 ### F15: Correct Publication Metadata
 
-- [ ] P2: Reconcile npm repository, homepage, and issue URLs with this repository.
+- [x] P2: Reconcile npm repository, homepage, and issue URLs with this repository.
 
 Evidence: `package.json:7-12` points to `jorgepiloto/unbloated-css`, while this
 repository is `jorgepiloto/unbloated`. The release guide already notes the
@@ -155,7 +157,7 @@ real core stylesheet, including forced colors and keyboard interaction.
 
 ### F21: Escape Sphinx Plain-Text Labels
 
-- [ ] P2: Escape project names, descriptions, and navigation labels at template boundaries.
+- [x] P2: Escape project names, descriptions, and navigation labels at template boundaries.
 
 Evidence: the Sphinx theme's `layout.html:14-16,71-74,103-107,116-119`
 interpreted `Tools & <Interfaces>` and `Vector <T> & Buffer` as markup,
@@ -179,7 +181,7 @@ that currently preserve the nested-button structure.
 
 ### F06: Make Hugo Navigation Work Without JavaScript
 
-- [ ] P2: Replace inline navigation handlers with real links.
+- [x] P2: Replace inline navigation handlers with real links.
 
 Evidence: `packages/hugo/layouts/_default/baseof.html:34-37` renders buttons
 with `onclick` navigation. The About control did not navigate with scripts
@@ -213,7 +215,7 @@ and Arrow/Home/End behavior.
 
 ### F13: Render Plant Information During Generation
 
-- [ ] P2: Emit visible semantic fields and remove the repeated plant-card ID.
+- [x] P2: Emit visible semantic fields and remove the repeated plant-card ID.
 
 Evidence: `packages/hugo/layouts/shortcodes/card_plant.html:16-29` emits empty
 fields containing only data attributes and repeats `id="plant-info"`.
@@ -227,7 +229,7 @@ to align labels and values.
 
 ### F04: Resolve Hugo Search Within the Site Base Path
 
-- [ ] P2: Pass the generated search-index URL to JavaScript.
+- [x] P2: Pass the generated search-index URL to JavaScript.
 
 Evidence: `packages/hugo/static/js/search.js:26-30` fetches `/index.json`.
 A site below `/prefix/` therefore requested the origin's root index.
@@ -239,7 +241,7 @@ accidentally consuming another site's root resources.
 
 ### F05: Handle Malformed Search Queries
 
-- [ ] P2: Replace manual query splitting with deliberate URL parameter parsing.
+- [x] P2: Replace manual query splitting with deliberate URL parameter parsing.
 
 Evidence: `packages/hugo/static/js/search.js:105-108` calls
 `decodeURIComponent` before the error handler exists. `?s=%` produced
@@ -251,7 +253,7 @@ Use `URLSearchParams` rather than duplicating its parsing rules.
 
 ### F19: Preserve Literal Search Result Text
 
-- [ ] P2: Construct result elements with safe text insertion instead of HTML substitution.
+- [x] P2: Construct result elements with safe text insertion instead of HTML substitution.
 
 Evidence: `packages/hugo/static/js/search.js:82-93,111-129` rendered the
 benign title `Vector<T>` as `Vector` with an unintended element.
@@ -263,7 +265,7 @@ source is introduced.
 
 ### F09: Apply Discoverability Flags Consistently
 
-- [ ] P2: Define and enforce private/noindex behavior across generated outputs.
+- [x] P2: Define and enforce private/noindex behavior across generated outputs.
 
 Evidence: `packages/hugo/layouts/_default/index.json:1-5` indexes all regular
 pages, including a fixture excluded by private/noindex flags from the sitemap.
@@ -274,7 +276,7 @@ content must stay out of the public build.
 
 ### F14: Separate Plotly Container IDs From Data URLs
 
-- [ ] P2: Generate independent per-shortcode IDs and rely on contextual escaping.
+- [x] P2: Generate independent per-shortcode IDs and rely on contextual escaping.
 
 Evidence: `packages/hugo/layouts/shortcodes/plotly.html:4,7-8` double-escapes
 ampersands in the ID while JavaScript searches for the original URL.
@@ -286,7 +288,7 @@ dereference a missing element.
 
 ### F08: Use Actual Archive Years
 
-- [ ] P2: Render date-group keys and remove the category template's diagnostic text.
+- [x] P2: Render date-group keys and remove the category template's diagnostic text.
 
 Evidence: `packages/hugo/layouts/_default/tags.html:12-17` and
 `categories.html:13-15` subtract group positions from 2024. A 2026 post
@@ -297,7 +299,7 @@ headings and no internal diagnostic reaches the page.
 
 ### F10: Emit the Configured Hugo Document Language
 
-- [ ] P2: Derive the document language from the active site's language/locale.
+- [x] P2: Derive the document language from the active site's language/locale.
 
 Evidence: `packages/hugo/layouts/_default/baseof.html:2` hardcodes English,
 including for the French fixture.
@@ -307,7 +309,7 @@ Add direction support where the supported locale set requires it.
 
 ### F26: Fix Sphinx Directory-HTML 404 Resolution
 
-- [ ] P2: Make 404 base, navigation, and asset URLs share a builder-aware reference frame.
+- [x] P2: Make 404 base, navigation, and asset URLs share a builder-aware reference frame.
 
 Evidence: the Sphinx theme's `404.html:3-6` and navigation context in
 `packages/sphinx/src/sphinx_unbloated_theme/__init__.py:82-85` combine
@@ -319,7 +321,7 @@ If only one builder is supported, state and enforce that contract.
 
 ### F31: Hide Unconfigured Sphinx Issue Actions
 
-- [ ] P3: Render the 404 issue link only when a valid report destination exists.
+- [x] P3: Render the 404 issue link only when a valid report destination exists.
 
 Evidence: the Sphinx theme's `404.html:10-12` appends `/issues` to an optional
 GitHub URL whose `theme.toml:10` default is empty.
@@ -354,7 +356,7 @@ controls. Keep live-source preview checks separate if they remain useful.
 
 ### F16: Gate Development Documentation Deployment
 
-- [ ] P2: Make development deployment wait for required validation.
+- [x] P2: Make development deployment wait for required validation.
 
 Evidence: `.github/workflows/night.yml:35-36` depends only on `doc-build`,
 so deployment can finish before the independent checks fail.
@@ -365,7 +367,7 @@ an intentionally unverified preview from a validated deployment.
 
 ### F20: Cover CSS Shorthands in Adapter Ownership Checks
 
-- [ ] P2: Reject independent font stacks and palettes in supported CSS forms.
+- [x] P2: Reject independent font stacks and palettes in supported CSS forms.
 
 Evidence: `scripts/adapter-styles.mjs:19-20,76-82,104-110` accepted
 `font: 16px serif` and `background-image: linear-gradient(red, blue)`.
@@ -376,7 +378,7 @@ adapter geometry. Treat the validator as an ownership check, not a sandbox.
 
 ### F27: Build a Nonempty Generated Changelog
 
-- [ ] P2: Emit supported changelog markup or declare its required extension.
+- [x] P2: Emit supported changelog markup or declare its required extension.
 
 Evidence: `packages/sphinx/doc/source/changelog/template:1-10` generates
 `tab-set`/`tab-item`, but the documentation extension/dependency lists do not
@@ -388,7 +390,7 @@ headings/lists if tabs do not justify another extension.
 
 ### F17: Keep the Preview Server Alive After Invalid Requests
 
-- [ ] P3: Handle request URL parsing errors inside the request boundary.
+- [x] P3: Handle request URL parsing errors inside the request boundary.
 
 Evidence: `scripts/serve.mjs:22-23` parses outside its error handler.
 The literal request path `//[` terminated the loopback process.
@@ -477,6 +479,72 @@ regression coverage and directly related documentation updates. Record changed
 behavior and compatibility decisions. Keep unresolved access/environment limits
 explicit instead of reporting an all-green release.
 
-Roadmap handoff: evidence and uncertainty are preserved, no new visual assets
-or product claims were introduced, and no defect is marked fixed. This document
-does not approve the unchanged interface for release.
+Implementation handoff: the 31 source fixes preserve the core/adapters architecture.
+Nineteen tasks are checked; twelve retain explicit verification work below.
+The follow-up assessment remains separate from the confirmed findings.
+
+## Implementation and Verification — 2026-10-23
+
+Implemented changes include PostCSS 8.5.31, corrected publication URLs, exclusive
+Sphinx example creation and tracked cleanup, escaped labels and native links,
+wrapped content, visible notebook output, responsive Quarto images, native footer
+ownership, mixed checkboxes, script-independent tab panels and plant fields,
+prefixed and literal-text search, consistent discovery flags, independent plot IDs,
+actual archive years, version-gated locale APIs, builder-aware 404 paths, native
+changelog markup, exact artifact serving, deployment gates, expanded ownership
+checks, and bounded preview errors.
+
+Persistent regressions live in `tests/hugo.test.mjs`, `tests/search.test.mjs`,
+`tests/servers.test.mjs`, `tests/workflows.test.mjs`, the expanded adapter/core tests,
+`packages/sphinx/tests/python/test_roadmap.py`, and the browser suites. Sphinx
+rendering checks are also wired into adapter CI. The actual Towncrier draft with
+one fragment was rendered and built with warning-strict Sphinx.
+
+The implementation could read the shared token source and build the real core,
+resolving the earlier review's token-build and default-contrast access limit. The
+historical review limits above are retained as the original review record.
+
+Validated locally:
+
+- Formatting, JavaScript/CSS lint, and adapter ownership checks.
+- Deterministic core builds, Sass consumption, contrast checks, and generated CSS.
+- Hugo 0.167.0 consumer output, search-script contracts, malformed requests,
+  stable/versioned static artifact bytes, publication metadata, and workflow gates.
+- Eleven Sphinx regressions on Sphinx 9.0.0 / Python 3.12, including both HTML
+  builders; six Python bundle tests; real Sphinx browser-fixture builds.
+- Sphinx wheel/source distribution, Hugo npm tarball, and Quarto archive inspection
+  against the exact core bytes, provenance, and licenses.
+- Documentation builds at stable and versioned deployment prefixes.
+- Quarto 1.9.37 HTML generation with columns and native footer markup.
+- The dependency install audit reported zero vulnerabilities before the environment
+  changed. Subsequent registry access was unavailable; an offline audit is not a
+  fresh advisory check.
+
+Outstanding acceptance checks (implementations are present):
+
+| Finding  | Remaining verification                                                                                                                                                                                               |
+| -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| F02      | Run the exact artifact browser suite on stable and versioned output. Static serving and byte-preservation regressions pass.                                                                                          |
+| F03, F23 | Run real-core narrow/200% table, nested-content, link, and focus rendering fixtures.                                                                                                                                 |
+| F07      | Confirm persistent prose-link decoration in the generated browser fixture.                                                                                                                                           |
+| F11      | Run checked/unchecked/mixed keyboard and forced-color browser checks.                                                                                                                                                |
+| F12      | Run enhanced tabs and both disabled/failed-script fallback cases.                                                                                                                                                    |
+| F18      | Build the same Hugo fixture on the declared 0.144.1 floor as well as the passing pinned 0.167.0 version.                                                                                                             |
+| F22      | Run keyboard/focus rendering checks for styled Sphinx links; generated markup and current-page semantics already pass.                                                                                               |
+| F24      | Run the image-plus-text/table/caption output visibility fixture.                                                                                                                                                     |
+| F28, F29 | Check Quarto image sizes and footer behavior through slide transitions, scroll view, and print/PDF with supported generator versions. HTML generation passes; native lifecycle differences remain version-dependent. |
+| F30      | Replay the documented commands in a fresh environment with registry access, including documentation dependencies. Installed-tool package builds pass.                                                                |
+
+The environment changed during implementation to restricted filesystem/network
+access. Chromium launch fails with `Operation not permitted`; loopback listeners
+fail with `listen EPERM`. Browser cases are discovered successfully but have not
+passed here. Package subprocess integration also fails in this restricted
+runtime (npm child output is empty), although explicit package commands and
+archive inspections pass. Full notebook documentation, fresh dependency installs,
+Hugo minimum-version execution, and Quarto print/PDF verification remain open.
+External trusted-publisher settings and deployment credentials were not changed.
+
+Run `npm run test:browser`, build documentation then run `npm run test:docs`, and
+run `PYTHON=.venv/bin/python npm run test:adapter-browser` in an environment that
+supports browsers and local listeners. See the contribution guides for builder
+installation. Do not treat the remaining unchecked criteria as an all-green release.

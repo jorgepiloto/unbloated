@@ -17,7 +17,7 @@ const generated = new Set([
   "packages/hugo/assets/css/unbloat.css",
 ]);
 const colorProperties =
-  /(?:color$|^background$|^border(?:-(?:top|right|bottom|left|inline|block|start|end))*$|^(?:fill|stroke|box-shadow|text-shadow)$)/;
+  /(?:color$|^background(?:-image)?$|^border(?:-(?:top|right|bottom|left|inline|block|start|end))*$|^(?:fill|stroke|box-shadow|text-shadow)$)/;
 const allowedWords = new Set([
   "transparent",
   "currentcolor",
@@ -39,6 +39,42 @@ const allowedWords = new Set([
   "ridge",
   "inset",
   "outset",
+  "linear-gradient",
+  "radial-gradient",
+  "conic-gradient",
+  "repeating-linear-gradient",
+  "repeating-radial-gradient",
+  "repeating-conic-gradient",
+  "to",
+  "top",
+  "bottom",
+  "left",
+  "right",
+  "at",
+  "center",
+  "circle",
+  "ellipse",
+  "closest-side",
+  "farthest-side",
+  "closest-corner",
+  "farthest-corner",
+  "from",
+  "in",
+  "srgb",
+  "srgb-linear",
+  "oklab",
+  "oklch",
+  "hsl",
+  "hwb",
+  "shorter",
+  "longer",
+  "increasing",
+  "decreasing",
+  "hue",
+  "calc",
+  "min",
+  "max",
+  "clamp",
 ]);
 
 /**
@@ -60,14 +96,15 @@ export function assertAdapterStyle(
           ),
         );
   postcss.parse(source, { from }).walkDecls((declaration) => {
-    const { prop, value } = declaration;
+    const { value } = declaration;
+    const prop = declaration.prop.toLowerCase();
     const fail = (reason) => {
       throw declaration.error(reason);
     };
     if (prop.startsWith("--unbloat-"))
       fail("Only the core may define --unbloat-* properties.");
     if (
-      /#(?:[\da-f]{3,8})\b|\b(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color|color-mix)\s*\(/i.test(
+      /#(?:[\da-f]{3,8})\b|\b(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color|color-mix|device-cmyk)\s*\(/i.test(
         value,
       )
     ) {
@@ -80,6 +117,29 @@ export function assertAdapterStyle(
         )
       ) {
         fail("Font families must come from --unbloat-font-family.");
+      }
+    }
+    if (
+      prop === "font" &&
+      !/^(?:inherit|initial|unset|revert|revert-layer)$/.test(value)
+    ) {
+      const prefix = value.replace(
+        /var\(--(?:unbloat-font-family|font-family-[\w-]+)\)$/,
+        "",
+      );
+      if (
+        prefix === value ||
+        /[,'"]/.test(prefix) ||
+        /[a-z]/i.test(
+          prefix
+            .replace(/(?:\d*\.)?\d+(?:[a-z]+|%)?/gi, "")
+            .replace(
+              /\b(?:normal|italic|oblique|small-caps|bold|bolder|lighter)\b/g,
+              "",
+            ),
+        )
+      ) {
+        fail("Font shorthands must use the core font family.");
       }
     }
     if (
@@ -101,8 +161,13 @@ export function assertAdapterStyle(
     ) {
       fail("Border radii must come from the core.");
     }
-    if (colorProperties.test(prop) || prop.startsWith("--")) {
+    if (
+      colorProperties.test(prop) ||
+      prop.startsWith("--") ||
+      /gradient\s*\(/i.test(value)
+    ) {
       const remaining = value
+        .replace(/url\([^)]*\)/gi, "")
         .replace(/var\(--[\w-]+\)/g, "")
         .replace(/-?(?:\d*\.)?\d+(?:[a-z]+|%)?/gi, "");
       for (const word of remaining.match(/[a-z][\w-]*/gi) || []) {

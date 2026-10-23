@@ -6,6 +6,11 @@
 for (const tablist of document.querySelectorAll("[data-demo-tabs]")) {
   const tabs = [...tablist.querySelectorAll('[role="tab"]')];
 
+  const panels = tabs.map((tab) =>
+    document.getElementById(tab.getAttribute("aria-controls")),
+  );
+  if (!tabs.length || panels.some((panel) => !panel)) continue;
+
   /**
    * Select a tab, update its associated panel, and move keyboard focus to it.
    * @param {HTMLButtonElement} selected Tab belonging to this example.
@@ -34,5 +39,12 @@ for (const tablist of document.querySelectorAll("[data-demo-tabs]")) {
       event.preventDefault();
       select(tabs[target]);
     });
+  }
+  // Commit panel visibility only after all controls and listeners are ready.
+  for (const [index, tab] of tabs.entries()) {
+    const active = index === 0;
+    tab.setAttribute("aria-selected", String(active));
+    tab.tabIndex = active ? 0 : -1;
+    panels[index].hidden = !active;
   }
 }

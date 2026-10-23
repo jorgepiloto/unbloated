@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ (partial "language.html" .Site.Language).locale }}"{{ with (partial "language.html" .Site.Language).direction }} dir="{{ . }}"{{ end }}>
     <head>
         {{- partial "head" . -}}
     </head>
@@ -33,7 +33,9 @@
         </header>
         <nav>
             {{ range .Site.Menus.main }}
-            <button onclick="location.href='{{ .URL | relURL }}'">{{ .Name }}</button>
+            {{ $current := $.IsMenuCurrent "main" . }}
+            {{ $ancestor := $.HasMenuCurrent "main" . }}
+            <a class="nav-link{{ if or $current $ancestor }} active{{ end }}" href="{{ .URL | relURL }}"{{ if $current }} aria-current="page"{{ else if $ancestor }} aria-current="true"{{ end }}>{{ .Name }}</a>
             {{ end }}
         </nav>
         {{- block "main" . }}{{- end }}

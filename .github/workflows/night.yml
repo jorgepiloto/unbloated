@@ -33,7 +33,7 @@ jobs:
           if-no-files-found: error
           retention-days: 7
   doc-deploy-dev:
-    needs: doc-build
+    needs: [doc-build, tests, build-library]
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
     timeout-minutes: 5
@@ -67,6 +67,7 @@ jobs:
           package-manager-cache: false
       - run: npm ci --ignore-scripts
       - run: npm run docs:setup
+      - run: npm run lint
       - run: npm run format:check
       - run: npm run build
       - run: npx --no-install playwright install --with-deps chromium firefox webkit

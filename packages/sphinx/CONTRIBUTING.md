@@ -1,106 +1,91 @@
 # Contributing
 
-Use issues to report bugs or discuss changes to the theme. For vulnerabilities,
-follow the [security policy](SECURITY.md). Project discussions and contributions
-follow the [code of conduct](CODE_OF_CONDUCT.md).
+Start with the [monorepo contribution guide](../../CONTRIBUTING.md) for shared
+setup, style rules, dependency ownership, and CI. Use Python 3.12 or newer and
+Node.js 22.14 or newer (CI uses Node.js 24).
 
-## Set Up Your Environment
+## Set Up and Build
 
-Use Python 3.12 or later and Node.js 22.12 or later. CI uses Node.js 22.
-With `uv` available, run these commands from the repository root:
+Run these commands from the **monorepo root** in a clean checkout:
 
-```console
-uv venv
-uv pip install --editable .
-uv tool install tox
-uv tool install pre-commit
+```sh
+npm ci --ignore-scripts
+python3 -m venv .venv
+. .venv/bin/activate
+python -m pip install build hatchling tox towncrier twine
+npm run build:adapters
+npm run check:adapters
+python -m pip install --editable packages/sphinx
+python -m unittest discover -s packages/sphinx/tests/python
+python -m build packages/sphinx
+python -m twine check packages/sphinx/dist/*
+```
+
+Adapter staging copies the exact generated core stylesheet, provenance, and
+licenses. Run it after shared CSS changes and before Python installation or
+packaging; the build hook rejects stale or missing bundles. Keep authored
+`static/css/style.css` readable. The Sphinx package's legacy `npm run build`
+minifies that source in place and is not needed for monorepo builds.
+
+## Build Documentation
+
+With the root virtual environment activated and bundles prepared, change into
+**packages/sphinx**:
+
+```sh
+cd packages/sphinx
+python -m tox -e doc-html
+```
+
+Tox installs the declared `doc` dependency group. Install Pandoc for notebooks.
+Quarto and TinyTeX are needed for PDF downloads. To check remote links, run
+`python -m tox -e doc-links` from the same directory. HTML goes to
+`packages/sphinx/doc/_build/html` relative to the monorepo root.
+
+Sources live in `packages/sphinx/doc/source`, with AutoAPI reading
+`packages/sphinx/src/sphinx_unbloated_theme`. Example scripts live in
+`packages/sphinx/examples` and execute during documentation builds. The build
+creates exclusive temporary copies under `doc/source/examples` and removes only
+its unchanged copies. Existing files and symlinks cause a collision error.
+After an interrupted build, inspect and remove leftover generated `.py` copies
+before retrying; authored files are preserved.
+
+Use Title Case headings and short paragraphs. Document Python APIs with
+NumPy-style docstrings. Theme description, project, and navigation labels are
+plain text; `footer_text` remains an explicitly trusted HTML option.
+
+## Test Theme Behavior
+
+From the monorepo root, run shared checks as described in the root guide.
+For Sphinx's existing browser suites, first build documentation, then run:
+
+```sh
+cd packages/sphinx
 npm ci
-```
-
-Install the browsers used by the tests:
-
-```console
-npx playwright install --with-deps chromium firefox
-```
-
-Puppeteer downloads Chrome during `npm ci`. Install Pandoc to build the
-notebook examples. Quarto and TinyTeX are also needed to generate their PDF
-downloads.
-
-Commit `package-lock.json` when updating Node.js dependencies. CI uses this
-lockfile for CSS builds and browser tests. Run `npm audit` after an update.
-
-## Check Code Style
-
-Run the repository's pre-commit hooks:
-
-```console
-pre-commit run --all-files --show-diff-on-failure
-```
-
-Some hooks format files in place. Review their changes before committing.
-Use NumPy-style docstrings for the Python API.
-
-## Build the Documentation
-
-The documentation source is in `doc/source`. AutoAPI generates the API
-reference from `src/sphinx_unbloated_theme` during the build. Edit the source
-docstrings or the templates in
-`src/sphinx_unbloated_theme/theme/sphinx_unbloated_theme/_templates/autoapi`
-to change the reference.
-
-Build the CSS, check links, and render the HTML pages:
-
-```console
-npm run build
-tox -e doc-links,doc-html
-```
-
-The CSS build rewrites
-`src/sphinx_unbloated_theme/theme/sphinx_unbloated_theme/static/css/style.css`
-in place. HTML output goes to `doc/_build/html`.
-
-Use Title Case headings and short paragraphs. Explain what the reader needs
-to do, and keep equations in display math blocks on their own lines. The ISA,
-Monte Carlo pi, and projectile motion examples live in `examples` and run
-during documentation builds.
-
-## Run Browser Tests
-
-Build the HTML documentation first, then run:
-
-```console
+npx --no-install playwright install --with-deps chromium firefox
 npm test
 ```
 
-This runs the Playwright and Puppeteer suites against `doc/_build/html`.
-Check theme changes on narrow and wide screens, including navigation, search,
-and API pages.
+The package lockfile pins these browser tools. Puppeteer downloads Chrome during
+installation. Check narrow and wide screens, keyboard links, search, notebook
+outputs, and API pages. HTML and directory HTML builders are supported. Configure
+`html_baseurl` with the deployment prefix for a hosted 404 page, including when
+the host serves it at an arbitrary missing URL. The 404 issue action requires an
+HTTPS GitHub repository URL and tolerates a trailing slash.
 
-Check generated navigation, deployment paths, and bundled licenses:
+## Release Notes and Distributions
 
-```console
-tox -e tests-python
+Add a short reStructuredText fragment under `packages/sphinx/doc/source/changelog`,
+for example `123.fixed.rst`, using a category in [pyproject.toml](pyproject.toml).
+Towncrier renders native headings and lists, without a tabs extension.
+
+For all adapter distributions, run from the monorepo root:
+
+```sh
+npm run build:adapters
+npm run pack:adapters
+python3 scripts/check-adapter-artifacts.py
 ```
 
-## Add a Changelog Fragment
-
-Add a reStructuredText fragment to `doc/source/changelog` when a change needs
-a release note. Name it with the pull request number and a category from
-the Towncrier configuration in [pyproject.toml](pyproject.toml), such as
-`123.fixed.rst`.
-
-Describe the behavior that changed and how it affects the reader. Keep the
-fragment short. Towncrier combines these files into
-`doc/source/changelog.rst` for a release.
-
-## Build a Distribution
-
-After building the CSS, build and check the wheel and source distribution:
-
-```console
-uv build
-uvx twine check dist/*
-```
-
-See [README.rst](README.rst) for the CI workflows and release setup.
+Report bugs through the monorepo issues. Follow the [security policy](SECURITY.md)
+for vulnerabilities and the [code of conduct](CODE_OF_CONDUCT.md) for discussions.

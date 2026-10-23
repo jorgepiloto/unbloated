@@ -12,8 +12,8 @@
 <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
 
 <!-- Website icon -->
-<link rel="icon" href="/favicon.ico" sizes="any">
-<link rel="icon" href="/favicon.png" type="image/png">
+<link rel="icon" href="{{ "favicon.ico" | relURL }}" sizes="any">
+<link rel="icon" href="{{ "favicon.png" | relURL }}" type="image/png">
 
 <!-- Custom CSS -->
 {{ partial "unbloated-styles.html" . }}
@@ -53,9 +53,6 @@
   <script src="https://cdn.jsdelivr.net/npm/three@0.125.2/examples/js/controls/OrbitControls.js"></script>
 {{ end}}
 
-<!-- Custom JS -->
-{{ $js := resources.Get "js/youarehere.js" | resources.Minify | resources.Fingerprint }}
-<script src="{{ $js.Permalink }}" defer></script>
 
 {{ if .HasShortcode "tabs" }}
   {{ with resources.Get "js/tabs.js" | resources.Minify | resources.Fingerprint }}

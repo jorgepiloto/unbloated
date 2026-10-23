@@ -2,6 +2,10 @@
 title: Form Controls
 ---
 
+Checkboxes distinguish unchecked, checked, and JavaScript-set `indeterminate`
+states. Mixed state uses a horizontal mark; forced colors restores native
+checkbox and radio appearance.
+
 Inputs, selects, textareas, and buttons inherit the document font. They use a
 white surface, a `1px` black border, square corners, and the shared focus outline.
 The documentation arranges this form in a grid; the library does not set a

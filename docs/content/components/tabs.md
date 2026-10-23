@@ -8,6 +8,8 @@ not implement tab selection, focus movement, or panel visibility.
 
 The example below adds those behaviors with `docs/assets/tabs.js`. Click a tab
 or use Left Arrow, Right Arrow, Home, and End while a tab has focus.
+Both panels are visible until the script successfully initializes, so their
+content remains readable when JavaScript is disabled or fails to load.
 
 <div class="component-demo">
   <div class="unbloat-tabs" role="tablist" aria-label="Stylesheet example" data-demo-tabs>
@@ -15,7 +17,7 @@ or use Left Arrow, Right Arrow, Home, and End while a tab has focus.
     <button type="button" id="tab-tokens" role="tab" aria-selected="false" aria-controls="panel-tokens" tabindex="-1">Tokens</button>
   </div>
   <div id="panel-complete" role="tabpanel" aria-labelledby="tab-complete" tabindex="0"><p>Load <code>unbloat.css</code> for tokens, base styles, and components.</p></div>
-  <div id="panel-tokens" role="tabpanel" aria-labelledby="tab-tokens" tabindex="0" hidden><p>Load <code>tokens.css</code> when your adapter supplies the element styles.</p></div>
+  <div id="panel-tokens" role="tabpanel" aria-labelledby="tab-tokens" tabindex="0"><p>Load <code>tokens.css</code> when your adapter supplies the element styles.</p></div>
 </div>
 
 ```html
@@ -54,7 +56,6 @@ or use Left Arrow, Right Arrow, Home, and End while a tab has focus.
   role="tabpanel"
   aria-labelledby="tab-tokens"
   tabindex="0"
-  hidden
 >
   Token stylesheet content.
 </div>

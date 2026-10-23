@@ -12,7 +12,7 @@
 
         {{ $AllPosts := .Site.GetPage "section" "posts" }}
         <div class="collection">
-        {{ range where $AllPosts.Sections "Title" "not in" (slice "Categories" "Tags") }}
+        {{ range where (partial "discoverable-pages.html" $AllPosts.Sections) "Title" "not in" (slice "Categories" "Tags") }}
             <a class="tag" href="{{ .Permalink }}">{{ .Title }}</a>
         {{ end }}
         </div>
@@ -27,7 +27,7 @@
 
         <div class="collection">
         {{ range $key, $value := .Site.Taxonomies.tags }}
-            <a class="tag" href="{{ $value.Page.Permalink }}">{{ $key }}</a>
+            {{ if partial "discoverable-pages.html" $value.Pages }}<a class="tag" href="{{ $value.Page.Permalink }}">{{ $key }}</a>{{ end }}
         {{ end }}
         </div>
 
@@ -45,7 +45,7 @@
           {{ .Content }}
         </section>
 
-        {{ $allPosts := where .Site.RegularPages "Section" "posts" }}
+        {{ $allPosts := where (partial "discoverable-pages.html" .Site.RegularPages) "Section" "posts" }}
         {{ $postsPerYear := $allPosts.GroupByDate "2006" "year" }}
 
         {{ range $postsPerYear }}

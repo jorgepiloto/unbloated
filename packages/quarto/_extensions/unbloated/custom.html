@@ -1,18 +1,1 @@
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    // Select the footer div
-    const footerDiv = document.querySelector(".footer");
-
-    // Select the slides div
-    const slidesDiv = document.querySelector(".slides");
-
-    // Check if both elements exist
-    if (footerDiv && slidesDiv) {
-      // Append the footer div to the end of the slides div
-      slidesDiv.appendChild(footerDiv);
-      console.log("Footer moved to the end of the slides.");
-    } else {
-      console.warn("Either .footer or .slides is missing from the DOM.");
-    }
-  });
-</script>
+<!-- Footers use Quarto’s native Reveal.js lifecycle. -->

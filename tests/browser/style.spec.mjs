@@ -143,3 +143,33 @@ test("square selection controls preserve native keyboard behavior", async ({
   await page.keyboard.press("Space");
   await expect(checkbox).not.toBeChecked();
 });
+
+test("mixed checkboxes remain distinct and use native forced-color rendering", async ({
+  page,
+}) => {
+  await page.locator("main").evaluate((main) => {
+    const group = document.createElement("div");
+    group.innerHTML =
+      '<label>Unchecked <input id="unchecked-test" type="checkbox"></label><label>Mixed <input id="mixed-test" type="checkbox"></label><label>Checked <input id="checked-test" type="checkbox" checked></label>';
+    main.append(group);
+    group.querySelector("#mixed-test").indeterminate = true;
+  });
+  const mixed = page.locator("#mixed-test");
+  await expect(mixed).toHaveCSS("background-image", /linear-gradient/);
+  await expect(page.locator("#unchecked-test")).toHaveCSS(
+    "background-image",
+    "none",
+  );
+  await expect(page.locator("#checked-test")).toHaveCSS(
+    "background-image",
+    "none",
+  );
+  await mixed.focus();
+  await mixed.press("Space");
+  expect(await mixed.evaluate((input) => input.indeterminate)).toBe(false);
+  await page.emulateMedia({ forcedColors: "active" });
+  await mixed.evaluate((input) => {
+    input.indeterminate = true;
+  });
+  await expect(mixed).toHaveCSS("appearance", "auto");
+});

@@ -19,13 +19,13 @@ class NavigationParser(HTMLParser):
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
-        if tag == "button":
-            self.in_active = attrs.get("class") == "active"
+        if tag == "a":
+            self.in_active = "active" in attrs.get("class", "").split()
         if tag == "p":
             self.in_breadcrumb = attrs.get("class") == "nav-breadcrumb-title"
 
     def handle_endtag(self, tag):
-        if tag == "button":
+        if tag == "a":
             self.in_active = False
         if tag == "p":
             self.in_breadcrumb = False
@@ -91,6 +91,9 @@ class ThemeTests(unittest.TestCase):
 
     def test_sections_in_one_folder_have_distinct_active_links(self):
         self.assertEqual(self.navigation("docs/reference.html").active, ["Reference"])
+        page = (self.output / "docs/reference.html").read_text()
+        self.assertIn('href="#" aria-current="page">Reference</a>', page)
+        self.assertNotIn("<button", page)
 
     def test_flat_child_uses_toctree_ancestry(self):
         navigation = self.navigation("flat-child.html")

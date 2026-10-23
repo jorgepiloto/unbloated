@@ -100,6 +100,7 @@ aliases keep relative stylesheet links valid. Requests never become filesystem
 paths; a fixed route map resolves them.
 
 Only GET and HEAD are accepted. Unknown routes and other methods return 404.
+Malformed URLs return 400 and the server continues handling requests.
 File-read failures return 500. Responses include `X-Content-Type-Options:
 nosniff` and a Content Security Policy that permits local styles and denies
 scripts, framing, and form submission. SIGINT and SIGTERM close the listener.
@@ -141,9 +142,18 @@ missing pages or heading fragments. Heading IDs remain available for links;
 headings have no permalink controls. Trusted repository HTML is enabled for
 live examples, and syntax highlighting adds no inline colors.
 
+`npm run test:docs` serves the existing `site/` artifact with
+`scripts/serve-docs.mjs`, without Hugo or source generation. It infers the deployment
+prefix from the built core stylesheet URL and serves files only under that prefix.
+`DOCS_ARTIFACT_DIR` selects another downloaded artifact directory. Both stable and
+versioned release artifacts are checked; `docs:preview` remains a source preview.
+The static server accepts GET/HEAD, returns 400 for malformed URLs and 404 for
+missing/outside-prefix paths, and preserves the uploaded bytes.
+
 The tab adapter in `docs/assets/tabs.js` applies automatic activation to the
 documentation's marked tablist. It updates `aria-selected`, the focusable tab,
-and panel visibility together. Click, Left Arrow, Right Arrow, Home, and End
+and panel visibility together after validating all panels and registering handlers.
+Both panels remain visible if enhancement is unavailable. Click, Left Arrow, Right Arrow, Home, and End
 change the active tab. See [Tabs](../components/tabs.md) for the markup contract.
 
 ## Repository Configuration

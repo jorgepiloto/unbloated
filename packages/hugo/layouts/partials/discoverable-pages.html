@@ -1,0 +1,2 @@
+{{- /* These flags affect discovery only; all built pages remain public. */ -}}
+{{- return (where (where . "Params.private" "!=" true) "Params.noindex" "!=" true) -}}

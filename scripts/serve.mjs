@@ -2,6 +2,7 @@
 /** Serve the reference page and generated CSS on loopback at port 4173. */
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
+import { fileURLToPath } from "node:url";
 
 const root = new URL("../", import.meta.url);
 // Map public URLs to fixed files and MIME types. Request paths never become paths
@@ -19,14 +20,23 @@ const routes = new Map([
 
 // Support only GET and HEAD for the allowlisted routes. Apply restrictive headers
 // to successful and rejected requests; the preview page does not need scripts.
-const server = createServer(async (request, response) => {
-  const pathname = new URL(request.url, "http://127.0.0.1").pathname;
-  const route = routes.get(pathname);
+/** Respond to a preview request, including malformed URLs, without escaping errors.
+ * @param {import("node:http").IncomingMessage} request Incoming request.
+ * @param {import("node:http").ServerResponse} response Outgoing response.
+ */
+export async function handlePreviewRequest(request, response) {
   const headers = {
     "X-Content-Type-Options": "nosniff",
     "Content-Security-Policy":
       "default-src 'none'; style-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
   };
+  let route;
+  try {
+    route = routes.get(new URL(request.url, "http://127.0.0.1").pathname);
+  } catch {
+    response.writeHead(400, headers).end();
+    return;
+  }
   if (!route || !["GET", "HEAD"].includes(request.method)) {
     response.writeHead(404, headers).end();
     return;
@@ -41,10 +51,14 @@ const server = createServer(async (request, response) => {
   } catch {
     response.writeHead(500, headers).end();
   }
-});
-server.listen(4173, "127.0.0.1", () =>
-  console.log("Preview: http://127.0.0.1:4173"),
-);
-// Close the listener when the terminal or test runner terminates the preview.
-for (const signal of ["SIGINT", "SIGTERM"])
-  process.on(signal, () => server.close());
+}
+
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  const server = createServer(handlePreviewRequest);
+  server.listen(4173, "127.0.0.1", () =>
+    console.log("Preview: http://127.0.0.1:4173"),
+  );
+  // Close the listener when the terminal or test runner terminates the preview.
+  for (const signal of ["SIGINT", "SIGTERM"])
+    process.on(signal, () => server.close());
+}

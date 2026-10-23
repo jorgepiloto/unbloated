@@ -116,7 +116,7 @@
 <meta property="og:description" content="{{ $desc }}">
 <meta property="og:type" content="{{ $ogType }}">
 <meta property="og:url" content="{{ $canonical }}">
-<meta property="og:locale" content="{{ replace .Site.LanguageCode "-" "_" }}">
+<meta property="og:locale" content="{{ replace (partial "language.html" .Site.Language).locale "-" "_" }}">
 {{- with $imgAbs }}
 <meta property="og:image" content="{{ . }}">
 <meta property="og:image:alt" content="{{ $desc }}">
@@ -171,7 +171,7 @@
     "name" .Site.Title
     "url" .Site.BaseURL
     "description" $desc
-    "inLanguage" .Site.LanguageCode
+    "inLanguage" (partial "language.html" .Site.Language).locale
     "author" (dict "@type" "Person" "name" .Site.Params.author)
     "potentialAction" (dict
         "@type" "SearchAction"
@@ -189,7 +189,7 @@
     "description" $desc
     "mainEntityOfPage" (dict "@type" "WebPage" "@id" $canonical)
     "url" $canonical
-    "inLanguage" .Site.LanguageCode
+    "inLanguage" (partial "language.html" .Site.Language).locale
     "author" (dict "@type" "Person" "name" (or $author .Site.Title) "url" .Site.BaseURL)
     "publisher" (dict "@type" "Person" "name" .Site.Params.author "url" .Site.BaseURL)
 -}}

@@ -31,6 +31,7 @@ export default defineConfig([
     files: [
       "tests/browser/**/*.mjs",
       "tests/docs/**/*.mjs",
+      "tests/adapter-browser/**/*.mjs",
       "docs/assets/*.js",
       "packages/hugo/assets/js/*.js",
       "packages/hugo/static/js/*.js",

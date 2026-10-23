@@ -78,10 +78,19 @@ test("adapters cannot introduce their own palette, fonts, or core definitions", 
     "a { border: thin solid var(--unbloat-color-border); }",
     "a { border-radius: 4px; }",
     "a { font-family: monospace; }",
+    "a { font: 16px serif; }",
+    "a { FONT: 16px serif; }",
+    "a { font: italic 16px Georgia, var(--unbloat-font-family); }",
+    "a { background-image: linear-gradient(red, blue); }",
+    "a { background: radial-gradient(circle at center, white, black); }",
+    "a { background-image: conic-gradient(from 45deg, oklch(50% 0 0), transparent); }",
     ":root { --unbloat-color-text: inherit; }",
     "a { color: var(--unbloat-color-text, red); }",
   ])
     assert.throws(() => assertAdapterStyle(source));
+  assertAdapterStyle(
+    "a { font: italic 16px/1.5 var(--unbloat-font-family); background-image: linear-gradient(to right, var(--unbloat-color-text), transparent); }",
+  );
   assertAdapterStyle(
     "a { color: var(--unbloat-color-text); font-family: var(--unbloat-font-family); border: var(--unbloat-border-width) solid currentColor; width: 800px; }",
   );

@@ -5,7 +5,7 @@
       <h2>Latest posts</h2>
     </section>
     <ul class="posts">
-    {{ range ( first .Site.Params.Lastposts ( where .Site.RegularPages "Section" "posts" ).ByDate.Reverse ) }}
+    {{ range ( first .Site.Params.Lastposts ( where (partial "discoverable-pages.html" .Site.RegularPages) "Section" "posts" ).ByDate.Reverse ) }}
         <li>
             {{ .Date.Format "2006-01-02" }} - <a href="{{ .Permalink }}">{{ .Title }}{{ if .Params.Subtitle}} - {{ .Params.Subtitle }}{{ end }}</a>
         </li>

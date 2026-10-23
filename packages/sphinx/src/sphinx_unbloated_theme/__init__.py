@@ -1,7 +1,9 @@
 """Sphinx Unbloated Theme, an HTML theme for Sphinx."""
 
 from pathlib import Path
-from urllib.parse import urlsplit
+import posixpath
+import re
+from urllib.parse import urlsplit, urlunsplit
 
 
 __version__ = "1.1.dev0"
@@ -49,7 +51,7 @@ def _build_subnav(app, pagename, docnames, active_docs):
         links.append(
             (
                 title_node.astext(),
-                app.builder.get_relative_uri(pagename, doc),
+                app.builder.get_relative_uri(pagename, doc) or "#",
                 doc in active_docs,
             )
         )
@@ -81,6 +83,56 @@ def _add_nav_context(app, pagename, templatename, context, doctree):
     these links after the page's first ``<h1>``.
     """
     master = app.config.master_doc
+    github = context.get("theme_github_url", "")
+    context["issue_url"] = (
+        github.rstrip("/") + "/issues"
+        if re.fullmatch(r"https://github\.com/[A-Za-z0-9_-]+/[A-Za-z0-9_.-]+/?", github)
+        and github.rstrip("/").rsplit("/", 1)[-1] not in {".", ".."}
+        else None
+    )
+    if pagename == "404":
+        # Resolve builder-relative links into the <base> frame, including
+        # dirhtml's 404/index.html and a host's arbitrary missing-page URL.
+        original_pathto = context["pathto"]
+        directory = posixpath.dirname(app.builder.get_target_uri(pagename))
+
+        def rebase_target(target):
+            parts = urlsplit(target)
+            if parts.scheme or target.startswith("/"):
+                return target
+            path = posixpath.normpath(posixpath.join(directory, parts.path))
+            if parts.path.endswith("/") or path == ".":
+                path += "/"
+            return urlunsplit(("", "", path, parts.query, parts.fragment))
+
+        def root_pathto(*args, **kwargs):
+            return rebase_target(original_pathto(*args, **kwargs))
+
+        context["pathto"] = root_pathto
+        context["content_root"] = "./"
+
+        def root_resource_tag(renderer):
+            # Sphinx's tag helpers close over their original pathto function.
+            # Keep attributes/checksums and rebase only the emitted resource URL.
+            def render(resource):
+                def rebase(match):
+                    target = match.group(2)
+                    if urlsplit(target).scheme or target.startswith("/"):
+                        return match.group(0)
+                    return f'{match.group(1)}="{rebase_target(target)}"'
+
+                return re.sub(
+                    r'\b(href|src)="([^"]*)"', rebase, renderer(resource), count=1
+                )
+
+            return render
+
+        for tag in ("css_tag", "js_tag"):
+            context[tag] = root_resource_tag(context[tag])
+    reference_page = master if pagename == "404" else pagename
+    context["current_page_url"] = (
+        app.builder.get_relative_uri(pagename, pagename) or "#"
+    )
     context["documentation_root"] = (
         urlsplit(app.config.html_baseurl).path.rstrip("/") + "/"
     )
@@ -95,7 +147,11 @@ def _add_nav_context(app, pagename, templatename, context, doctree):
 
     # Keep the same navigation links on every page.
     nav_links = [
-        ("Home", app.builder.get_relative_uri(pagename, master), pagename == master)
+        (
+            "Home",
+            app.builder.get_relative_uri(reference_page, master) or "#",
+            pagename == master,
+        )
     ]
     for doc in top_level_docs:
         title_node = app.env.titles.get(doc)
@@ -105,7 +161,7 @@ def _add_nav_context(app, pagename, templatename, context, doctree):
         nav_links.append(
             (
                 title_node.astext(),
-                app.builder.get_relative_uri(pagename, doc),
+                app.builder.get_relative_uri(reference_page, doc) or "#",
                 is_active,
             )
         )
