@@ -187,7 +187,7 @@ jobs:
       - name: Deploy versioned documentation
         uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453 # v4.1.0
         with:
-          personal_token: ${{ secrets.WEBSITE_DEPLOY_KEY }}
+          personal_token: ${{ secrets.WEBSITE_DEPLOY_TOKEN }}
           external_repository: jorgepiloto/website
           publish_dir: documentation-versioned
           publish_branch: gh-pages
@@ -195,7 +195,7 @@ jobs:
       - name: Deploy stable documentation
         uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453 # v4.1.0
         with:
-          personal_token: ${{ secrets.WEBSITE_DEPLOY_KEY }}
+          personal_token: ${{ secrets.WEBSITE_DEPLOY_TOKEN }}
           external_repository: jorgepiloto/website
           publish_dir: documentation-html
           publish_branch: gh-pages

@@ -36,7 +36,7 @@ for provenance generation.
 
 ## Configure Documentation Deployment
 
-Add the repository secret `WEBSITE_DEPLOY_KEY` with a personal access token that
+Add the repository secret `WEBSITE_DEPLOY_TOKEN` with a personal access token that
 can write to the `gh-pages` branch of `jorgepiloto/website`. Documentation deploys
 to that repository, not this package's GitHub Pages site. The deployment jobs
 update only their documentation subdirectory and preserve the rest of the website.

@@ -16,8 +16,8 @@ properties, Sass variables, and the complete stylesheet.
 
 ## Installation
 
-Check the [prerequisites](docs/content/getting-started/prerequisites.md), then
-follow the [installation guide](docs/content/getting-started/installation.md).
+Check the [prerequisites](https://jorgemartinez.space/projects/unbloated/version/stable/getting-started/prerequisites/), then
+follow the [installation guide](https://jorgemartinez.space/projects/unbloated/version/stable/getting-started/installation/).
 The npm and CDN examples require publication of version `0.1.0`. After
 publication, install the package:
 
@@ -33,23 +33,23 @@ import "unbloated/unbloat.css";
 
 You can also copy `node_modules/unbloated/dist/unbloat.css` into your public
 assets and load it with a stylesheet link. To use the package before
-publication, [build and install a local tarball](docs/content/getting-started/installation.md#build-a-local-package).
+publication, [build and install a local tarball](https://jorgemartinez.space/projects/unbloated/version/stable/getting-started/installation/#build-a-local-package).
 
 ## Documentation
 
-The [documentation](docs/content/_index.md) covers:
+The [documentation](https://jorgemartinez.space/projects/unbloated/version/stable/) covers:
 
-- [Getting Started](docs/content/getting-started/_index.md): prerequisites,
+- [Getting Started](https://jorgemartinez.space/projects/unbloated/version/stable/getting-started/): prerequisites,
   installation, stylesheet selection, and Sass tokens.
-- [Components](docs/content/components/_index.md): live examples, HTML markup,
+- [Components](https://jorgemartinez.space/projects/unbloated/version/stable/components/): live examples, HTML markup,
   styling, and keyboard behavior.
-- [Source Reference](docs/content/reference/source.md): build APIs, local
+- [Source Reference](https://jorgemartinez.space/projects/unbloated/version/stable/reference/source/): build APIs, local
   servers, repository configuration, and verification commands.
 - [Contributing](CONTRIBUTING.md): development setup, checks, and pull requests.
-- [Release Setup](docs/content/releasing.md): npm publishing, documentation
+- [Release Setup](https://jorgemartinez.space/projects/unbloated/version/stable/releasing/): npm publishing, documentation
   deployment, and CI artifacts.
 
-See [Preview the Documentation](docs/content/getting-started/installation.md#preview-the-documentation)
+See [Preview the Documentation](https://jorgemartinez.space/projects/unbloated/version/stable/getting-started/installation/#preview-the-documentation)
 to build and serve the site locally. Package tarballs are available from
 successful [workflow runs](https://github.com/jorgepiloto/unbloated/actions);
 published releases attach the same tarball to the
