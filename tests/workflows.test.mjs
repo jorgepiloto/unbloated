@@ -31,7 +31,7 @@ for (const workflow of ["night", "pull-request", "release"]) {
       new URL(`../.github/workflows/${workflow}.yml`, import.meta.url),
       "utf8",
     );
-    const gates = ["doc-build", "tests", "latex-book", "adapter-packages"];
+    const gates = ["doc-build", "tests", "adapter-latex", "adapter-packages"];
     const library = job(source, "build-library");
     for (const name of gates) {
       const validation = job(source, name);
@@ -69,7 +69,7 @@ for (const workflow of ["night", "pull-request", "release"]) {
       /test:docs|documentation-html|documentation-versioned/,
     );
     assert.match(job(source, "tests"), /npm run test:browser/);
-    const latex = job(source, "latex-book");
+    const latex = job(source, "adapter-latex");
     assert.match(latex, /npm run build:adapters/);
     assert.match(latex, /npm run check:adapters/);
     assert.match(latex, /node --test tests\/latex.integration.mjs/);

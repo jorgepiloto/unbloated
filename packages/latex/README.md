@@ -162,7 +162,7 @@ Generated PDFs and auxiliary files stay in `build/`.
 From the repository root, `node --test tests/latex.integration.mjs` compiles
 isolated consumers with default and modified core CSS. It verifies the actual
 body color, font size, baseline spacing, paragraph gaps, chapter size, and table
-rule width. The independent `latex-book` CI job stages the adapter, runs the
+rule width. The independent `adapter-latex` CI job stages the adapter, runs the
 example checks, and runs these consumer tests. Adapter packaging CI validates
 the LaTeX archive alongside the Sphinx, Hugo, and Quarto distributions.
 

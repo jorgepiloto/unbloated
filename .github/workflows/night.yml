@@ -10,7 +10,7 @@ concurrency:
   group: night-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  latex-book:
+  adapter-latex:
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
@@ -29,7 +29,7 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y --no-install-recommends \
             latexmk lmodern texlive-luatex texlive-latex-extra texlive-fonts-recommended
-      - name: Compile and Check the Book
+      - name: Compile and Check LaTeX Adapter Consumers
         working-directory: packages/latex
         run: bash tests/check.sh
       - name: Test core CSS in isolated LaTeX consumers
@@ -154,7 +154,7 @@ jobs:
       - run: npm audit signatures
       - run: npm audit --audit-level=low
   build-library:
-    needs: [doc-build, tests, latex-book, adapter-packages]
+    needs: [doc-build, tests, adapter-latex, adapter-packages]
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
