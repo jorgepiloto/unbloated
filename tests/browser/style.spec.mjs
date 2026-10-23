@@ -99,10 +99,11 @@ test("consumer overrides work and base CSS imposes no page width", async ({
       '"Consumer Mono", monospace',
     ),
   );
-  await expect(page.locator("button").first()).toHaveCSS(
-    "font-family",
-    '"Consumer Mono", monospace',
-  );
+  const buttonFontFamily = await page
+    .locator("button")
+    .first()
+    .evaluate((element) => getComputedStyle(element).fontFamily);
+  expect(buttonFontFamily.replace(/"/g, "")).toBe("Consumer Mono, monospace");
 });
 
 test("preview server denies access outside its public routes", async ({
