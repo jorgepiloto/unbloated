@@ -1,4 +1,4 @@
-name: Night
+name: night
 on:
   schedule:
     - cron: "0 8 * * *"
