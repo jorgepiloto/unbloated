@@ -1,0 +1,7 @@
+{{- $core := resources.Get "css/unbloat.css" -}}
+{{- if not $core -}}
+  {{- errorf "Missing Unbloated core CSS. Run npm run build:adapters in the Unbloated repository." -}}
+{{- end -}}
+{{- $layout := resources.Get "css/style.css" | postCSS -}}
+{{- $css := slice $core $layout | resources.Concat "css/unbloated.css" | minify | fingerprint -}}
+<link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">

@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Make Sphinx, Quarto, and Hugo adapters consume the same generated core CSS.
+- Add bundle provenance, source ownership checks, package checks, and adapter CI.
+- Replace adapter palettes and font defaults with core variables.
+- Extract Hugo presentation files for the website consumer.
+
 ## 0.1.0
 
 - Add shared grayscale tokens, semantic HTML styles, and optional components.

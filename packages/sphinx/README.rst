@@ -24,9 +24,16 @@ The Sphinx Unbloated Theme is a minimal, clean HTML theme for
 theme, the only dependency, and uses vanilla CSS with no third-party
 frameworks or bundlers.
 
-The theme is intentionally small: a single well-organised CSS file, a Jinja2
-layout template, and a handful of configuration options. It is designed to be
-easy to read, easy to override, and fast to load.
+The theme bundles the Unbloated CSS library with Sphinx-specific layout styles,
+Jinja2 templates, and configuration options. Colors, heading sizes, font stacks,
+and shadow values come from the core library. Node.js is a contributor build
+dependency, not a requirement for installing the Python package.
+
+This adapter now lives in ``packages/sphinx`` of the Unbloated monorepo.
+From that repository's root, run ``npm ci --ignore-scripts`` and
+``npm run build:adapters`` before building Python distributions. Direct builds
+fail when the generated core bundle is missing or differs from its provenance.
+The monorepo's contribution guide documents package and artifact checks.
 
 Screenshots
 ===========

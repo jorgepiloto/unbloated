@@ -6,6 +6,19 @@ The repository keeps design values, semantic styles, optional components, and
 site adapters in separate files. The library build uses only Node.js built-ins.
 Documentation uses Hugo; the npm package still contains no runtime dependencies.
 
+The independently installable adapters live in `packages/sphinx`,
+`packages/quarto`, and `packages/hugo`. `scripts/adapters.mjs` stages and checks
+the exact core CSS, version metadata, digest, and license notices.
+`scripts/adapter-styles.mjs` enforces style ownership without reading the token
+source. `scripts/pack-adapters.mjs` packages verified bundles, and
+`scripts/check-adapter-artifacts.py` checks the assets inside the distributions.
+
+Run `npm run build:adapters` to build the core and prepare adapters, then
+`npm run check:adapters` to detect stale or modified bundles. These scripts
+propagate missing-file, style-contract, and packaging errors. Importing
+`prepareAdapters({ directory, check })` or `packAdapters({ directory })` has
+no build side effects; both default to this checkout and return `Promise<void>`.
+
 ## Source Files
 
 | File                   | Responsibility                                                                                        |

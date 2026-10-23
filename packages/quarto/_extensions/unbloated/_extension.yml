@@ -5,4 +5,5 @@ contributes:
   format:
     revealjs:
       theme: [default, unbloated.scss]
+      css: unbloat.css
       include-after-body: custom.html

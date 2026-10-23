@@ -169,6 +169,7 @@ def setup(app):
         Extension metadata with the version and parallel build safety flags.
     """
     app.add_html_theme("sphinx_unbloated_theme", THEME_PATH)
+    app.add_css_file("css/unbloat.css", priority=100)
     app.add_js_file("js/autoapi.js", defer="defer")
     app.add_js_file("js/version-switcher.js", defer="defer")
     app.connect("html-page-context", _add_nav_context)

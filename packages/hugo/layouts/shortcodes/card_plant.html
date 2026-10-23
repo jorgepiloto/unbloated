@@ -13,7 +13,7 @@
 {{ $temperature := .Get "temperature" }}
 {{ $birthday := .Get "birthday" }}
 
-<div id="plant-info" style="container-type: inline-size; border: thin solid black; padding: 1rem; background-color: var(--lightgray); font-family: monospace;">
+<div id="plant-info" style="container-type: inline-size; border: var(--unbloat-border-width) solid var(--unbloat-color-border); padding: 1rem; background-color: var(--lightgray); font-family: var(--unbloat-font-family);">
   <div style="display: flex; flex-wrap: wrap;">
     <div style="flex: 1;">
       <h2 style="margin-bottom: 0rem !important;">{{ $name }}</h2>
@@ -47,4 +47,3 @@
 
   document.addEventListener('DOMContentLoaded', fillWithDots);
 </script>
-

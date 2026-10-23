@@ -4,71 +4,43 @@
  * Use vanilla CSS and semantic HTML. Keep custom classes to a minimum.
  */
 
-/* Self-Hosted Fonts */
-
-@font-face {
-  font-family: "Source Code Pro";
-  font-style: normal;
-  font-weight: 400 700;
-  font-display: swap;
-  src: url("../fonts/source-code-pro-normal.woff2") format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
-    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
-    U+2212, U+2215, U+FEFF, U+FFFD;
-}
-
-@font-face {
-  font-family: "Source Code Pro";
-  font-style: italic;
-  font-weight: 400 700;
-  font-display: swap;
-  src: url("../fonts/source-code-pro-italic.woff2") format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
-    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
-    U+2212, U+2215, U+FEFF, U+FFFD;
-}
-
 /* Responsive Breakpoint */
 
 /* Use the website's mobile sizes at widths up to 500px. */
 
-/* Design Tokens */
+/* Compatibility names retain the existing layout's public customization hooks. */
 
 :root {
-  font-size: 11px;
-
   /* Colors */
-  --white: #ffffff;
-  --lightgray: #ededed;
-  --gray: #dddddd;
-  --darkgray: #bbbbbb;
-  --black: #000000;
-  --blue: #007bff;
+  --white: var(--unbloat-color-surface);
+  --lightgray: var(--unbloat-color-surface-muted);
+  --gray: var(--unbloat-color-surface-muted);
+  --darkgray: var(--unbloat-color-shadow);
+  --black: var(--unbloat-color-text);
+  --blue: var(--unbloat-color-text);
 
   /* Fonts */
-  --font-family-regular: "Source Code Pro", monospace;
-  --font-family-code: "Source Code Pro", monospace;
-  font-family: "Source Code Pro", monospace;
+  --font-family-regular: var(--unbloat-font-family);
+  --font-family-code: var(--unbloat-font-family);
+  font-family: var(--unbloat-font-family);
 
   /* Headings */
-  --h1-font-size: 2rem;
-  --h2-font-size: 1.3rem;
-  --h3-font-size: 1.15rem;
-  --h4-font-size: 1.05rem;
-  --h5-font-size: 1rem;
-  --h6-font-size: 0.95rem;
+  --h1-font-size: var(--unbloat-heading-size-1);
+  --h2-font-size: var(--unbloat-heading-size-2);
+  --h3-font-size: var(--unbloat-heading-size-3);
+  --h4-font-size: var(--unbloat-heading-size-4);
+  --h5-font-size: var(--unbloat-heading-size-5);
+  --h6-font-size: var(--unbloat-heading-size-6);
 
   /* Borders and shadows */
-  --shadow: 2px 2px var(--darkgray);
-  --border: thin solid var(--black);
+  --shadow: var(--unbloat-shadow-offset) var(--unbloat-shadow-offset)
+    var(--unbloat-color-shadow);
+  --border: var(--unbloat-border-width) solid var(--unbloat-color-border);
 }
 
 /* Responsive Design */
 
 @media (min-width: 501px) {
-  :root {
-    font-size: 17px;
-  }
   body {
     margin: 1rem auto;
   }
@@ -106,7 +78,7 @@ header {
 
   /* Keep the site title separate from page headings. */
   & h1.title {
-    font-size: 2rem;
+    font-size: var(--h1-font-size);
     margin: 0;
     text-transform: uppercase;
     color: var(--white);
@@ -159,7 +131,7 @@ header div.version-switcher {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpolygon points='0,0 10,0 5,6' fill='white'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 0.5rem center;
-    border: thin solid var(--white);
+    border: var(--unbloat-border-width) solid var(--white);
     border-radius: 0;
     outline: none;
     padding: 0.2rem 1.6rem 0.2rem 0.4rem;
@@ -200,7 +172,7 @@ header form.header-search {
     font-size: 0.85rem;
     color: var(--white);
     background-color: var(--black);
-    border: thin solid var(--white);
+    border: var(--unbloat-border-width) solid var(--white);
     border-radius: 0;
     outline: none;
     padding: 0.2rem 0.4rem;
@@ -237,8 +209,8 @@ nav {
       font-size: 1rem;
       font-family: var(--font-family-code);
       background-color: var(--white);
-      border: thin solid var(--black);
-      box-shadow: 2px 2px var(--darkgray);
+      border: var(--border);
+      box-shadow: var(--shadow);
       transition: background-color 0.3s ease;
       color: var(--black);
 
@@ -283,8 +255,8 @@ nav.page-navigation {
     padding: 2px 6px;
     box-sizing: border-box;
     background-color: var(--white);
-    border: thin solid var(--black);
-    box-shadow: 2px 2px var(--darkgray);
+    border: var(--border);
+    box-shadow: var(--shadow);
     transition: background-color 0.3s ease;
     color: var(--black);
 
@@ -460,12 +432,12 @@ tt {
   font-family: var(--font-family-code);
   color: var(--black);
   padding: 0 0.2rem;
-  border: thin solid var(--black);
+  border: var(--border);
 }
 
 /* Code blocks with Pygments syntax highlighting */
 div.highlight {
-  border: thin solid var(--black);
+  border: var(--border);
   background: var(--lightgray);
   margin-bottom: 1rem;
   overflow-x: auto;
@@ -487,7 +459,7 @@ pre {
   font-family: var(--font-family-code);
   padding: 0.5rem 1rem;
   overflow-x: auto;
-  border: thin solid var(--black);
+  border: var(--border);
   margin-bottom: 1rem;
 }
 
@@ -717,7 +689,7 @@ main dl:has(> dt.sig-object) dl.field-list {
 /* Blockquotes and Admonitions */
 
 blockquote {
-  border: thin solid var(--black);
+  border: var(--border);
   background: var(--lightgray);
   border-left: 5px solid var(--black);
   padding: 0.05rem 1rem;
@@ -729,7 +701,7 @@ div.note,
 div.warning,
 div.tip,
 div.important {
-  border: thin solid var(--black);
+  border: var(--border);
   background: var(--lightgray);
   border-left: 5px solid var(--black);
   padding: 0.05rem 1rem;
@@ -748,13 +720,13 @@ table {
   margin-right: auto;
   max-width: 100%;
   border-collapse: collapse;
-  border: 1px solid var(--black);
+  border: var(--border);
   text-align: center;
   margin-bottom: 1rem;
 
   & th,
   & td {
-    border: 1px solid var(--black);
+    border: var(--border);
     padding: 0.3rem 0.6rem;
   }
 }
@@ -778,7 +750,7 @@ div.figure p.caption {
 /* Topic and Contents Boxes */
 
 div.topic {
-  border: thin solid var(--black);
+  border: var(--border);
   background: var(--lightgray);
   padding: 0.5rem 1rem;
   margin-bottom: 1rem;
@@ -824,8 +796,8 @@ div.download-buttons {
       font-size: 1rem;
       font-family: var(--font-family-code);
       background-color: var(--white);
-      border: thin solid var(--black);
-      box-shadow: 2px 2px var(--darkgray);
+      border: var(--border);
+      box-shadow: var(--shadow);
       transition: background-color 0.3s ease;
       color: var(--black);
       padding: 0.4rem 0.6rem;

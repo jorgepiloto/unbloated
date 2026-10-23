@@ -1,49 +1,37 @@
 /*-- scss:defaults --*/
 
-$color-white: #ffffff;
-$color-lightgray: #ededed;
-$color-gray: #dddddd;
-$color-darkgray: #bbbbbb;
-$color-black: #000000;
-$color-blue: #007bff;
-$color-red: #e34221;
-
-$box-shadow: 2px 2px $color-darkgray;
-
-// Fonts
-$font-family-sans-serif: 'Berkeley Mono', courier;
-$font-family-monospace: 'Berkeley Mono', courier;
-
 $presentation-font-size-root: 24px;
 $presentation-font-smaller: 0.7;
 $presentation-line-height: 1;
 
-// Colors
-$body-bg: $color-white;
-$body-color: $color-black;
-$link-color: $color-blue;
-$link-color-hover: $color-black;
-
-// Codeblocks
-$code-block-bg: $color-lightgray;
-$code-block-border-color: none;
-
-// Callouts
-$callout-color-note: $color-black;
-$callout-color-tip: $color-black;
-$callout-color-caution: $color-black;
-$callout-color-warning: $color-black;
-$callout-color-important: $color-black;
-
 /*-- scss:rules --*/
 
+/* Reveal owns slide geometry; the core owns the visual design values. */
+.reveal {
+  --r-main-font: var(--unbloat-font-family);
+  --r-heading-font: var(--unbloat-font-family);
+  --r-code-font: var(--unbloat-font-family);
+  --r-main-color: var(--unbloat-color-text);
+  --r-background-color: var(--unbloat-color-surface);
+  --r-heading-color: var(--unbloat-color-text);
+  --r-heading1-size: var(--unbloat-heading-size-1);
+  --r-heading2-size: var(--unbloat-heading-size-2);
+  --r-heading3-size: var(--unbloat-heading-size-3);
+  --r-heading4-size: var(--unbloat-heading-size-4);
+  --r-link-color: var(--unbloat-color-text);
+  --r-link-color-hover: var(--unbloat-color-text);
+  --r-selection-background-color: var(--unbloat-color-text);
+  --r-selection-color: var(--unbloat-color-inverse-text);
+}
+
 body {
-  background-color: $color-lightgray !important;
+  background-color: var(--unbloat-color-surface-muted) !important;
 }
 
 .slides {
-  background-color: $color-white !important;
-  box-shadow: $box-shadow !important;
+  background-color: var(--unbloat-color-surface) !important;
+  box-shadow: var(--unbloat-shadow-offset) var(--unbloat-shadow-offset)
+    var(--unbloat-color-shadow) !important;
 }
 
 .slide > * {
@@ -51,79 +39,81 @@ body {
   border: none;
 }
 
-// Codeblocks
 div.sourceCode {
-  background-color: $color-white !important;
+  background-color: var(--unbloat-color-surface) !important;
   overflow: hidden !important;
 }
+
 pre.sourceCode {
-  border: thin solid $color-black !important;
-  background-color: $color-white !important;
+  border: var(--unbloat-border-width) solid var(--unbloat-color-border) !important;
+  background-color: var(--unbloat-color-surface) !important;
 }
 
-// Math formulas
 .math {
   font-size: 2.5rem !important;
 }
 
 h2 {
-    color: $color-white !important;
-    background-color: $color-black !important;
-    padding: 1rem; 
+  color: var(--unbloat-color-inverse-text) !important;
+  background-color: var(--unbloat-color-inverse-surface) !important;
+  padding: 1rem;
 }
 
 .reveal .progress {
-    color: $color-black !important;
+  color: var(--unbloat-color-text) !important;
 }
 
 .reveal .footer > * {
-	color: $color-white !important;
-	background-color: $color-black !important;
-    padding: 0.5rem !important;
-    margin: 0 auto !important;
-    margin-bottom: -1.2rem !important;
+  color: var(--unbloat-color-inverse-text) !important;
+  background-color: var(--unbloat-color-inverse-surface) !important;
+  padding: 0.5rem !important;
+  margin: 0 auto !important;
+  margin-bottom: -1.2rem !important;
 }
 
-// Better spacing between list items
 li {
-    margin-left: 1rem !important;
-    margin-bottom: 1rem !important;
+  margin-left: 1rem !important;
+  margin-bottom: 1rem !important;
 }
 
 .slide img {
-    display: block;
-    max-width: 800px !important;
-    max-height: 600px !important;
-    width: auto !important;
-    height: auto !important;
-    margin: 1rem auto !important;
+  display: block;
+  max-width: 800px !important;
+  max-height: 600px !important;
+  width: auto !important;
+  height: auto !important;
+  margin: 1rem auto !important;
 }
 
 .caption {
-    display: block !important;
-    text-align: center !important;
-    margin: 0 auto !important;
+  display: block !important;
+  text-align: center !important;
+  margin: 0 auto !important;
 }
 
 h1 code,
 h2 code {
-  color: $color-red !important;
+  color: var(--unbloat-color-text) !important;
 }
 
 p > code {
-  border: thin solid $color-black !important;
-  background-color: $color-white !important;
-  color: $color-black !important;
-  padding: 0rem 0.25rem !important;
+  border: var(--unbloat-border-width) solid var(--unbloat-color-border) !important;
+  background-color: var(--unbloat-color-surface) !important;
+  color: var(--unbloat-color-text) !important;
+  padding: 0 0.25rem !important;
 }
 
 .reveal table {
   width: 95% !important;
-  border: thin solid $color-black !important;
+  border: var(--unbloat-border-width) solid var(--unbloat-color-border) !important;
 }
 
 .reveal table th {
-  background-color: $color-lightgray !important;
+  background-color: var(--unbloat-color-surface-muted) !important;
+}
+
+.reveal .callout {
+  border-color: var(--unbloat-color-border) !important;
 }
 
 caption {

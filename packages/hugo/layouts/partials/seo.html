@@ -112,7 +112,7 @@
     {{- end -}}
 {{- end }}
 <meta property="og:site_name" content="{{ .Site.Title }}">
-<meta property="og:title" content="{{ if .IsHome }}{{ .Site.Title }} — Aerospace Engineer & Software Developer{{ else }}{{ .Title }} — {{ .Site.Title }}{{ end }}">
+<meta property="og:title" content="{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }} | {{ .Site.Title }}{{ end }}">
 <meta property="og:description" content="{{ $desc }}">
 <meta property="og:type" content="{{ $ogType }}">
 <meta property="og:url" content="{{ $canonical }}">
@@ -190,7 +190,7 @@
     "mainEntityOfPage" (dict "@type" "WebPage" "@id" $canonical)
     "url" $canonical
     "inLanguage" .Site.LanguageCode
-    "author" (dict "@type" "Person" "name" (or $author "Jorge Martinez") "url" .Site.BaseURL)
+    "author" (dict "@type" "Person" "name" (or $author .Site.Title) "url" .Site.BaseURL)
     "publisher" (dict "@type" "Person" "name" .Site.Params.author "url" .Site.BaseURL)
 -}}
 {{- with $imgAbs -}}{{- $article = merge $article (dict "image" .) -}}{{- end -}}

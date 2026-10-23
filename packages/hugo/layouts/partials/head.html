@@ -11,38 +11,17 @@
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
 
-<!-- Preload critical fonts -->
-<link rel="preload" href="/fonts/MonoRegular.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="/fonts/MonoBold.woff2" as="font" type="font/woff2" crossorigin>
-
 <!-- Website icon -->
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon.png" type="image/png">
 
 <!-- Custom CSS -->
-{{ with resources.Get "css/style.css" | postCSS | minify | fingerprint }}
-  <link rel="stylesheet" href="{{ .RelPermalink }}">
-{{ end }}
+{{ partial "unbloated-styles.html" . }}
 {{ with .Params.application_css }}
   {{ with resources.Get . | postCSS | minify | fingerprint }}
     <link rel="stylesheet" href="{{ .RelPermalink }}">
   {{ end }}
 {{ end }}
-
-<!-- Google tag (gtag.js) — deferred to avoid blocking first paint -->
-<script>
-  window.addEventListener('load', function() {
-    var s = document.createElement('script');
-    s.src = 'https://www.googletagmanager.com/gtag/js?id=G-3EVWFESB3W';
-    s.async = true;
-    document.head.appendChild(s);
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    window.gtag = gtag;
-    gtag('js', new Date());
-    gtag('config', 'G-3EVWFESB3W');
-  });
-</script>
 
 <!-- Plotly -->
 {{ if .Params.plotly }}
@@ -86,10 +65,10 @@
 
 <title>
 {{- if .IsHome -}}
-  {{- .Site.Title }} — Aerospace Engineer & Software Developer
+  {{- .Site.Title }}
 {{- else if eq .Kind "term" -}}
-  {{- humanize .Data.Singular }}: {{ .Title }} — {{ .Site.Title -}}
+  {{- humanize .Data.Singular }}: {{ .Title }} | {{ .Site.Title -}}
 {{- else -}}
-  {{- .Title }} — {{ .Site.Title -}}
+  {{- .Title }} | {{ .Site.Title -}}
 {{- end -}}
 </title>

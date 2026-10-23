@@ -1,9 +1,25 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.5.15/schema.json",
   "files": {
-    "includes": ["src/**/*.css", "examples/**/*.css", "docs/assets/site.css"]
+    "includes": [
+      "src/**/*.css",
+      "examples/**/*.css",
+      "docs/assets/site.css",
+      "packages/**/style.css"
+    ]
   },
   "formatter": { "enabled": false },
   "assist": { "enabled": false },
-  "linter": { "enabled": true, "rules": { "recommended": true } }
+  "linter": { "enabled": true, "rules": { "recommended": true } },
+  "overrides": [
+    {
+      "includes": ["packages/**/style.css"],
+      "linter": {
+        "rules": {
+          "complexity": { "noImportantStyles": "off" },
+          "style": { "noDescendingSpecificity": "off" }
+        }
+      }
+    }
+  ]
 }

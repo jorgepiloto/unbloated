@@ -35,6 +35,12 @@ You can also copy `node_modules/unbloated/dist/unbloat.css` into your public
 assets and load it with a stylesheet link. To use the package before
 publication, [build and install a local tarball](https://jorgemartinez.space/projects/unbloated/version/stable/getting-started/installation/#build-a-local-package).
 
+The repository also contains adapters in `packages/sphinx`, `packages/quarto`,
+and `packages/hugo`. They bundle the core stylesheet at build time; consuming
+Sphinx projects and generated sites do not need Node.js at runtime. See
+[Adapter Packages](CONTRIBUTING.md#adapter-packages) for builds and ownership
+rules, and the [Hugo adapter](packages/hugo/README.md) for website setup.
+
 ## Documentation
 
 The [documentation](https://jorgemartinez.space/projects/unbloated/version/stable/) covers:
@@ -69,6 +75,9 @@ Unbloated is licensed under the GNU Lesser General Public License, version 3
 only (`LGPL-3.0-only`). Read [LICENSE](LICENSE) and the incorporated GNU GPLv3
 terms in [COPYING](COPYING). Copyright and warranty notices are in
 [NOTICE](NOTICE).
+
+The Sphinx adapter retains its GPL-3.0-only license in
+`packages/sphinx/LICENSE`. The Hugo adapter uses LGPL-3.0-only.
 
 Keep the license files with redistributed copies and retain access to the
 corresponding source. The npm tarball includes the source styles, token

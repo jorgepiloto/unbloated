@@ -15,3 +15,16 @@ docs/data/package.json
 docs/resources/
 docs/.hugo_build.lock
 .venv*/
+packages/hugo/layouts/
+packages/sphinx/src/**/*.html
+packages/sphinx/CODE_OF_CONDUCT.md
+packages/hugo/assets/css/unbloat.css
+packages/hugo/assets/css/unbloated-core.json
+packages/hugo/assets/css/licenses/
+packages/quarto/_extensions/unbloated/unbloat.css
+packages/quarto/_extensions/unbloated/unbloated-core.json
+packages/quarto/_extensions/unbloated/licenses/
+packages/sphinx/src/sphinx_unbloated_theme/theme/sphinx_unbloated_theme/static/css/unbloat.css
+packages/sphinx/src/sphinx_unbloated_theme/theme/sphinx_unbloated_theme/static/css/unbloated-core.json
+packages/sphinx/src/sphinx_unbloated_theme/theme/sphinx_unbloated_theme/static/css/licenses/
+.artifacts/

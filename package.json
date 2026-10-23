@@ -52,6 +52,11 @@
   },
   "scripts": {
     "build": "node scripts/build.mjs",
+    "build:adapters": "npm run build && node scripts/adapters.mjs",
+    "check:adapters": "node scripts/adapters.mjs --check",
+    "lint:adapters": "node scripts/adapter-styles.mjs",
+    "test:adapters": "node --test tests/adapters.test.mjs tests/adapter-packages.integration.mjs",
+    "pack:adapters": "node scripts/pack-adapters.mjs",
     "build:check": "node scripts/build.mjs --check",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -61,8 +66,8 @@
     "prepack": "npm run build",
     "preview": "node scripts/serve.mjs",
     "lint:js": "eslint . --max-warnings=0",
-    "lint:css": "biome lint src examples docs/assets/site.css --error-on-warnings",
-    "lint": "npm run lint:js && npm run lint:css",
+    "lint:css": "biome lint src examples docs/assets/site.css packages --error-on-warnings",
+    "lint": "npm run lint:js && npm run lint:css && npm run lint:adapters",
     "docs:build": "node scripts/docs.mjs build",
     "docs:dev": "node scripts/docs.mjs serve",
     "docs:preview": "node scripts/docs.mjs preview",
@@ -76,6 +81,7 @@
     "eslint": "10.12.0",
     "globals": "17.13.0",
     "prettier": "3.9.10",
+    "postcss": "8.5.6",
     "sass": "1.105.1"
   }
 }

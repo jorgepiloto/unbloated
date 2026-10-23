@@ -5,7 +5,6 @@ author: "Jorge Martinez"
 institute: "Aerospace Engineer and Senior Software Developer"
 format: 
     unbloated-revealjs:
-        mainfont: "Berkeley Mono"
         self-contained: true
         footer: "Copyright © 2025 Jorge Martinez"
         menu: false

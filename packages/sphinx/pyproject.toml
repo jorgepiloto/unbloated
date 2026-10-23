@@ -50,6 +50,16 @@ doc = [
 path = "src/sphinx_unbloated_theme/__init__.py"
 pattern = '__version__ = "(?P<version>[^"]+)"'
 
+[tool.hatch.build]
+artifacts = [
+  "src/sphinx_unbloated_theme/theme/sphinx_unbloated_theme/static/css/unbloat.css",
+  "src/sphinx_unbloated_theme/theme/sphinx_unbloated_theme/static/css/unbloated-core.json",
+  "src/sphinx_unbloated_theme/theme/sphinx_unbloated_theme/static/css/licenses/",
+]
+
+[tool.hatch.build.hooks.custom]
+path = "hatch_build.py"
+
 [tool.hatch.build.targets.wheel]
 packages = [ "src/sphinx_unbloated_theme" ]
 
@@ -67,6 +77,7 @@ include = [
   "doc/source/changelog.rst",
   "doc/source/_static/screenshots/",
   "pyproject.toml",
+  "hatch_build.py",
 ]
 
 [tool.towncrier]

@@ -15,6 +15,7 @@ export default defineConfig([
     ".cache/",
     "docs/resources/",
     ".venv*/",
+    "packages/sphinx/tests/",
   ]),
   {
     files: ["**/*.{js,mjs,cjs}"],
@@ -31,7 +32,16 @@ export default defineConfig([
       "tests/browser/**/*.mjs",
       "tests/docs/**/*.mjs",
       "docs/assets/*.js",
+      "packages/hugo/assets/js/*.js",
+      "packages/hugo/static/js/*.js",
+      "packages/sphinx/src/**/static/js/*.js",
     ],
     languageOptions: { globals: globals.browser },
+  },
+  {
+    files: ["packages/hugo/static/js/search.js"],
+    languageOptions: {
+      globals: { Fuse: "readonly", Mark: "readonly" },
+    },
   },
 ]);

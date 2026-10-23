@@ -79,3 +79,65 @@ in each test job. Generated documentation assets and `site/` stay out of Git.
 
 The package includes full source and build instructions for its LGPLv3 license.
 Keep the license banner in distributed CSS and Sass files.
+
+## Adapter Packages
+
+The CSS library at the repository root owns the design values and shared
+semantic styles. `packages/sphinx`, `packages/quarto`, and `packages/hugo` own
+platform markup, navigation, slide geometry, and layout-specific spacing.
+The imported Sphinx browser suites retain their existing test tooling rather
+than the core's ESLint configuration. Hugo's Go templates and Sphinx's Jinja
+templates are excluded from Prettier's HTML parser.
+The imported layout styles retain their existing specificity order and
+`!important` declarations; Biome exempts only those two rules for adapter
+stylesheets. Changing the cascade requires a separate visual review.
+Existing Sphinx and Hugo customization names are aliases for core variables,
+not independent palettes or font stacks. The adapters use the core's grayscale
+links and system monospace stack instead of their former blue links and bundled
+font defaults.
+
+Build and package all adapters from the repository root:
+
+```sh
+npm ci --ignore-scripts
+python3 -m pip install build hatchling
+npm run build:adapters
+npm run check:adapters
+npm run test:adapters
+python3 -m unittest discover -s tests -p test_adapter_bundles.py
+npm run pack:adapters
+python3 scripts/check-adapter-artifacts.py
+```
+
+Use Python 3.12 or newer. Set `PYTHON` to a virtual environment's Python
+executable when it is not available as `python3`. Package tests invoke npm, tar,
+and Python's build frontend against isolated fixtures. They do not replace a
+build and rendering check with the real core stylesheet.
+
+`build:adapters` builds the core once and copies `dist/unbloat.css` unchanged
+into each adapter, with its package name, version, SHA-256 digest, and license
+notices. Generated files stay out of Git. `check:adapters` compares every
+bundled asset with the current core build; it fails on missing, modified, or
+stale files. It also validates core variable references.
+
+`lint:adapters` parses authored CSS, compiled SCSS, and template style
+declarations. It rejects literal colors, independent font stacks, independent
+shadow offsets, and definitions of core `--unbloat-*` variables. Keep visual
+values in the core; adapter-specific dimensions and widget sizing may remain
+local. This is an ownership check, not a general accessibility or CSS audit.
+
+`pack:adapters` refuses stale bundles and writes a Sphinx wheel and source
+distribution, Quarto extension archive, and Hugo npm tarball to `.artifacts/`.
+The artifact checker compares the files inside each archive with the core.
+The Sphinx build hook also rejects missing assets or a mismatched digest, so
+building a wheel directly cannot silently omit the core.
+
+The `adapter-packages` workflow runs these checks, tests the installed Sphinx
+wheel, and uploads distributions on pull requests, main pushes, and core release
+tags. It does not publish adapters to PyPI or npm. Keep adapter versions
+independent; each generated provenance file records the bundled core version.
+Publish matching core source with releases and retain all bundled notices.
+
+Use the copies inside this repository for further adapter development. The
+former standalone Sphinx and Quarto repositories remain intact as migration
+sources, not additional sources of theme design values.

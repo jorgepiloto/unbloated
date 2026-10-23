@@ -18,6 +18,7 @@ repos:
       - id: check-executables-have-shebangs
       - id: check-shebang-scripts-are-executable
       - id: check-json
+        exclude: ^packages/hugo/layouts/
       - id: check-yaml
       - id: check-toml
       - id: detect-private-key
