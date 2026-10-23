@@ -4,18 +4,14 @@
 
 Monospace grayscale CSS library for engineers.
 
-Unbloated provides shared styles for monospace type, black and white surfaces,
-grayscale details, and square corners. It
-contains no runtime JavaScript, runtime dependencies, remote fonts, or remote
-assets.
+Unbloated styles semantic HTML with system monospace fonts, grayscale colors,
+and square corners. It has no runtime JavaScript, runtime dependencies, remote
+fonts, or remote assets. Your site supplies the layout and application behavior.
 
-The [documentation](docs/content/_index.md) covers installation, design tokens, source
-modules, and components with live style examples. Build it locally with Hugo
-using the [documentation prerequisites](docs/content/getting-started/prerequisites.md).
-
-Design values live in `src/tokens.json`. A dependency-free build generates CSS
-custom properties, Sass variables, and a complete stylesheet. Websites and
-themes keep their own layouts and adapters for generated HTML.
+The [documentation](docs/content/_index.md) includes installation instructions,
+design tokens, and live component examples. Design values live in
+`src/tokens.json`; the build generates CSS custom properties, Sass variables,
+and the complete stylesheet.
 
 The package starts at version `0.1.0`. The npm and CDN examples below become
 available after that version is published. You can build and install a local
@@ -72,10 +68,10 @@ You can also load the same URL directly:
 />
 ```
 
-Serve a local copy if you want the site to work without a CDN request. For CDN
-use, a checksum generated from the exact release can be supplied through the
-HTML `integrity` attribute with `crossorigin="anonymous"`. Version pinning and
-integrity serve different purposes. See the
+Serve a local copy to avoid a CDN request at page load. To verify CDN assets,
+set the HTML `integrity` attribute to a checksum of the exact release and add
+`crossorigin="anonymous"`. Pinning selects the version; integrity checks the
+downloaded bytes. See the
 [Subresource Integrity documentation](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity).
 
 ### Build a Local Package
@@ -99,100 +95,19 @@ redistributed copies and retain access to the corresponding source.
 
 ## User Guide
 
-### Choose the CSS You Need
+Use `unbloat.css` for the complete library, or load tokens, base styles, and
+components separately. See [Stylesheets](docs/content/getting-started/about.md#stylesheets)
+for the files, load order, and guidance for existing themes.
 
-| File                  | Contents                                              |
-| --------------------- | ----------------------------------------------------- |
-| `dist/unbloat.css`    | Tokens, semantic HTML styles, and optional components |
-| `dist/tokens.css`     | CSS custom properties only                            |
-| `dist/base.css`       | Styles for semantic HTML elements                     |
-| `dist/components.css` | Optional classes for repeated visual patterns         |
-| `dist/_tokens.scss`   | Sass variables, each declared with `!default`         |
-| `src/tokens.json`     | Canonical design values                               |
+Native HTML elements need no classes. The optional classes add panels,
+buttons, tags, callouts, tabs, and inverse surfaces. The
+[component pages](docs/content/components/_index.md) show their markup and states.
 
-When using individual CSS files, load tokens first, then base styles, then
-components. Load the project adapter last. The styles use `:where()` to keep
-selector specificity low. Existing framework styles may have higher specificity;
-the adapter must handle those selectors explicitly.
+To customize the library, see
+[Typography](docs/content/components/typography.md#customize-type) and
+[Sass Tokens](docs/content/getting-started/about.md#use-sass-tokens).
 
-The base stylesheet applies to the whole document. For an existing theme,
-start with tokens and an adapter if you need to preserve its element styling.
-No shared stylesheet sets page width, slide dimensions, navigation layout, or
-mobile font scaling.
-
-### Use Semantic HTML
-
-Headings, links, lists, tables, code blocks, and form controls work without
-custom classes. Inputs need labels, tables need appropriate header cells, and
-buttons need the correct `type` inside forms. Keyboard focus indicators remain
-visible. Links remain underlined.
-
-```html
-<label for="name">Name</label>
-<input id="name" name="name" autocomplete="name" />
-<button type="button">Preview</button>
-```
-
-### Use Components
-
-| Class             | Purpose                                       |
-| ----------------- | --------------------------------------------- |
-| `unbloat-panel`   | Bordered surface with a hard shadow           |
-| `unbloat-button`  | Button appearance for a native button or link |
-| `unbloat-tag`     | Compact label or link                         |
-| `unbloat-callout` | Bordered note with a thicker leading edge     |
-| `unbloat-tabs`    | Wrapping layout for tab controls              |
-| `unbloat-inverse` | White text on a black surface                 |
-
-```html
-<aside class="unbloat-callout">
-  <p>Build the assets before publishing the site.</p>
-</aside>
-<a class="unbloat-button" href="/guide/">Read the Guide</a>
-```
-
-These classes provide appearance. Tabs still need accessible markup, keyboard
-navigation, and selection behavior supplied by the consuming project. The
-package does not implement interactions.
-
-### Configure Typography
-
-The default stack uses system monospace fonts. The package does not bundle a
-font. A project can supply its own properly licensed, self-hosted font:
-
-```css
-:root {
-  --unbloat-font-family: "My Mono", monospace;
-}
-```
-
-Available token groups are `color`, `font`, `line-height`, `heading`, `space`,
-`border`, `shadow`, and `focus`. Names follow
-`--unbloat-<group>-<name>`, for example `--unbloat-space-3` and
-`--unbloat-color-surface`.
-
-Keep fonts monospace, colors grayscale, and `--unbloat-border-radius` at zero.
-Changes to text, background, or focus colors must preserve readable contrast.
-Consumer overrides are possible; they are not a guarantee that the result still
-follows unbloat.
-
-### Use Sass Tokens
-
-For tools that resolve packages through Sass load paths:
-
-```scss
-@use "unbloated/dist/tokens" as unbloat;
-
-$body-color: unbloat.$unbloat-color-text;
-$body-bg: unbloat.$unbloat-color-surface;
-$font-family-monospace: unbloat.$unbloat-font-family;
-```
-
-Include `node_modules` in the Sass load path. For Quarto, copy `_tokens.scss`
-into the extension and load it within the `scss:defaults` section of the theme.
-Keep slide layout and Quarto-specific selectors in that extension. If the
-host tool cannot resolve `@use`, use the generated values through the mechanism
-that its Sass compiler supports.
+## Development
 
 ### Develop and Test
 
@@ -208,19 +123,12 @@ Open `http://127.0.0.1:4173` for the reference page. The preview server binds on
 to loopback and serves an explicit list of public files.
 
 Edit `src/`, then run `npm run format` and `npm run build`. Git ignores `dist/`;
-commit the source changes. Each CI workflow builds the distribution before
-verification. `build:check` compares two builds in temporary directories without
-requiring an existing `dist/`. Node tests validate tokens,
-Sass consumption, licenses, exports, and installation from the actual tarball.
-Browser tests check grayscale colors, typography, square corners, focus,
-hover, narrow viewports, and consumer overrides. They save screenshots for
-inspection; they do not compare screenshot baselines.
+commit the source changes. The [Source Reference](docs/content/reference/source.md#verification)
+describes the checks. Browser tests save screenshots for inspection, not baseline
+comparison.
 
-The workflows run on pull requests, version tags, and daily at 08:00 in
-`Europe/Madrid`. The npm tarball includes the generated files even though Git
-ignores them. Pushing a stable version tag triggers `release.yml`, which checks
-the source, builds the tarball, publishes it to npm through trusted publishing,
-and creates a GitHub release with the same tarball attached. See
+CI runs on pull requests, version tags, and daily at 08:00 in `Europe/Madrid`.
+Stable version tags trigger npm publication and a GitHub release. See
 [Contributing](CONTRIBUTING.md), [Release Setup](docs/content/releasing.md), and
 [Security](SECURITY.md).
 
@@ -240,13 +148,9 @@ On macOS and Windows, install Hugo 0.167.0 from the
 against the SHA-256 in `docs/hugo-lock.json`.
 
 Open `http://127.0.0.1:4174`. Use `npm run docs:dev` for Markdown editing with
-live reload at `http://127.0.0.1:8000`. The site has Home, Getting Started, and
-Components sections. Source comments and the
-[Source Reference](docs/content/reference/source.md) describe the implementation.
-The footer identifies the package version. The site uses this checkout's generated
-CSS with a layout modeled on `web`; heading IDs remain available for links,
-without permalink controls. `npm run test:docs` checks navigation, live styles,
-tab behavior, and mobile layout.
+live reload at `http://127.0.0.1:8000`. The site uses this checkout's generated
+CSS. Run `npm run test:docs` to check navigation, live styles, tab behavior,
+and mobile layout.
 
 ## License
 

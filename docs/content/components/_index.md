@@ -17,9 +17,8 @@ border marks the preview area; it is a documentation layout rule.
 | [Tabs](tabs.md)                                | `unbloat-tabs`                               | Wrapping controls with an inverted selected state |
 | [Tables and Details](content.md)               | `table`, `details`, and `summary`            | Bordered cells and native disclosure behavior     |
 
-Use native controls and descriptive labels. The library supplies appearance;
-your application supplies actions and any interaction beyond the browser's
-native behavior.
+Use native controls and descriptive labels. See [Tabs](tabs.md) for the behavior
+you need to add beyond the CSS.
 
 The [Design Tokens](../reference/tokens.md) page lists the values used by these
 components and shows how to override them.

@@ -28,16 +28,35 @@ Load tokens first when using separate stylesheets. Load base styles and
 components next, then your own adapter. The selectors use `:where()` to keep
 specificity low, so ordinary selectors can override the shared styles.
 
-The base stylesheet applies to the whole document. For an existing theme,
-start with tokens and an adapter if you need to preserve its element styling.
-The library does not set page width, navigation layout, or slide dimensions.
+The base stylesheet applies to the whole document. To preserve an existing
+theme's element styles, start with tokens and an adapter instead. Set page
+width, navigation layout, slide dimensions, and mobile font scaling in your
+site's stylesheet.
 
 ## Supported Markup
 
 Use semantic HTML for headings, lists, links, code, tables, and form controls.
-Classes add repeated visual patterns; they do not replace accessible markup or
-interaction behavior. Labels, focus order, tab selection, and application
-actions belong to the consuming project.
+Give inputs labels and tables scoped header cells, and set button types
+explicitly inside forms. Keep keyboard focus visible and implement application
+actions and tab selection in your own code.
+
+## Use Sass Tokens
+
+For tools that resolve packages through Sass load paths:
+
+```scss
+@use "unbloated/dist/tokens" as unbloat;
+
+$body-color: unbloat.$unbloat-color-text;
+$body-bg: unbloat.$unbloat-color-surface;
+$font-family-monospace: unbloat.$unbloat-font-family;
+```
+
+Include `node_modules` in the Sass load path. For Quarto, copy `_tokens.scss`
+into the extension and load it within the `scss:defaults` section of the theme.
+Keep slide layout and Quarto-specific selectors in that extension. If the
+host tool cannot resolve `@use`, load the generated values through its supported
+Sass mechanism.
 
 ## License
 

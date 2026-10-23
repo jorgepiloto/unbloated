@@ -22,8 +22,6 @@ Documentation uses Hugo; the npm package still contains no runtime dependencies.
 | `docs/assets/site.css` | Centered page, black masthead, navigation buttons, prose styles, preview spacing, and table scrolling |
 | `docs/assets/tabs.js`  | Example tab selection, keyboard focus, and panel visibility                                           |
 
-Each source module has an inline description. Exported build and documentation
-functions document their inputs, return values, side effects, and errors.
 The [Components](../components/_index.md) pages describe the CSS selectors and
 their states, and [Design Tokens](tokens.md) documents the JSON schema and defaults.
 
@@ -179,15 +177,15 @@ library tests and `npm run docs:build` before documentation browser tests.
 
 ## Change the Documentation
 
-The Hugo templates and site stylesheet follow the layout of `web`: a centered
-white page on a gray background, a black masthead and footer, and square
-navigation links. The header includes the Email, GitHub, LinkedIn, YouTube, and
-RSS links from `web`, configured in `docs/data/social.json`. Their local SVG
+Edit the page layout in `docs/layouts/` and `docs/assets/site.css`. The site uses
+a centered white page on a gray background, a black masthead and footer, and
+square navigation links. Configure the header's Email, GitHub, LinkedIn,
+YouTube, and RSS links in `docs/data/social.json`. Their local SVG
 icons retain Font Awesome attribution; the generated site includes the license
 in `licenses/font-awesome-LICENSE.txt`.
 
-Navigation follows `sphinx-theme`: section overviews show their child buttons
-below the title. Child pages show a linked parent title and sibling buttons
+Section overviews show their child buttons below the title. Child pages show
+a linked parent title and sibling buttons
 above the page heading, with the current page highlighted. A Back to link
 returns to the section overview, or Home from an overview. The markup works
 without JavaScript. Prose headings use uppercase black labels; these

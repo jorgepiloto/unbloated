@@ -14,13 +14,12 @@ explain hover, focus, disabled, and selected states.
 <div class="component-demo">
   <section class="unbloat-panel" aria-labelledby="home-panel">
     <h2 id="home-panel">One Stylesheet</h2>
-    <p>System monospace fonts. Grayscale colors. Square corners.</p>
+    <p>Use system monospace fonts with grayscale colors and square corners.</p>
     <span class="unbloat-tag">CSS</span>
   </section>
 </div>
 
-The examples use the stylesheet built from this checkout. Layout rules belong
-to the documentation site; the library supplies the component appearance.
+The examples use the stylesheet built from this checkout.
 
 To change the library, read the [Design Tokens](reference/tokens.md) and
 [Source Reference](reference/source.md). Publication is covered in

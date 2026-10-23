@@ -2,16 +2,15 @@
 title: Release Setup
 ---
 
-The package metadata assumes the public repository will be
-`https://github.com/jorgepiloto/unbloated-css`. Update `package.json` if the final
-repository differs. The package name is `unbloated`; registry availability does
-not reserve it. Nothing is published by building or testing locally.
+The package name is `unbloated`. Before publishing, check that the repository
+URLs in `package.json` match the GitHub repository you publish from. The current
+metadata points to `jorgepiloto/unbloated-css`; this checkout uses
+`jorgepiloto/unbloated`. Registry availability does not reserve the package name.
 
 ## Configure Publishing
 
-1. Create the GitHub repository `unbloated-css` and push this project to its
-   `main` branch. The existing `jorgepiloto/unbloated` repository hosts the older
-   Hugo theme, so it is not used as the publication source for this package.
+1. Push the project to the publishing repository's `main` branch and check its
+   URL against `package.json`.
 2. Create the GitHub environment `npm`. Restrict deployments to release tags
    and configure required reviewers for publication.
 3. If npm requires an initial publication to create the package, perform that
@@ -19,9 +18,9 @@ not reserve it. Nothing is published by building or testing locally.
    authentication using the reviewed tarball produced by the pull-request workflow.
    Complete this npm setup before relying on OIDC publication in `release.yml`.
 4. In the npm package settings, add a GitHub Actions trusted publisher with
-   owner `jorgepiloto`, repository `unbloated-css`, workflow `release.yml`, and
-   environment `npm`. Enable the allowed action for direct `npm publish`.
-   Change the owner and repository if your remote differs.
+   owner `jorgepiloto`, repository `unbloated`, workflow `release.yml`, and
+   environment `npm`. Use the actual owner and repository if you publish from
+   a different remote. Enable the allowed action for direct `npm publish`.
 5. Require two-factor authentication and disable token-based publishing after
    trusted publishing is configured and verified.
 

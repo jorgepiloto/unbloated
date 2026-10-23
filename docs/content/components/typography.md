@@ -58,5 +58,19 @@ surface; preformatted blocks have padding, a border, and horizontal scrolling.
 ## Customize Type
 
 Set `--unbloat-font-family` in your adapter to use another monospace font.
-Use a licensed, self-hosted font if you need a specific family. The
-`font`, `line-height`, and `heading` groups control type sizes and line spacing.
+Use a licensed, self-hosted font if you need a specific family:
+
+```css
+:root {
+  --unbloat-font-family: "My Mono", monospace;
+}
+```
+
+The `font`, `line-height`, and `heading` token groups control type sizes and
+line spacing. Other groups are `color`, `space`, `border`, `shadow`, and `focus`.
+Names follow `--unbloat-<group>-<name>`, for example `--unbloat-space-3` and
+`--unbloat-color-surface`.
+
+To keep the library's appearance, use monospace fonts, grayscale colors, and
+`--unbloat-border-radius: 0`. Check text, background, and focus contrast after
+changing these values.
