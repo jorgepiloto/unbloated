@@ -1,3 +1,4 @@
+/** Enhance tabs/tab shortcode groups; sync peers by label and retain script-free panels. */
 document.addEventListener("DOMContentLoaded", () => {
   const syncedGroups = new Map();
 

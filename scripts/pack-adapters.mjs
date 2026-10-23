@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: LGPL-3.0-only
+/** Package staged adapters with tar, npm, and Python's build frontend. */
 import { execFile as execFileCallback } from "node:child_process";
 import { mkdir, readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
@@ -9,8 +10,11 @@ const execFile = promisify(execFileCallback);
 
 /**
  * Pack verified bundles into the Quarto archive, Hugo tarball, and Sphinx builds.
+ * Write to .artifacts/; failures can leave already-created archives in place.
+ * PYTHON selects the builder executable; relative paths resolve in packages/sphinx.
  * @param {{directory?: URL}} [options] Checkout root.
  * @returns {Promise<void>}
+ * @throws {Error} On invalid bundles, missing tools, I/O errors, or failed builders.
  */
 export async function packAdapters({ directory = root } = {}) {
   await prepareAdapters({ directory, check: true });

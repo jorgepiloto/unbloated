@@ -8,7 +8,31 @@ import zipfile
 
 
 def check_files(files: dict[str, bytes], core: bytes, metadata: dict[str, str]) -> None:
-    """Require one exact core bundle, its version, and its license notices."""
+    """Compare one archive's bundle with the core without extracting files.
+
+    Parameters
+    ----------
+    files : dict of str to bytes
+        Archive member paths and file contents, excluding directories.
+    core : bytes
+        Current complete core stylesheet.
+    metadata : dict of str to str
+        Expected core name, version, and SHA-256 digest.
+
+    Raises
+    ------
+    RuntimeError
+        The core bundle count or CSS, provenance, or license bytes differ.
+    KeyError
+        A required provenance or license member is missing.
+    json.JSONDecodeError
+        The bundled provenance is not valid JSON.
+
+    Notes
+    -----
+    License bytes are read from this script's checkout, not from the caller's
+    working directory. No files are written.
+    """
     css_files = [name for name in files if name.endswith("/unbloat.css")]
     if len(css_files) != 1:
         raise RuntimeError(f"Expected one core stylesheet, found {css_files}")
@@ -24,7 +48,13 @@ def check_files(files: dict[str, bytes], core: bytes, metadata: dict[str, str]) 
 
 
 def main() -> None:
-    """Validate wheel, source distribution, Quarto archive, and Hugo npm package."""
+    """Inspect four distributions under this checkout's ``.artifacts/``.
+
+    Require exactly one wheel, source distribution, Quarto archive, and Hugo
+    npm tarball. Compare each with ``dist/unbloat.css`` and print one verified
+    filename per success. Missing or invalid archives, provenance, or source
+    files raise an exception and produce a nonzero CLI exit status.
+    """
     root = Path(__file__).resolve().parent.parent
     core = (root / "dist/unbloat.css").read_bytes()
     manifest = json.loads((root / "package.json").read_text(encoding="utf-8"))

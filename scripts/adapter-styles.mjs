@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: LGPL-3.0-only
+/** Enforce core design-value ownership in authored adapter styles. */
 import { readFile, readdir } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import postcss from "postcss";
@@ -82,6 +83,8 @@ const allowedWords = new Set([
  * Layout geometry and widget-specific sizing remain adapter responsibilities.
  * @param {string} source CSS source.
  * @param {{from?: string, core?: string}} [options] Source label and built core.
+ * @returns {void} Leaves the source unchanged; core enables token-name checks.
+ * @throws {Error} On invalid CSS or a design-ownership violation, with source context.
  */
 export function assertAdapterStyle(
   source,
@@ -203,8 +206,10 @@ async function* files(directory) {
 
 /**
  * Check authored adapter styles, including inline declarations in templates.
+ * Compile SCSS in memory and skip generated core copies; never write sources.
  * @param {{directory?: URL, core?: string}} [options] Checkout and built core.
  * @returns {Promise<void>}
+ * @throws {Error} On source reads, parsing, Sass compilation, or ownership violations.
  */
 export async function checkAdapterStyles({ directory = root, core } = {}) {
   for (const source of sources) {

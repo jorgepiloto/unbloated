@@ -4,6 +4,9 @@ Configuration
 #############
 
 Set ``html_theme_options`` in your project's ``conf.py``.
+Project names, descriptions, and navigation labels are plain text and retain
+literal angle brackets, ampersands, and Unicode. ``footer_text`` is the exception:
+it accepts trusted HTML and must not contain unsanitized untrusted input.
 
 Available Options
 -----------------
@@ -119,6 +122,9 @@ To generate a 404 page, add these settings to ``conf.py``:
 Set ``html_baseurl`` to the documentation root, including its deployment
 prefix. The 404 page uses that path for assets and navigation when the host
 serves it for a missing URL. An empty ``html_baseurl`` uses the domain root.
+Both ``html`` and ``dirhtml`` builders are supported. The issue-report link
+requires ``github_url`` to be an HTTPS GitHub repository URL; an omitted or
+invalid repository hides the action.
 
 Full Example
 ------------

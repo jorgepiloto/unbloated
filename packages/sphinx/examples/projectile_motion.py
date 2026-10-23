@@ -65,6 +65,11 @@ def derivatives(state):
     ndarray of shape (4,)
         Horizontal and vertical velocities, followed by the corresponding
         accelerations in meters per second squared.
+
+    Notes
+    -----
+    Uses the module's mass, drag coefficient, and gravity constants. The input
+    state is not modified.
     """
     x, y, vx, vy = state
     v = np.sqrt(vx**2 + vy**2)
@@ -82,12 +87,17 @@ def rk4_step(state, dt):
         Horizontal and vertical positions in meters, followed by the
         corresponding velocities in meters per second.
     dt : float
-        Time step in seconds.
+        Time step in seconds; the trajectory simulation requires a finite,
+        positive value. The helper does not validate it.
 
     Returns
     -------
     ndarray of shape (4,)
         Projectile state after one time step.
+
+    Notes
+    -----
+    Returns a new state without modifying the input array.
     """
     k1 = derivatives(state)
     k2 = derivatives(state + 0.5 * dt * k1)
@@ -104,7 +114,7 @@ def simulate(angle_deg, dt=0.01):
     angle_deg : float
         Launch angle in degrees above the horizontal.
     dt : float, optional
-        Time step in seconds. Default is 0.01.
+        Finite positive time step in seconds. Default is 0.01.
 
     Returns
     -------
@@ -113,6 +123,12 @@ def simulate(angle_deg, dt=0.01):
         ground level.
     ys : ndarray
         Vertical positions in meters at the same time steps.
+
+    Notes
+    -----
+    Uses the module's initial speed and force constants. Inputs are not validated
+    and the loop has no iteration limit; a zero step does not advance the state.
+    Landing is the first below-ground sample, without interpolation.
     """
     theta = np.radians(angle_deg)
     state = np.array([0.0, 0.0, v0 * np.cos(theta), v0 * np.sin(theta)])

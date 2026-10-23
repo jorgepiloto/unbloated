@@ -9,6 +9,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from jinja2 import Environment
 
@@ -93,6 +94,73 @@ class ExampleSafetyTests(unittest.TestCase):
             edited.write_text("edited")
             self.hooks["remove_examples_from_source_dir"](app, None)
             self.assertEqual(edited.read_text(), "edited")
+
+
+class ExportHookTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.hooks = runpy.run_path(str(PACKAGE / "doc/source/conf.py"))
+
+    def test_exports_run_only_after_successful_supported_builds(self):
+        for builder in ("html", "dirhtml", "latex", "linkcheck", "text"):
+            for exception in (None, RuntimeError("original build failure")):
+                with (
+                    self.subTest(builder=builder, exception=exception),
+                    tempfile.TemporaryDirectory() as directory,
+                ):
+                    root = Path(directory)
+                    source = root / "doc/source"
+                    source.mkdir(parents=True)
+                    (root / "examples").mkdir()
+                    (root / "examples/example.py").write_text("print(42)")
+                    output = root / "output"
+                    (output / "examples").mkdir(parents=True)
+                    (output / "examples/example.ipynb").write_text("{}")
+                    app = SimpleNamespace(
+                        srcdir=source,
+                        outdir=output,
+                        builder=SimpleNamespace(name=builder),
+                    )
+                    with patch("subprocess.run") as render:
+                        self.hooks["copy_examples_to_output_dir"](app, exception)
+                        self.hooks["render_examples_as_pdf"](app, exception)
+                    exported = exception is None and builder in {"html", "dirhtml"}
+                    self.assertEqual(
+                        (output / "examples/example.py").exists(), exported
+                    )
+                    self.assertEqual(render.call_count, int(exported))
+
+    def test_cleanup_precedes_export_even_when_export_fails(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "doc/source"
+            source.mkdir(parents=True)
+            (root / "examples").mkdir()
+            (root / "examples/example.py").write_text("print(42)")
+            output = root / "output"
+            (output / "examples").mkdir(parents=True)
+            (output / "examples/example.ipynb").write_text("{}")
+            events = []
+            app = SimpleNamespace(
+                srcdir=source,
+                outdir=output,
+                builder=SimpleNamespace(name="html"),
+                connect=lambda event, callback: events.append((event, callback)),
+            )
+            self.hooks["setup"](app)
+            self.hooks["copy_examples_files_to_source_dir"](app, None)
+            with (
+                patch(
+                    "subprocess.run",
+                    side_effect=subprocess.CalledProcessError(1, "quarto"),
+                ),
+                self.assertRaises(subprocess.CalledProcessError),
+            ):
+                for event, callback in events:
+                    if event == "build-finished":
+                        callback(app, None)
+            self.assertFalse((source / "examples/example.py").exists())
+            self.assertTrue((root / "examples/example.py").exists())
 
 
 class BuilderTests(unittest.TestCase):

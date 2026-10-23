@@ -8,8 +8,8 @@
    :target: https://pypi.org/project/sphinx-unbloated-theme/
    :alt: PyPI
 
-.. |GH-CI| image:: https://github.com/jorgemartinez/sphinx-unbloated-theme/actions/workflows/ci_cd_pr.yml/badge.svg
-   :target: https://github.com/jorgemartinez/sphinx-unbloated-theme/actions/workflows/ci_cd_pr.yml
+.. |GH-CI| image:: https://github.com/jorgepiloto/unbloated/actions/workflows/pull-request.yml/badge.svg
+   :target: https://github.com/jorgepiloto/unbloated/actions/workflows/pull-request.yml
    :alt: GH-CI
 
 .. |GPL| image:: https://img.shields.io/badge/License-GPL--3.0-white.svg?labelColor=black
@@ -19,10 +19,9 @@
 About
 =====
 
-The Sphinx Unbloated Theme is a minimal, clean HTML theme for
-`Sphinx <https://www.sphinx-doc.org/>`_. It is built on Sphinx's ``basic``
-theme, the only dependency, and uses vanilla CSS with no third-party
-frameworks or bundlers.
+The Sphinx Unbloated Theme is an HTML theme for
+`Sphinx <https://www.sphinx-doc.org/>`_. It inherits Sphinx's ``basic`` theme
+and uses vanilla CSS and JavaScript. Sphinx is its only runtime dependency.
 
 The theme bundles the Unbloated CSS library with Sphinx-specific layout styles,
 Jinja2 templates, and configuration options. Colors, heading sizes, font stacks,
@@ -48,14 +47,26 @@ Home page, user guide, and API reference, from left to right.
 Installation
 ============
 
-Ensure your environment meets the `prerequisites`_. Then follow the
-`installation guidelines`_ for step-by-step instructions.
+Use Python 3.12 or newer and Sphinx 9.0 or newer. The ``html`` and ``dirhtml``
+builders are supported. The layout CSS uses native nesting, container queries,
+and container units; use a browser supporting those features.
 
 Quick install with pip:
 
 .. code-block:: bash
 
-   pip install sphinx-unbloated-theme
+   python -m pip install sphinx-unbloated-theme
+
+Published releases can predate the monorepo source. To use this checkout,
+prepare the adapter bundle and build a wheel from the monorepo root:
+
+.. code-block:: bash
+
+   npm ci --ignore-scripts
+   npm run build:adapters
+   python -m pip install build
+   python -m build packages/sphinx
+   python -m pip install packages/sphinx/dist/*.whl
 
 Then set the theme in your ``conf.py``:
 
@@ -66,19 +77,17 @@ Then set the theme in your ``conf.py``:
 Documentation
 =============
 
-The `official documentation`_ contains the following sections:
+The checked-in documentation contains these sections:
 
 - `Getting started`_. A brief overview of the theme, prerequisites, and
-  installation instructions to get your documentation site up and running
-  in minutes.
+  installation instructions.
 
 - `User guide`_. Detailed documentation of all configuration options,
   layout conventions, and CSS customisation hooks. This is the right place
   to learn how to tailor the theme to your project.
 
 - `API reference`_. Auto-generated reference for the public Python API
-  exposed by the theme package (Sphinx extension hooks, version helpers,
-  etc.).
+  exposed by the theme package.
 
 - `Examples`_. A gallery of self-contained scientific Python notebooks that
   demonstrate the theme rendering prose, code blocks, maths, figures, and
@@ -97,24 +106,77 @@ a vulnerability, use the contact in the `security policy`_.
 Development
 ===========
 
-GitHub Actions uses three workflows:
+Use the monorepo's ``.github/workflows/pull-request.yml``, ``night.yml``, and
+``release.yml``. Their adapter job stages bundles, builds and inspects
+distributions, installs the Sphinx wheel, and runs theme regressions on Ubuntu
+with Python 3.12. The job uploads artifacts; it does not publish this adapter
+to PyPI. Root release publication targets the core npm package.
 
-- ``ci_cd_pr.yml`` checks pull requests, builds wheels on Linux and Windows
-  with Python 3.12 and 3.13, builds the documentation, and runs the browser
-  tests. It uploads the HTML documentation and package distributions.
-- ``ci_cd_night.yml`` runs on pushes to ``main``, daily at 00:00 UTC, and
-  on manual runs. The manual inputs select documentation deployment and
-  tests. Documentation builds also run when tests need them.
-- ``ci_cd_release.yml`` runs on ``v*.*.*`` tags. After the checks pass, it
-  publishes the package to PyPI and GitHub and deploys stable and versioned
-  documentation. The tag must match the package version.
+The ``doc-html`` tox environment builds this adapter's notebook documentation.
+The root Hugo documentation is a separate site. See the `contribution guide`_
+for working directories, dependencies, tests, and changelog fragments.
 
-Development and release documentation use ``WEBSITE_DEPLOY_KEY`` to publish
-to the ``gh-pages`` branch of ``jorgepiloto/website``.
+Source Map and API
+==================
 
-For PyPI releases, configure a `trusted publisher
-<https://docs.pypi.org/trusted-publishers/adding-a-publisher/>`_ for
-``ci_cd_release.yml`` and the ``release`` environment.
+``src/sphinx_unbloated_theme/__init__.py``
+    Registers the theme, core CSS, deferred browser scripts, and toctree-based
+    navigation. ``get_autoapi_templates_dir()`` returns the installed AutoAPI
+    template directory as a string without enabling the extension or writing
+    files. ``setup(app)`` is Sphinx's registration entry point and returns
+    version and parallel-safety metadata. Names beginning with ``_`` are
+    internal navigation helpers.
+
+``src/sphinx_unbloated_theme/theme/sphinx_unbloated_theme/``
+    Holds Jinja templates, theme options, layout CSS, fonts, and notices.
+    ``static/js/autoapi.js`` enhances direct summary panels into keyboard tabs;
+    without scripts all groups remain visible. ``static/js/version-switcher.js``
+    loads the configured version feed, uses literal labels, validates same-origin
+    destinations, and hides the selector on invalid or failed feeds.
+
+``hatch_build.py``
+    Requires generated CSS, provenance, and license files before wheel or source
+    builds. ``validate_core_bundle(root)`` checks the recorded digest without
+    changing files. The root adapter checker additionally compares the bundle
+    with the current core build.
+
+``doc/source/conf.py``
+    Configures AutoAPI and notebook documentation. It stages examples with
+    exclusive file creation and tracks its copies for cleanup. After successful
+    HTML or directory-HTML builds, it copies scripts and asks Quarto to render
+    notebook PDFs. Failures and other builders skip exports; cleanup runs before
+    exporters. Missing Quarto logs a warning and leaves PDF downloads unavailable;
+    a failed Quarto render propagates an error.
+
+``examples/``
+    Scientific demonstrations executed by the documentation build. They use
+    NumPy and Matplotlib and have top-level calculations, plots, and output.
+    Importing them executes that work. Treat them as notebook sources rather
+    than a validated numerical API.
+
+``tests/``
+    Python builder regressions and imported Playwright, Puppeteer, and Backstop
+    suites. The root ``tests/adapter-browser`` suite exercises a small consumer
+    with the real core bundle. The package-local npm build is legacy tooling
+    that minifies authored CSS in place; monorepo staging does not need it.
+
+Configuration Contract
+======================
+
+``project``, ``site_description``, and navigation labels are plain text escaped
+by templates. ``footer_text`` accepts trusted HTML; do not pass untrusted text
+as HTML. Configure optional social destinations and ``versions_url`` through
+``html_theme_options``; omitted destinations are hidden. The `configuration
+reference <doc/source/user-guide/configuration.rst>`_ lists all options.
+
+Navigation follows Sphinx toctrees, including descendants outside a section's
+directory. Set ``html_baseurl`` with the deployment prefix and add
+``html_additional_pages = {"404": "404.html"}`` for the hosted error page.
+Its issue link appears only for an HTTPS GitHub repository destination.
+
+Known version-selection, header, prose-link, and print acceptance work is recorded
+in the monorepo's ``ROADMAP.md``. Do not infer complete browser or print coverage
+from a successful Sphinx build.
 
 Troubleshooting
 ===============
@@ -147,19 +209,15 @@ The changelog tracks notable changes for each release of the Sphinx Unbloated
 Theme. To view the full history, see the `changelog file`_ in the repository.
 
 
-.. _prerequisites: https://jorgemartinez.space/projects/sphinx-unbloated-theme/version/stable/getting-started/prerequisites.html
-.. _installation guidelines: https://jorgemartinez.space/projects/sphinx-unbloated-theme/version/stable/getting-started/installation.html
+.. _getting started: doc/source/getting-started.rst
+.. _user guide: doc/source/user-guide.rst
+.. _api reference: doc/source/api-reference.rst
+.. _examples: doc/source/examples.rst
+.. _changelog: doc/source/changelog.rst
 
-.. _official documentation: https://jorgemartinez.space/projects/sphinx-unbloated-theme/version/stable/
-.. _getting started: https://jorgemartinez.space/projects/sphinx-unbloated-theme/version/stable/getting-started.html
-.. _user guide: https://jorgemartinez.space/projects/sphinx-unbloated-theme/version/stable/user-guide.html
-.. _api reference: https://jorgemartinez.space/projects/sphinx-unbloated-theme/version/stable/api-reference.html
-.. _examples: https://jorgemartinez.space/projects/sphinx-unbloated-theme/version/stable/examples.html
-.. _changelog: https://jorgemartinez.space/projects/sphinx-unbloated-theme/version/stable/changelog.html
-
-.. _project repository: https://github.com/jorgemartinez/sphinx-unbloated-theme
-.. _contribution guide: https://github.com/jorgemartinez/sphinx-unbloated-theme/blob/main/CONTRIBUTING.md
-.. _code of conduct: https://github.com/jorgemartinez/sphinx-unbloated-theme/blob/main/CODE_OF_CONDUCT.md
-.. _security policy: https://github.com/jorgemartinez/sphinx-unbloated-theme/blob/main/SECURITY.md
-.. _LICENSE: https://github.com/jorgemartinez/sphinx-unbloated-theme/blob/main/LICENSE
-.. _changelog file: https://github.com/jorgemartinez/sphinx-unbloated-theme/blob/main/doc/source/changelog.rst
+.. _project repository: https://github.com/jorgepiloto/unbloated
+.. _contribution guide: https://github.com/jorgepiloto/unbloated/blob/main/packages/sphinx/CONTRIBUTING.md
+.. _code of conduct: https://github.com/jorgepiloto/unbloated/blob/main/packages/sphinx/CODE_OF_CONDUCT.md
+.. _security policy: https://github.com/jorgepiloto/unbloated/blob/main/packages/sphinx/SECURITY.md
+.. _LICENSE: https://github.com/jorgepiloto/unbloated/blob/main/packages/sphinx/LICENSE
+.. _changelog file: https://github.com/jorgepiloto/unbloated/blob/main/packages/sphinx/doc/source/changelog.rst

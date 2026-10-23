@@ -75,7 +75,7 @@ separately before publication.
 
 ### F30: Update Sphinx Contributor Instructions
 
-- [ ] P2: Replace standalone-repository commands with explicit monorepo working directories.
+- [x] P2: Replace standalone-repository commands with explicit monorepo working directories.
 
 Evidence: `packages/sphinx/CONTRIBUTING.md:9-17,44-61,97-106` gives root-relative
 Python commands and old source paths. Python metadata lives in
@@ -266,7 +266,7 @@ source is introduced.
 
 ### F09: Apply Discoverability Flags Consistently
 
-- [ ] P2: Define and enforce private/noindex behavior across generated outputs,
+- [x] P2: Define and enforce private/noindex behavior across generated outputs,
       including translated sitemap alternates.
 
 Evidence: `packages/hugo/layouts/_default/index.json:1-5` indexes all regular
@@ -342,7 +342,7 @@ link and repository URLs with trailing slashes produce the intended destination.
 
 ### F18: Support the Declared Hugo Locale API Range
 
-- [ ] P2: Make locale resolution build throughout the declared Hugo range.
+- [x] P2: Make locale resolution build throughout the declared Hugo range.
 
 Evidence: `packages/hugo/layouts/partials/seo.html:119,174,192` uses
 `.Site.LanguageCode`, which Hugo 0.167.0 warns is deprecated.
@@ -643,7 +643,7 @@ fallbacks, and repeated print transitions with persistent browser regressions.
 
 ### F36: Skip Sphinx Exports After Failed Builds
 
-- [ ] P2: Guard notebook/script copying and PDF generation by build outcome
+- [x] P2: Guard notebook/script copying and PDF generation by build outcome
       and supported builder, while keeping cleanup unconditional.
 
 Evidence: `packages/sphinx/doc/source/conf.py:205-245` does not inspect the
@@ -694,3 +694,38 @@ without installed package metadata. This is a validation limit, not a confirmed
 repository defect. Hugo semantic reproductions bypassed stylesheet processing;
 the Quarto checks used fixture CSS. Minimum generator versions, complete notebook
 builds, and the full PDF pipeline remain unverified by this follow-up.
+
+## Current Implementation Verification: 2026-10-23
+
+This section supersedes the earlier verification limits only for the checks
+listed here. UI fixes and browser acceptance checks remain open pending the
+required anti-slop mode selection.
+
+- F09: Sitemap alternates now reuse the discovery predicate. Persistent
+  multilingual regressions exclude private and noindex translations as both
+  primary URLs and alternate destinations while retaining public translations.
+- F18: The language partial now returns once, after selecting the supported
+  API. The same real-core consumer regressions pass on Hugo Extended 0.144.1,
+  0.154.5, and 0.167.0, including French locale and Arabic RTL metadata.
+  Older Hugo fixtures use a local PostCSS CLI discoverable through npm.
+- F30: Replayed the documented root setup, editable installation, adapter
+  preparation, Python tests, distribution build, and Twine commands in a fresh
+  temporary checkout with new environments and network access. The documented
+  `tox -e doc-html` also passes, including notebook execution and all three
+  Quarto PDF exports. Shared formatters and linters now exclude generated
+  Sphinx documentation and tox environments.
+- F36: Both export hooks return before doing work on a failed build or a
+  builder other than `html` or `dirhtml`. Hook regressions cover successful
+  HTML builders, failures, unsupported builders, and cleanup before PDF export
+  errors. Contributor documentation describes the export contract.
+
+Additional checks passed: 24 Node tests, 13 Sphinx Python tests on Sphinx 9.0.0
+and Python 3.12, seven adapter tests including real package builders, six Python
+bundle tests, all four archive inspections, Sphinx wheel/source metadata,
+formatting, JavaScript/CSS/ownership lint, deterministic builds, and a fresh
+dependency audit with zero reported vulnerabilities. The full notebook
+documentation build used Sphinx 9.1.1 and Quarto 1.11.5.
+
+Remaining confirmed tasks: F02, F03, F07, F11, F12, F22, F23, F24, F28, F29,
+and F32-F35. Their unchecked boxes remain the source of truth; this work does
+not certify a release or the broader assessment-only recommendations.

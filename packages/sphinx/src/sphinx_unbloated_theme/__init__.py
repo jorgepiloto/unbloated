@@ -10,6 +10,7 @@ __version__ = "1.1.dev0"
 """Current version of the Sphinx Unbloated Theme."""
 
 THEME_PATH = Path(__file__).parent / "theme" / "sphinx_unbloated_theme"
+"""Installed theme directory containing templates, static assets, and options."""
 
 
 def get_autoapi_templates_dir():
@@ -19,6 +20,11 @@ def get_autoapi_templates_dir():
     -------
     str
         Absolute directory path for Sphinx's ``autoapi_template_dir`` setting.
+
+    Notes
+    -----
+    This helper performs no filesystem writes and does not enable AutoAPI.
+    Install and configure ``sphinx-autoapi`` separately in the consuming project.
     """
     return str(THEME_PATH / "_templates" / "autoapi")
 
@@ -223,6 +229,12 @@ def setup(app):
     -------
     dict
         Extension metadata with the version and parallel build safety flags.
+
+    Notes
+    -----
+    Registers the core CSS before adapter styles, deferred AutoAPI and version
+    scripts, and the page-context hook. Sphinx calls this entry point; consumers
+    normally select ``html_theme`` rather than calling it themselves.
     """
     app.add_html_theme("sphinx_unbloated_theme", THEME_PATH)
     app.add_css_file("css/unbloat.css", priority=100)

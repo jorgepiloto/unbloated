@@ -6,9 +6,11 @@ import { extname, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { docsArtifact } from "./docs-artifact.mjs";
 
-/** Create a static handler for a previously built documentation artifact.
+/**
+ * Create a static handler without opening a listener or rebuilding the artifact.
+ * Translate malformed URLs, missing paths, and read errors to HTTP responses.
  * @param {{directory: URL, prefix: string}} artifact Directory and URL prefix.
- * @returns {function} HTTP request handler; reads only files from the artifact.
+ * @returns {import("node:http").RequestListener} GET/HEAD handler for trusted local output.
  */
 export function documentationHandler({ directory, prefix }) {
   const root = fileURLToPath(directory);

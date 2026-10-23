@@ -1,10 +1,13 @@
 // SPDX-License-Identifier: LGPL-3.0-only
+/** Stage or verify exact core bundles for the three CSS adapters. */
 import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { checkAdapterStyles } from "./adapter-styles.mjs";
 
+/** Checkout root used for source, bundle, and license paths. @type {URL} */
 export const root = new URL("../", import.meta.url);
+/** Adapter names mapped to asset directories relative to the checkout root. */
 export const adapters = {
   sphinx:
     "packages/sphinx/src/sphinx_unbloated_theme/theme/sphinx_unbloated_theme/static/css/",
@@ -14,8 +17,10 @@ export const adapters = {
 
 /**
  * Bundle the core build unchanged, or reject missing, stale, or modified bundles.
+ * Check style ownership before writing. Check mode reads without updating assets.
  * @param {{directory?: URL, check?: boolean}} [options] Checkout and check mode.
  * @returns {Promise<void>}
+ * @throws {Error} On missing sources, invalid adapter styles, stale bytes, or I/O errors.
  */
 export async function prepareAdapters({
   directory = root,

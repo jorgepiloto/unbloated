@@ -1,3 +1,4 @@
+/** Populate #version-switcher from its JSON feed; reject cross-origin destinations. */
 document.addEventListener("DOMContentLoaded", function () {
   const select = document.getElementById("version-switcher");
   if (!select) return;

@@ -33,7 +33,7 @@
     <loc>{{ .Permalink }}</loc>{{ if not $lastmod.IsZero }}
     <lastmod>{{ safeHTML ( $lastmod.Format "2006-01-02T15:04:05-07:00" ) }}</lastmod>{{ end }}
     <changefreq>{{ $freq }}</changefreq>
-    <priority>{{ $prio }}</priority>{{ if .IsTranslated }}{{ range .Translations }}
+    <priority>{{ $prio }}</priority>{{ if .IsTranslated }}{{ range (partial "discoverable-pages.html" .Translations) }}
     <xhtml:link
                 rel="alternate"
                 hreflang="{{ (partial "language.html" .Language).locale }}"

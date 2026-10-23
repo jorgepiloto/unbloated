@@ -8,7 +8,7 @@ equations and theorem numbering, code listings, and tables.
 
 Install TeX Live 2023 or newer, or a corresponding MacTeX distribution, with
 LuaLaTeX and `latexmk`. A minimal TeX installation needs `fontspec`, Latin Modern
-fonts, `geometry`, `microtype`, `ragged2e`, `amsmath`, `amsfonts`, `amsthm`, `graphicx`,
+fonts, `iftex`, `geometry`, `microtype`, `ragged2e`, `amsmath`, `amssymb`, `amsfonts`, `amsthm`, `graphicx`,
 `booktabs`, `listings`, and `hyperref`, including their dependencies.
 
 From `packages/latex`, run:
@@ -97,6 +97,13 @@ The class uses black text and TeX-distributed fonts rather than a separate
 theme palette.
 
 ## Checks and Build Limits
+
+The source is [unbloated-book.cls](unbloated-book.cls). It passes options to
+the standard `book` class, rejects engines other than LuaLaTeX, and loads the
+packages and defaults described above. Chapter sources live under
+`example/chapters/`; [example/book.tex](example/book.tex) is the entry document.
+[tests/options.tex](tests/options.tex) exercises alternate book options, and
+[tests/check.sh](tests/check.sh) runs the compilation checks below.
 
 From `packages/latex`, run:
 

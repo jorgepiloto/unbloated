@@ -66,6 +66,15 @@ and documented classes as the public interface. Changes to those names require
 a migration note. Record intentional visual changes in the changelog and
 inspect the reference page on desktop and mobile.
 
+Keep documentation beside the contract it describes. Use JSDoc for JavaScript
+module APIs and NumPy-style docstrings for Python APIs, including caller inputs,
+results, side effects, and meaningful errors. Comments should explain constraints
+and decisions rather than restating code. Keep JSON schema explanations in the
+token reference, named shortcode inputs in the Hugo guide, and installation and
+configuration in each package guide. Preserve third-party text and attribution.
+The directory guides in [src](src/README.md), [scripts](scripts/README.md), and
+[packages](packages/README.md) link these references together.
+
 Documentation uses Hugo and the generated library stylesheet. Install the
 pinned Hugo version as shown in
 [Documentation Prerequisites](docs/content/getting-started/prerequisites.md), then run

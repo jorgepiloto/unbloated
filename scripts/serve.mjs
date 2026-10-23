@@ -18,11 +18,12 @@ const routes = new Map([
   ]),
 ]);
 
-// Support only GET and HEAD for the allowlisted routes. Apply restrictive headers
-// to successful and rejected requests; the preview page does not need scripts.
-/** Respond to a preview request, including malformed URLs, without escaping errors.
+/**
+ * Serve allowlisted GET/HEAD requests with restrictive headers, without opening a socket.
+ * Return HTTP 400 for malformed URLs, 404 for rejected routes, and 500 for failed reads.
  * @param {import("node:http").IncomingMessage} request Incoming request.
  * @param {import("node:http").ServerResponse} response Outgoing response.
+ * @returns {Promise<void>} Completes after writing the response.
  */
 export async function handlePreviewRequest(request, response) {
   const headers = {

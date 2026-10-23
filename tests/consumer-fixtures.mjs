@@ -15,7 +15,11 @@ export const hugo =
     : "hugo");
 
 /** Build a real prefixed Hugo consumer with literal text, flags, and shortcodes. */
-export async function buildHugo(directory, binary = hugo) {
+export async function buildHugo(
+  directory,
+  binary = hugo,
+  { multilingual = false } = {},
+) {
   await cp(
     join(checkout, "packages/hugo"),
     join(directory, "themes/unbloated"),
@@ -27,8 +31,8 @@ export async function buildHugo(directory, binary = hugo) {
     await readFile(join(checkout, "dist/unbloat.css")),
   );
   const { stdout: version } = await execFile(binary, ["version"]);
-  const localeKey =
-    Number(/v0\.(\d+)/.exec(version)[1]) >= 158 ? "locale" : "languageCode";
+  const modernLocale = Number(/v0\.(\d+)/.exec(version)[1]) >= 158;
+  const localeKey = modernLocale ? "locale" : "languageCode";
   await writeFile(
     join(directory, "hugo.toml"),
     `baseURL = 'https://example.org/prefix/'
@@ -52,6 +56,19 @@ pageRef = '/posts'
 [[menus.main]]
 name = 'À propos'
 pageRef = '/about'
+${
+  multilingual
+    ? `
+[languages.fr]
+${localeKey} = 'fr-FR'
+[languages.en]
+${localeKey} = 'en-US'
+[languages.ar]
+${localeKey} = 'ar-EG'
+${modernLocale ? "direction" : "languageDirection"} = 'rtl'
+`
+    : ""
+}
 `,
   );
   for (const [name, content] of Object.entries({
@@ -90,6 +107,22 @@ categories: [topic]
     await mkdir(join(file, ".."), { recursive: true });
     await writeFile(file, content);
   }
+  if (multilingual) {
+    for (const [name, flags] of Object.entries({
+      "public.fr.md": "",
+      "public.en.md": "",
+      "private.fr.md": "private: true",
+      "private.en.md": "",
+      "noindex.fr.md": "noindex: true",
+      "noindex.en.md": "",
+      "direction.ar.md": "",
+    })) {
+      await writeFile(
+        join(directory, "content", name),
+        `---\ntitle: Translation\n${flags}\n---\nTranslated content.\n`,
+      );
+    }
+  }
   // This consumer uses PostCSS's pinned parser without plugins. Hugo calls its
   // CLI over stdin; keeping the runner here avoids another package dependency.
   const bin = join(directory, "bin");
@@ -118,6 +151,8 @@ process.stdout.write(result.css);
 `,
   );
   await chmod(join(bin, "postcss"), 0o755);
+  await mkdir(join(directory, "node_modules/.bin"), { recursive: true });
+  await cp(join(bin, "postcss"), join(directory, "node_modules/.bin/postcss"));
   const result = await execFile(
     binary,
     [
@@ -127,7 +162,10 @@ process.stdout.write(result.css);
       join(directory, "public"),
       "--panicOnWarning",
     ],
-    { env: { ...process.env, PATH: `${bin}:${process.env.PATH}` } },
+    {
+      cwd: directory,
+      env: { ...process.env, PATH: `${bin}:${process.env.PATH}` },
+    },
   );
   return { output: join(directory, "public"), ...result };
 }

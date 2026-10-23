@@ -1,3 +1,4 @@
+/** Enhance AutoAPI summary panels with rubric-labelled tabs and roving keyboard focus. */
 document.addEventListener("DOMContentLoaded", function () {
   document
     .querySelectorAll(".autoapi-summary")

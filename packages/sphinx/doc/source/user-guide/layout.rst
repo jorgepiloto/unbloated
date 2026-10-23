@@ -11,7 +11,7 @@ It uses four HTML elements:
     Set ``site_description`` to add a description below it.
 
 ``<nav>``
-    Monospace buttons link to the top-level sections and the current section's
+    Styled native links lead to the top-level sections and the current section's
     child pages. They show white text on black when hovered or active.
 
 ``<main>``
@@ -24,10 +24,15 @@ It uses four HTML elements:
 Page Navigation
 ---------------
 
-A back button below the content links to the parent page. Top-level pages link
-back to Home. The button has a left arrow, a black border, and a gray shadow.
+A back link below the content leads to the parent page. Top-level pages link
+back to Home. The link has a left arrow, a black border, and a gray shadow.
 Hovering or focusing it with the keyboard switches to white text on black.
-On short pages, the content area expands to keep the button next to the footer.
+On short pages, the content area expands to keep the link next to the footer.
+
+Navigation follows toctree ancestry rather than directory names. Section pages
+show their child links after the title; descendant pages show the section and
+its children above the content. Each destination has one focusable link, with
+the current page marked by ``aria-current``. These links work without scripts.
 
 Table of Contents
 -----------------

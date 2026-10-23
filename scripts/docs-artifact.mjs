@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: LGPL-3.0-only
+/** Locate existing documentation output without invoking its source build. */
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 
-/** Read an existing artifact and infer its mount path from its core CSS URL.
+/**
+ * Read an existing artifact and infer its mount path from its core CSS URL.
  * DOCS_ARTIFACT_DIR selects the downloaded directory; no source is rebuilt.
- * @param {string} [artifactDirectory] Existing artifact directory path.
+ * @param {string} [artifactDirectory] Directory relative to cwd, defaulting to site.
  * @returns {Promise<{directory: URL, prefix: string}>} Directory and URL prefix.
  * @throws {Error} If the artifact is missing or has no built core stylesheet.
  */

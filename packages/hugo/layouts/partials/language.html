@@ -1,5 +1,7 @@
+{{- $language := dict -}}
 {{- if ge hugo.Version "0.158.0" -}}
-  {{- return (dict "locale" .Locale "direction" .Direction) -}}
+  {{- $language = dict "locale" .Locale "direction" .Direction -}}
 {{- else -}}
-  {{- return (dict "locale" (.LanguageCode | default .Lang) "direction" .LanguageDirection) -}}
+  {{- $language = dict "locale" (.LanguageCode | default .Lang) "direction" .LanguageDirection -}}
 {{- end -}}
+{{- return $language -}}

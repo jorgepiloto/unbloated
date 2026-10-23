@@ -5,7 +5,34 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 import { runInNewContext } from "node:vm";
-import { buildHugo } from "./consumer-fixtures.mjs";
+import { buildHugo, hugo } from "./consumer-fixtures.mjs";
+
+test("multilingual sitemaps exclude private and noindex alternate destinations and preserve locale direction", async (t) => {
+  const directory = await mkdtemp(join(tmpdir(), "unbloated-translations-"));
+  t.after(() => rm(directory, { recursive: true, force: true }));
+  const { output, stderr } = await buildHugo(directory, hugo, {
+    multilingual: true,
+  });
+  assert.doesNotMatch(stderr, /deprecated/i);
+  for (const path of ["sitemap.xml", "en/sitemap.xml", "ar/sitemap.xml"]) {
+    const sitemap = await readFile(join(output, path), "utf8");
+    assert.doesNotMatch(
+      sitemap,
+      /https:\/\/example.org\/prefix\/(?:private|noindex)\//,
+    );
+  }
+  const english = await readFile(join(output, "en/sitemap.xml"), "utf8");
+  assert.match(english, /href="https:\/\/example.org\/prefix\/public\/"/);
+  assert.match(english, /hreflang="fr-FR"/);
+  assert.match(english, /\/en\/private\//);
+  assert.match(english, /\/en\/noindex\//);
+  const arabic = await readFile(
+    join(output, "ar/direction/index.html"),
+    "utf8",
+  );
+  assert.match(arabic, /lang="ar-EG"/);
+  assert.match(arabic, /dir="rtl"/);
+});
 
 test("real Hugo output preserves discovery, years, locale, links, and shortcode data", async (t) => {
   const directory = await mkdtemp(join(tmpdir(), "unbloated-hugo-"));

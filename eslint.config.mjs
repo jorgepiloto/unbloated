@@ -16,6 +16,9 @@ export default defineConfig([
     "docs/resources/",
     ".venv*/",
     "packages/sphinx/tests/",
+    "packages/sphinx/.tox/",
+    "packages/sphinx/doc/_build/",
+    "packages/sphinx/dist/",
   ]),
   {
     files: ["**/*.{js,mjs,cjs}"],

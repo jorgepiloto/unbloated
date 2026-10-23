@@ -77,7 +77,8 @@ def isa_properties(altitudes_m: np.ndarray):
     Parameters
     ----------
     altitudes_m : numpy.ndarray
-        Geopotential altitudes in meters.
+        One-dimensional floating-point array of geopotential altitudes in meters,
+        from 0 through 86,000. The caller must supply this domain and dtype.
 
     Returns
     -------
@@ -89,6 +90,13 @@ def isa_properties(altitudes_m: np.ndarray):
         Air density in kg/m³.
     a : numpy.ndarray
         Speed of sound in m/s.
+
+    Notes
+    -----
+    Temperature and pressure arrays retain the input shape and dtype. Inputs are
+    not validated; altitudes above the last layer leave entries uninitialized.
+    The input array is not modified. This is a documentation demonstration,
+    not a validated numerical API.
 
     """
     T = np.empty_like(altitudes_m)

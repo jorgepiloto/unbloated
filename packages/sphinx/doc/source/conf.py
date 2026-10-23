@@ -132,9 +132,17 @@ def copy_examples_to_output_dir(app: sphinx.application.Sphinx, exception: Excep
     app : sphinx.application.Sphinx
         Sphinx application for this build.
     exception : Exception or None
-        Build exception, or None if the build succeeded. Unused by this hook.
+        Build exception, or None if the build succeeded.
+
+    Notes
+    -----
+    Only successful ``html`` and ``dirhtml`` builds receive script downloads.
+    Existing same-named output scripts are replaced; filesystem errors propagate.
 
     """
+    if exception is not None or app.builder.name not in {"html", "dirhtml"}:
+        return
+
     OUTPUT_EXAMPLES = pathlib.Path(app.outdir) / "examples"
     OUTPUT_EXAMPLES.mkdir(parents=True, exist_ok=True)
 
@@ -168,6 +176,17 @@ def copy_examples_files_to_source_dir(app: sphinx.application.Sphinx, config):
         Sphinx application for this build.
     config : sphinx.config.Config
         Build configuration. Unused, but required by the event signature.
+
+    Raises
+    ------
+    FileExistsError
+        A source destination already exists, including authored files, symlinks,
+        or copies left by an interrupted build.
+
+    Notes
+    -----
+    Only files created by this call are tracked for cleanup. On a copy error,
+    unchanged partial copies are removed before the error propagates.
 
     """
     source = pathlib.Path(app.srcdir) / "examples"
@@ -214,9 +233,23 @@ def render_examples_as_pdf(app: sphinx.application.Sphinx, exception: Exception)
     app : sphinx.application.Sphinx
         Sphinx application for this build.
     exception : Exception or None
-        Build exception, or None if the build succeeded. Unused by this hook.
+        Build exception, or None if the build succeeded.
+
+    Raises
+    ------
+    subprocess.CalledProcessError
+        Quarto starts but fails to render a notebook.
+
+    Notes
+    -----
+    Runs only after successful ``html`` or ``dirhtml`` builds. Existing output
+    notebooks are rendered in place. Missing Quarto logs a warning and skips
+    remaining PDFs; the notebook and script downloads remain available.
 
     """
+    if exception is not None or app.builder.name not in {"html", "dirhtml"}:
+        return
+
     try:
         RENDERED_EXAMPLES_DIRECTORY = pathlib.Path(app.outdir) / "examples"
         notebooks = list(RENDERED_EXAMPLES_DIRECTORY.glob("*.ipynb"))

@@ -8,7 +8,27 @@ from hatchling.builders.hooks.plugin.interface import BuildHookInterface
 
 
 def validate_core_bundle(root: Path) -> None:
-    """Reject missing generated assets or CSS that differs from its provenance."""
+    """Validate generated assets within a Sphinx package root without writing.
+
+    Parameters
+    ----------
+    root : pathlib.Path
+        Package directory containing ``pyproject.toml`` and ``src/``.
+
+    Raises
+    ------
+    RuntimeError
+        Required assets are missing or core name, version, or digest is invalid.
+    OSError
+        A bundle file cannot be read.
+    ValueError
+        The provenance cannot be decoded as JSON.
+
+    Notes
+    -----
+    The hook checks the recorded digest, not the monorepo's current core build.
+    Run ``npm run check:adapters`` to compare against that build before packaging.
+    """
     css_dir = root / "src/sphinx_unbloated_theme/theme/sphinx_unbloated_theme/static/css"
     required = [
         css_dir / "unbloat.css",
@@ -32,6 +52,21 @@ def validate_core_bundle(root: Path) -> None:
 
 
 class CustomBuildHook(BuildHookInterface):
+    """Require bundled CSS and provenance before either Hatch distribution build."""
+
     def initialize(self, version: str, build_data: dict[str, object]) -> None:
-        """Validate bundled assets for wheels and source distributions."""
+        """Validate bundles before Hatch builds a wheel or source distribution.
+
+        Parameters
+        ----------
+        version : str
+            Requested package version; required by Hatch's hook signature.
+        build_data : dict
+            Hatch build state. This validation hook does not modify it.
+
+        Raises
+        ------
+        RuntimeError
+            Required core assets or recorded provenance are invalid.
+        """
         validate_core_bundle(Path(self.root))

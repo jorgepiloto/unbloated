@@ -7,10 +7,7 @@
     "assets/",
     "layouts/",
     "static/",
-    "theme.toml",
-    "LICENSE",
-    "COPYING",
-    "NOTICE"
+    "theme.toml"
   ],
   "scripts": {
     "prepack": "node ../../scripts/adapters.mjs --check"

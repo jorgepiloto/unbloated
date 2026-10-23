@@ -59,6 +59,11 @@ The [documentation](https://jorgemartinez.space/projects/unbloated/version/stabl
 - [Release Setup](https://jorgemartinez.space/projects/unbloated/version/stable/releasing/): npm publishing, documentation
   deployment, and CI artifacts.
 
+For local source navigation, see [Core Sources](src/README.md),
+[Build and Verification Scripts](scripts/README.md), and
+[Platform Packages](packages/README.md). They describe file ownership, API
+contracts, commands, environment variables, and package-specific requirements.
+
 See [Preview the Documentation](https://jorgemartinez.space/projects/unbloated/version/stable/getting-started/installation/#preview-the-documentation)
 to build and serve the site locally. Package tarballs are available from
 successful [workflow runs](https://github.com/jorgepiloto/unbloated/actions);

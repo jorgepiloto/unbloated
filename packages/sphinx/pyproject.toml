@@ -66,11 +66,9 @@ packages = [ "src/sphinx_unbloated_theme" ]
 [tool.hatch.build.targets.sdist]
 include = [
   "src/",
-  "AUTHORS",
   "CHANGELOG.md",
   "CODE_OF_CONDUCT.md",
   "CONTRIBUTING.md",
-  "CONTRIBUTORS.md",
   "LICENSE",
   "README.rst",
   "SECURITY.md",

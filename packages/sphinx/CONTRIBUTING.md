@@ -50,6 +50,10 @@ its unchanged copies. Existing files and symlinks cause a collision error.
 After an interrupted build, inspect and remove leftover generated `.py` copies
 before retrying; authored files are preserved.
 
+Script downloads and notebook PDF exports run only after successful `html` or
+`dirhtml` builds. Failed builds and other builders skip both exports; source
+cleanup runs before export hooks, including when an exporter fails.
+
 Use Title Case headings and short paragraphs. Document Python APIs with
 NumPy-style docstrings. Theme description, project, and navigation labels are
 plain text; `footer_text` remains an explicitly trusted HTML option.

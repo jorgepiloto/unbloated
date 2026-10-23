@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+- Remove redundant top-level Hugo license copies and Sphinx author/contributor
+  lists; retain bundled license texts, attribution, and manifest author metadata.
+- Add source, script, and platform directory guides; document script APIs,
+  environment variables, shortcode inputs, and adapter build requirements.
+- Correct Sphinx monorepo workflow instructions and Quarto's math example.
+- Filter private and noindex translations from sitemap alternates and fix locale
+  partials on Hugo 0.144.1 and 0.154.5.
+- Skip Sphinx download exports after failed builds and for non-HTML builders.
+- Exclude generated Sphinx documentation and tox environments from shared linters.
 - Apply the 2026-10-23 roadmap fixes across core controls, Hugo, Sphinx, and Quarto.
 - Update PostCSS to 8.5.31 and correct npm project links.
 - Preserve authored Sphinx sources, literal labels, and notebook outputs; use native links.

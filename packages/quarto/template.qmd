@@ -14,7 +14,7 @@ format:
 
 More than a year ago, I finalized the style of my personal website. It took me
 several iterations. I had to re-learn HTML, CSS, and read lots of Hugo
-docuemntation. However, the effort was worth it. Nowadays, it is very easy for
+documentation. However, the effort was worth it. Nowadays, it is very easy for
 me to maintain my website.
 
 However, it contained some CSS bugs and the rendering in small screen media
@@ -34,7 +34,7 @@ website ships with. Enjoy!
 ## Paragraphs and emphasis
 
 Of course, writing content is a basic task when maintaining a website. This is
-a simple example on how a paragaph renders. In addition, emphasis elements such
+a simple example on how a paragraph renders. In addition, emphasis elements such
 as bold, and italic are shown.
 
 The emphasis, aka italics, with _asterisks_ or _underscores_.
@@ -93,9 +93,8 @@ Images keep aspect ratio and are always centered:
 
 ## Math
 
-Remember to use the `math: true` option in the post metadata to enable math
-rendering for the post. This prevents loading unnecessary CSS and JS if no
-mathematical content is expected.
+Quarto renders inline math between single dollar signs and display equations
+between double dollar signs. The following is a display equation.
 
 $$
 F(x) = \frac{1}{2 \pi i}\oint \frac{f(z)}{z - a} dz
