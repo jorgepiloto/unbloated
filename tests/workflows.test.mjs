@@ -62,6 +62,10 @@ for (const workflow of ["night", "pull-request", "release"]) {
       /test:docs|documentation-html|documentation-versioned/,
     );
     assert.match(job(source, "tests"), /npm run test:browser/);
+    const latex = job(source, "latex-book");
+    assert.match(latex, /npm run build:adapters/);
+    assert.match(latex, /npm run check:adapters/);
+    assert.match(latex, /node --test tests\/latex.integration.mjs/);
   });
 }
 

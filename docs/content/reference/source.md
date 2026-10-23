@@ -29,10 +29,11 @@ no build side effects; both default to this checkout and return `Promise<void>`.
 | `scripts/build.mjs`                  | Token validation, CSS and Sass generation, output checks, and reproducibility checks                  |
 | `scripts/serve.mjs`                  | Loopback reference server with fixed routes and restrictive response headers                          |
 | `scripts/docs.mjs`                   | Documentation asset preparation, verified Hugo setup, builds, and local servers                       |
+| `scripts/latex-tokens.mjs`           | Validated CSS-to-TeX token translation, length mapping, and core digest for the LaTeX adapter         |
 | `scripts/adapters.mjs`               | Exact adapter CSS, core provenance, and license staging/checking                                      |
 | `scripts/adapter-styles.mjs`         | Ownership validation for authored CSS, compiled SCSS, and template styles                             |
-| `scripts/pack-adapters.mjs`          | Verified wheel, source distribution, Quarto archive, and Hugo tarball creation                        |
-| `scripts/check-adapter-artifacts.py` | Read-only validation of core bytes, provenance, and licenses inside all four archives                 |
+| `scripts/pack-adapters.mjs`          | Verified wheel, source distribution, Quarto/LaTeX archives, and Hugo tarball creation                 |
+| `scripts/check-adapter-artifacts.py` | Read-only validation of core bytes, provenance, and licenses inside all five archives                 |
 | `scripts/docs-artifact.mjs`          | Existing static artifact directory and deployment-prefix discovery                                    |
 | `scripts/serve-docs.mjs`             | Loopback serving of an existing artifact without rebuilding it                                        |
 | `examples/index.html`                | Reference markup for manual inspection and library browser tests                                      |
@@ -55,7 +56,8 @@ unless the HTTP handler converts them into responses.
 | `prepareAdapters({ directory, check } = {})`      | Returns `Promise<void>`. Reads the current core build, validates adapter styles and references, and stages CSS/provenance/notices. `check: true` compares existing files without writing. |
 | `assertAdapterStyle(source, { from, core } = {})` | Returns `undefined` or throws a source-labelled PostCSS error. Rejects independent design values and core overrides. Optional built `core` text enables undefined-variable checks.        |
 | `checkAdapterStyles({ directory, core } = {})`    | Returns `Promise<void>`. Reads authored adapter styles, compiles SCSS in memory, and checks inline template declarations. It skips generated core copies and writes no sources.           |
-| `packAdapters({ directory } = {})`                | Returns `Promise<void>`. Checks bundles before invoking tar, npm, and Python. Writes four distributions to `.artifacts/`; a later failure can leave earlier archives in place.            |
+| `renderLatexTokens(css)`                          | Returns generated `unbloated-tokens.sty` as a string from the built core CSS. Validates the token block before emitting TeX. No filesystem side effects.                                  |
+| `packAdapters({ directory } = {})`                | Returns `Promise<void>`. Checks bundles before invoking tar, npm, and Python. Writes five distributions to `.artifacts/`; a later failure can leave earlier archives in place.            |
 
 The adapter `directory` arguments default to this checkout's root and accept
 directory URLs with trailing slashes. `adapters.mjs` also exports `root` and an
@@ -70,15 +72,16 @@ Python packaging runs from `packages/sphinx`. The archive checker uses only
 Python's standard library. It requires exactly one distribution of each supported
 type under `.artifacts/`; remove old versions before validating a new set.
 
-| Package           | Source and Consumer Contract                                                                                                                                                                                                                                                                             |
-| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/sphinx` | Python theme entry point, toctree navigation, Jinja templates, AutoAPI summaries, and version-feed enhancement. Requires Python 3.12 and Sphinx 9.0 or newer. `get_autoapi_templates_dir()` returns the installed template path; `setup(app)` registers the theme and returns Sphinx extension metadata. |
-| `packages/hugo`   | Go layouts, shortcodes, search, metadata, discovery rules, and CSS processing. Requires Hugo Extended 0.144.1 or newer and a host PostCSS toolchain. Its README lists site parameters, every shortcode input, and optional CDN scripts.                                                                  |
-| `packages/quarto` | Reveal.js format manifest, SCSS layout, native footer include, and a slide gallery. Its README covers local installation, generated assets, image limits, and output verification.                                                                                                                       |
-| `packages/latex`  | Standalone LuaLaTeX book class, example, and compilation checks. Its README documents TeX dependencies, inherited book options, theorem environments, listings, and build limits. It does not consume core tokens.                                                                                       |
+| Package           | Source and Consumer Contract                                                                                                                                                                                                                                                                                                                  |
+| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/sphinx` | Python theme entry point, toctree navigation, Jinja templates, AutoAPI summaries, and version-feed enhancement. Requires Python 3.12 and Sphinx 9.0 or newer. `get_autoapi_templates_dir()` returns the installed template path; `setup(app)` registers the theme and returns Sphinx extension metadata.                                      |
+| `packages/hugo`   | Go layouts, shortcodes, search, metadata, discovery rules, and CSS processing. Requires Hugo Extended 0.144.1 or newer and a host PostCSS toolchain. Its README lists site parameters, every shortcode input, and optional CDN scripts.                                                                                                       |
+| `packages/quarto` | Reveal.js format manifest, SCSS layout, native footer include, and a slide gallery. Its README covers local installation, generated assets, image limits, and output verification.                                                                                                                                                            |
+| `packages/latex`  | LuaLaTeX adapter with generated CSS-derived TeX styles, exact core CSS, provenance, licenses, an example, and compilation checks. Its README documents TeX dependencies, inherited book options, theorem environments, listings, and build limits. Its class applies translated core colors, typography, spacing, heading sizes, and borders. |
 
-The CSS adapters use generated core bundles; consuming Sphinx projects and slides
-do not need Node at runtime. Adapter versions remain independent from the core
+All adapters use generated core bundles; consuming projects do not need Node
+at runtime. LaTeX loads its generated TeX style, with mappings documented in
+its package guide. Adapter versions remain independent from the core
 version in provenance. The current Quarto archive filename uses the core version;
 read `_extension.yml` for its extension version. The monorepo workflows upload
 adapter packages without automatically publishing them to registries.
@@ -255,7 +258,7 @@ change the active tab. See [Tabs](../components/tabs.md) for the markup contract
 | `npm run check:adapters`                           | Exact CSS bytes, provenance, licenses, and known core references                             |
 | `npm run test:adapters`                            | Bundle contracts and real distribution builders in isolated fixtures                         |
 | `npm run pack:adapters`                            | Validated adapter archives in `.artifacts/`                                                  |
-| `python3 scripts/check-adapter-artifacts.py`       | Exact bundled bytes and metadata inside all four archives                                    |
+| `python3 scripts/check-adapter-artifacts.py`       | Exact bundled bytes and metadata inside all five archives                                    |
 | `npm run test:adapter-browser`                     | Generated Sphinx and Quarto consumers; requires their builders, staged bundles, and browsers |
 | `pre-commit run --all-files`                       | Commit-stage file, style, workflow, secret, and build checks                                 |
 | `pre-commit run --all-files --hook-stage pre-push` | Push-stage file checks and npm dependency audit                                              |

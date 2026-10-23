@@ -19,6 +19,13 @@ jobs:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "24"
+          package-manager-cache: false
+      - run: npm ci --ignore-scripts
+      - run: npm run build:adapters
+      - run: npm run check:adapters
       - name: Install TeX Live
         run: |
           sudo apt-get update -qq
@@ -27,6 +34,8 @@ jobs:
       - name: Compile and Check the Book
         working-directory: packages/latex
         run: bash tests/check.sh
+      - name: Test core CSS in isolated LaTeX consumers
+        run: node --test tests/latex.integration.mjs
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           name: unbloated-latex-example

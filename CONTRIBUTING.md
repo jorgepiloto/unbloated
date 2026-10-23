@@ -85,22 +85,26 @@ Document public inputs, return values, errors, and side effects in source
 comments. Update the [Source Reference](docs/content/reference/source.md), token table,
 and component examples when behavior changes. Run `npm run docs:build` and
 `npm run test:docs` before submitting documentation changes. CI runs both checks
-in each test job. Generated documentation assets and `site/` stay out of Git.
+in each `doc-build` job. Generated documentation assets and `site/` stay out of Git.
 
 The package includes full source and build instructions for its LGPLv3 license.
 Keep the license banner in distributed CSS and Sass files.
 
 ## Adapter Packages
 
-The standalone [LaTeX package](packages/latex/README.md) uses LuaLaTeX rather
-than the CSS adapter pipeline below. Run `bash tests/check.sh` from
-`packages/latex` to compile its example and check class options and engine
-errors. Keep generated PDFs and TeX auxiliary files in its ignored `build/`
-directory.
+The [LaTeX adapter](packages/latex/README.md) participates in the same staging,
+provenance, license, and packaging pipeline. Its generated `unbloated-tokens.sty`
+translates custom properties from the built core CSS to TeX. After staging,
+run `bash tests/check.sh` from `packages/latex` to compile its example and check
+class options and engine errors. From the repository root, run
+`node --test tests/latex.integration.mjs` to compile isolated consumers with
+default and modified CSS. These checks require LuaLaTeX. Keep PDFs and TeX
+auxiliary files in the ignored `build/` directory.
 
 The CSS library at the repository root owns the design values and shared
-semantic styles. `packages/sphinx`, `packages/quarto`, and `packages/hugo` own
-platform markup, navigation, slide geometry, and layout-specific spacing.
+semantic styles. The four platform packages own markup, navigation, slide or
+page geometry, and layout-specific spacing. LaTeX maps the core monospace family
+to Latin Modern Mono and core CSS units to TeX lengths.
 The imported Sphinx browser suites retain their existing test tooling rather
 than the core's ESLint configuration. Hugo's Go templates and Sphinx's Jinja
 templates are excluded from Prettier's HTML parser.
@@ -134,7 +138,8 @@ build and rendering check with the real core stylesheet.
 into each adapter, with its package name, version, SHA-256 digest, and license
 notices. Generated files stay out of Git. `check:adapters` compares every
 bundled asset with the current core build; it fails on missing, modified, or
-stale files. It also validates core variable references.
+stale files. It also validates core variable references and the generated TeX
+translation. LaTeX provenance includes `texSha256` alongside the CSS digest.
 
 `lint:adapters` parses authored CSS, compiled SCSS, and template style
 declarations. It rejects literal colors, independent font stacks, independent
@@ -143,8 +148,9 @@ values in the core; adapter-specific dimensions and widget sizing may remain
 local. This is an ownership check, not a general accessibility or CSS audit.
 
 `pack:adapters` refuses stale bundles and writes a Sphinx wheel and source
-distribution, Quarto extension archive, and Hugo npm tarball to `.artifacts/`.
-The artifact checker compares the files inside each archive with the core.
+distribution, Quarto extension archive, Hugo npm tarball, and LaTeX archive to
+`.artifacts/`. The artifact checker compares each bundled CSS file with the core
+and checks the LaTeX translation and its digest.
 The Sphinx build hook also rejects missing assets or a mismatched digest, so
 building a wheel directly cannot silently omit the core.
 

@@ -33,7 +33,10 @@ test("core changes invalidate every adapter until assets are rebuilt", async (t)
   await prepareAdapters({ directory });
   await writeFile(
     new URL("dist/unbloat.css", directory),
-    "/* Changed test fixture. */",
+    (await readFile(new URL("dist/unbloat.css", directory), "utf8")).replace(
+      "#000000",
+      "#111111",
+    ),
   );
   await assert.rejects(
     prepareAdapters({ directory, check: true }),

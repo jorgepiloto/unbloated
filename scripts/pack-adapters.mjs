@@ -9,7 +9,7 @@ import { prepareAdapters, root } from "./adapters.mjs";
 const execFile = promisify(execFileCallback);
 
 /**
- * Pack verified bundles into the Quarto archive, Hugo tarball, and Sphinx builds.
+ * Pack verified bundles into Quarto/LaTeX archives, Hugo tarball, and Sphinx builds.
  * Write to .artifacts/; failures can leave already-created archives in place.
  * PYTHON selects the builder executable; relative paths resolve in packages/sphinx.
  * @param {{directory?: URL}} [options] Checkout root.
@@ -31,6 +31,22 @@ export async function packAdapters({ directory = root } = {}) {
     "_extensions",
     "template.qmd",
     "README.md",
+  ]);
+  await execFile("tar", [
+    "-czf",
+    `${output}unbloated-latex-${version}.tar.gz`,
+    "-C",
+    fileURLToPath(new URL("packages/", directory)),
+    ...[
+      "unbloated-book.cls",
+      "unbloated-tokens.sty",
+      "unbloat.css",
+      "unbloated-core.json",
+      "licenses",
+      "README.md",
+      "example",
+      "tests",
+    ].map((name) => `latex/${name}`),
   ]);
   const args = ["pack", "--ignore-scripts", "--pack-destination", output];
   await execFile(

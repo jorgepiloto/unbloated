@@ -7,7 +7,12 @@ import tarfile
 import zipfile
 
 
-def check_files(files: dict[str, bytes], core: bytes, metadata: dict[str, str]) -> None:
+def check_files(
+    files: dict[str, bytes],
+    core: bytes,
+    metadata: dict[str, str],
+    latex_tokens: bytes | None = None,
+) -> None:
     """Compare one archive's bundle with the core without extracting files.
 
     Parameters
@@ -18,11 +23,13 @@ def check_files(files: dict[str, bytes], core: bytes, metadata: dict[str, str]) 
         Current complete core stylesheet.
     metadata : dict of str to str
         Expected core name, version, and SHA-256 digest.
+    latex_tokens : bytes, optional
+        Expected generated TeX package for a LaTeX distribution.
 
     Raises
     ------
     RuntimeError
-        The core bundle count or CSS, provenance, or license bytes differ.
+        The core bundle count or CSS, TeX, provenance, or license bytes differ.
     KeyError
         A required provenance or license member is missing.
     json.JSONDecodeError
@@ -39,7 +46,15 @@ def check_files(files: dict[str, bytes], core: bytes, metadata: dict[str, str]) 
     prefix = css_files[0].removesuffix("unbloat.css")
     if files[css_files[0]] != core:
         raise RuntimeError("Packaged CSS differs from the core build.")
-    if json.loads(files[prefix + "unbloated-core.json"]) != metadata:
+    expected = metadata
+    if latex_tokens is not None:
+        fingerprint = b"\\newcommand{\\UnbloatedCoreHash}{" + metadata["sha256"].encode("ascii") + b"}"
+        if fingerprint not in latex_tokens:
+            raise RuntimeError("TeX tokens were generated from different core CSS.")
+        if files[prefix + "unbloated-tokens.sty"] != latex_tokens:
+            raise RuntimeError("Packaged TeX tokens differ from the core translation.")
+        expected = {**metadata, "texSha256": hashlib.sha256(latex_tokens).hexdigest()}
+    if json.loads(files[prefix + "unbloated-core.json"]) != expected:
         raise RuntimeError("Packaged core provenance differs from the core build.")
     root = Path(__file__).resolve().parent.parent
     for name in ("LICENSE", "COPYING", "NOTICE"):
@@ -48,9 +63,9 @@ def check_files(files: dict[str, bytes], core: bytes, metadata: dict[str, str]) 
 
 
 def main() -> None:
-    """Inspect four distributions under this checkout's ``.artifacts/``.
+    """Inspect five distributions under this checkout's ``.artifacts/``.
 
-    Require exactly one wheel, source distribution, Quarto archive, and Hugo
+    Require exactly one wheel, source distribution, Quarto archive, LaTeX archive, and Hugo
     npm tarball. Compare each with ``dist/unbloat.css`` and print one verified
     filename per success. Missing or invalid archives, provenance, or source
     files raise an exception and produce a nonzero CLI exit status.
@@ -68,6 +83,7 @@ def main() -> None:
         "sphinx_unbloated_theme-*.tar.gz",
         "unbloated-quarto-*.tar.gz",
         "unbloated-hugo-theme-*.tgz",
+        "unbloated-latex-*.tar.gz",
     )
     for pattern in patterns:
         artifacts = list((root / ".artifacts").glob(pattern))
@@ -86,7 +102,10 @@ def main() -> None:
                         if stream is None:
                             raise RuntimeError(f"Cannot read {member.name}")
                         files[member.name] = stream.read()
-        check_files(files, core, metadata)
+        latex = None
+        if pattern.startswith("unbloated-latex-"):
+            latex = (root / "packages/latex/unbloated-tokens.sty").read_bytes()
+        check_files(files, core, metadata, latex)
         print(f"Verified {artifact.name}")
 
 

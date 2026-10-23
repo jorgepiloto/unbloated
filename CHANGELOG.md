@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Integrate the LaTeX adapter with core CSS-derived TeX styles, exact bundles,
+  provenance, license checks, distribution packaging, and consumer regressions.
 - Restore Sphinx prose-link decoration and reflow header controls at narrow widths.
 - Match documentation versions at URL boundaries and show unmatched pages honestly.
 - Print all documentation and AutoAPI tab content without changing screen selection.

@@ -7,6 +7,8 @@ fixed, and the ten acceptance checks pass within the browser coverage below.
 Completed task descriptions remain in Git; changes are recorded in
 [CHANGELOG.md](CHANGELOG.md). The [follow-up report](anti-slop/follow-up-001-2026-10-23.md)
 maps all fourteen finding IDs to their implementation and acceptance evidence.
+The [LaTeX integration report](anti-slop/follow-up-002-2026-10-23.md) records the
+shared-core adapter implementation and its checks.
 
 Preserve the grayscale palette, system monospace typography, square corners,
 low-specificity semantic CSS, and appearance-only core. Keep design values in
@@ -19,14 +21,15 @@ before publication.
 | Check                                                    | Result                                                                                                                                                    |
 | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Core build, adapter staging, ownership, lint, formatting | Pass.                                                                                                                                                     |
-| Node and adapter integration tests                       | 28 core/utility tests and 7 adapter tests pass.                                                                                                           |
-| Python regressions                                       | 13 Sphinx tests and 6 archive-validation tests pass.                                                                                                      |
+| Node and adapter integration tests                       | 34 core/utility tests and 7 adapter tests pass.                                                                                                           |
+| Python regressions                                       | 13 Sphinx tests and 7 archive-validation tests pass.                                                                                                      |
 | Core/Hugo browser checks                                 | 39 pass across Chromium, Firefox, and mobile Chromium; 3 existing mobile-only keyboard skips.                                                             |
 | Exact documentation artifacts                            | 11 Chromium checks pass for each stable and versioned deployment prefix; all 20 files in each artifact retain identical SHA-256 hashes across the checks. |
 | Sphinx/Quarto browser consumers                          | 5 Chromium checks pass, including HTML/dirhtml, 320 px, 200% text, keyboard interaction, and repeated print transitions.                                  |
 | Quarto compatibility                                     | Image and footer checks pass on 1.9.37 and 1.11.5, including generated PDFs.                                                                              |
+| LaTeX adapter                                            | Shared CSS translation, A4/Letter example checks, and 2 isolated consumers with default/modified core CSS pass.                                           |
 | Sphinx documentation                                     | Warning-as-error HTML build passes with notebook and PDF exports on Sphinx 9.1.1.                                                                         |
-| Distribution checks                                      | Four adapter archives pass bundle/license validation; Sphinx wheel and source distribution pass Twine validation.                                         |
+| Distribution checks                                      | Five adapter archives pass bundle/license validation; Sphinx wheel and source distribution pass Twine validation.                                         |
 
 ### Remaining Environment Verification
 

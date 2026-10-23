@@ -69,6 +69,29 @@ class CoreBundleTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "differs from the core build"):
             check_files(files, self.core, self.metadata)
 
+    def test_latex_artifact_retains_derived_tokens_and_both_digests(self):
+        files = {
+            f"latex/{path.relative_to(self.css_dir).as_posix()}": path.read_bytes()
+            for path in self.css_dir.rglob("*") if path.is_file()
+        }
+        tex = b"\\newcommand{\\UnbloatedCoreHash}{" + self.metadata["sha256"].encode() + b"}\n"
+        files["latex/unbloated-tokens.sty"] = tex
+        metadata = {**self.metadata, "texSha256": hashlib.sha256(tex).hexdigest()}
+        files["latex/unbloated-core.json"] = json.dumps(metadata).encode()
+        check_files(files, self.core, self.metadata, tex)
+        files["latex/unbloated-tokens.sty"] = b"modified"
+        with self.assertRaisesRegex(RuntimeError, "TeX tokens differ"):
+            check_files(files, self.core, self.metadata, tex)
+        files["latex/unbloated-tokens.sty"] = tex
+        files["latex/unbloated-core.json"] = json.dumps(self.metadata).encode()
+        with self.assertRaisesRegex(RuntimeError, "provenance differs"):
+            check_files(files, self.core, self.metadata, tex)
+        updated = self.core + b"changed"
+        files["latex/unbloat.css"] = updated
+        metadata = {**self.metadata, "sha256": hashlib.sha256(updated).hexdigest()}
+        with self.assertRaisesRegex(RuntimeError, "different core CSS"):
+            check_files(files, updated, metadata, tex)
+
 
 if __name__ == "__main__":
     unittest.main()

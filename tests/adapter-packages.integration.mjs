@@ -21,6 +21,13 @@ test("real package builders retain fixture CSS in every distribution", async (t)
     "packages/sphinx/LICENSE",
     "packages/sphinx/src/sphinx_unbloated_theme/__init__.py",
     "scripts/check-adapter-artifacts.py",
+    "packages/latex/unbloated-book.cls",
+    "packages/latex/README.md",
+    "packages/latex/example/book.tex",
+    "packages/latex/example/chapters/integration.tex",
+    "packages/latex/example/chapters/implementation.tex",
+    "packages/latex/tests/check.sh",
+    "packages/latex/tests/options.tex",
   ]) {
     const target = new URL(name, directory);
     await mkdir(new URL("./", target), { recursive: true });

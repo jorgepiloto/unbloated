@@ -36,14 +36,15 @@ assets and load it with a stylesheet link. To use the package before
 publication, [build and install a local tarball](https://jorgemartinez.space/projects/unbloated/version/stable/getting-started/installation/#build-a-local-package).
 
 The repository also contains adapters in `packages/sphinx`, `packages/quarto`,
-and `packages/hugo`. They bundle the core stylesheet at build time; consuming
-Sphinx projects and generated sites do not need Node.js at runtime. See
+`packages/hugo`, and `packages/latex`. They bundle the core stylesheet at build
+time; consuming projects do not need Node.js at runtime. The LaTeX adapter
+translates the built CSS tokens into a TeX style for its technical book class.
+See
 [Adapter Packages](CONTRIBUTING.md#adapter-packages) for builds and ownership
 rules, and the [Hugo adapter](packages/hugo/README.md) for website setup.
 
-[`packages/latex`](packages/latex/README.md) provides a standalone LuaLaTeX
-class for technical books. It uses TeX-distributed monospace fonts and doesn't
-yet consume the shared CSS design tokens.
+The [LaTeX adapter guide](packages/latex/README.md) documents CSS-to-TeX mappings,
+compilation, and installation from its packaged archive.
 
 ## Documentation
 

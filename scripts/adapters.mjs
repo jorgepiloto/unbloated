@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: LGPL-3.0-only
-/** Stage or verify exact core bundles for the three CSS adapters. */
+/** Stage or verify core bundles and the LaTeX translation of their CSS tokens. */
 import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { checkAdapterStyles } from "./adapter-styles.mjs";
+import { renderLatexTokens } from "./latex-tokens.mjs";
 
 /** Checkout root used for source, bundle, and license paths. @type {URL} */
 export const root = new URL("../", import.meta.url);
@@ -13,6 +14,7 @@ export const adapters = {
     "packages/sphinx/src/sphinx_unbloated_theme/theme/sphinx_unbloated_theme/static/css/",
   quarto: "packages/quarto/_extensions/unbloated/",
   hugo: "packages/hugo/assets/css/",
+  latex: "packages/latex/",
 };
 
 /**
@@ -31,26 +33,34 @@ export async function prepareAdapters({
   );
   const css = await readFile(new URL("dist/unbloat.css", directory));
   await checkAdapterStyles({ directory, core: css.toString("utf8") });
-  const metadata = `${JSON.stringify(
-    {
-      name: manifest.name,
-      version: manifest.version,
-      sha256: createHash("sha256").update(css).digest("hex"),
-    },
-    null,
-    2,
-  )}\n`;
+  const coreMetadata = {
+    name: manifest.name,
+    version: manifest.version,
+    sha256: createHash("sha256").update(css).digest("hex"),
+  };
+  const latex = Buffer.from(renderLatexTokens(css.toString("utf8")));
   const licenses = await Promise.all(
     ["LICENSE", "COPYING", "NOTICE"].map(async (name) => [
       name,
       await readFile(new URL(name, directory)),
     ]),
   );
-  for (const path of Object.values(adapters)) {
+  for (const [name, path] of Object.entries(adapters)) {
     const target = new URL(path, directory);
+    const metadata =
+      name === "latex"
+        ? {
+            ...coreMetadata,
+            texSha256: createHash("sha256").update(latex).digest("hex"),
+          }
+        : coreMetadata;
     const files = [
       ["unbloat.css", css],
-      ["unbloated-core.json", Buffer.from(metadata)],
+      [
+        "unbloated-core.json",
+        Buffer.from(`${JSON.stringify(metadata, null, 2)}\n`),
+      ],
+      ...(name === "latex" ? [["unbloated-tokens.sty", latex]] : []),
       ...licenses.map(([name, content]) => [
         `licenses/unbloated/${name}`,
         content,

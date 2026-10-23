@@ -11,9 +11,31 @@
 
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{book}}
 \ProcessOptions\relax
+% Core font sizes can be fractional; keep Computer Modern mathematics scalable.
+\RequirePackage{fix-cm}
 \LoadClass{book}
 
+\IfFileExists{unbloated-tokens.sty}{
+  \RequirePackage{unbloated-tokens}
+}{
+  \ClassError{unbloated-book}{Missing generated core tokens}
+    {Run npm run build:adapters, or install the complete LaTeX adapter archive.}
+  \expandafter\endinput
+}
+
+\newcommand{\unbloated@font}[2]{%
+  \setlength{\@tempdima}{\UnbloatedToken{#1}}%
+  \fontsize{\@tempdima}{\UnbloatedToken{#2}\@tempdima}\selectfont
+}
+\let\unbloated@normalsize\normalsize
+\renewcommand{\normalsize}{%
+  \unbloated@normalsize
+  \unbloated@font{font-size}{line-height-body}%
+}
+\normalsize
+
 \RequirePackage{fontspec}
+% Map the core's generic monospace family to a TeX-distributed OpenType font.
 \setmainfont{Latin Modern Mono}[
   Ligatures=TeX,
   BoldFont=lmmonolt10-bold.otf,
@@ -38,14 +60,50 @@
 ]{geometry}
 \RequirePackage{microtype}
 \RequirePackage{ragged2e}
-\setlength{\RaggedRightParindent}{\parindent}
+\setlength{\parindent}{0pt}
+\setlength{\RaggedRightParindent}{0pt}
+\setlength{\parskip}{\UnbloatedToken{space-3}}
 \AtBeginDocument{\RaggedRight}
+\AtBeginDocument{%
+  \pagecolor{unbloat-color-surface}%
+  \color{unbloat-color-text}%
+  \typeout{Unbloated core CSS SHA-256: \UnbloatedCoreHash}%
+}
 \RequirePackage{amsmath}
 \RequirePackage{amssymb}
 \RequirePackage{amsthm}
 \RequirePackage{graphicx}
 \RequirePackage{booktabs}
 \RequirePackage{listings}
+\RequirePackage{titlesec}
+
+\titleformat{\chapter}[display]
+  {\normalfont\bfseries\unbloated@font{heading-size-1}{line-height-heading}}
+  {\chaptertitlename\ \thechapter}{\UnbloatedToken{space-3}}{}
+\titlespacing*{\chapter}{0pt}{\UnbloatedToken{space-5}}{\UnbloatedToken{space-4}}
+\titleformat{\section}
+  {\normalfont\bfseries\unbloated@font{heading-size-2}{line-height-heading}}
+  {\thesection}{\UnbloatedToken{space-2}}{}
+\titleformat{\subsection}
+  {\normalfont\bfseries\unbloated@font{heading-size-3}{line-height-heading}}
+  {\thesubsection}{\UnbloatedToken{space-2}}{}
+\titleformat{\subsubsection}
+  {\normalfont\bfseries\unbloated@font{heading-size-4}{line-height-heading}}
+  {\thesubsubsection}{\UnbloatedToken{space-2}}{}
+\titleformat{\paragraph}[runin]
+  {\normalfont\bfseries\unbloated@font{heading-size-5}{line-height-heading}}
+  {\theparagraph}{\UnbloatedToken{space-2}}{}
+\titleformat{\subparagraph}[runin]
+  {\normalfont\bfseries\unbloated@font{heading-size-6}{line-height-heading}}
+  {\thesubparagraph}{\UnbloatedToken{space-2}}{}
+\titlespacing*{\section}{0pt}{\UnbloatedToken{space-4}}{\UnbloatedToken{space-2}}
+\titlespacing*{\subsection}{0pt}{\UnbloatedToken{space-4}}{\UnbloatedToken{space-2}}
+\titlespacing*{\subsubsection}{0pt}{\UnbloatedToken{space-4}}{\UnbloatedToken{space-2}}
+\titlespacing*{\paragraph}{0pt}{\UnbloatedToken{space-4}}{\UnbloatedToken{space-2}}
+\titlespacing*{\subparagraph}{0pt}{\UnbloatedToken{space-4}}{\UnbloatedToken{space-2}}
+\setlength{\tabcolsep}{\UnbloatedToken{space-2}}
+\setlength{\heavyrulewidth}{\UnbloatedToken{border-width}}
+\setlength{\lightrulewidth}{\UnbloatedToken{border-width}}
 
 \numberwithin{equation}{chapter}
 \newtheorem{theorem}{Theorem}[chapter]
@@ -60,12 +118,16 @@
 \newtheorem*{remark}{Remark}
 
 \lstset{
-  basicstyle=\small\ttfamily,
+  basicstyle=\normalsize\ttfamily,
   keywordstyle=\bfseries,
-  commentstyle=\itshape,
+  commentstyle=\itshape\color{unbloat-color-muted},
+  backgroundcolor=\color{unbloat-color-surface-muted},
+  rulecolor=\color{unbloat-color-border},
   numbers=left,
-  numberstyle=\scriptsize\ttfamily,
-  numbersep=8pt,
+  numberstyle=\scriptsize\ttfamily\color{unbloat-color-muted},
+  numbersep=\UnbloatedToken{space-2},
+  framesep=\UnbloatedToken{space-2},
+  framerule=\UnbloatedToken{border-width},
   frame=single,
   breaklines=true,
   columns=fullflexible,

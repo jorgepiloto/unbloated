@@ -23,3 +23,7 @@ packages/quarto/_extensions/unbloated/licenses/
 packages/sphinx/src/sphinx_unbloated_theme/theme/sphinx_unbloated_theme/static/css/unbloat.css
 packages/sphinx/src/sphinx_unbloated_theme/theme/sphinx_unbloated_theme/static/css/unbloated-core.json
 packages/sphinx/src/sphinx_unbloated_theme/theme/sphinx_unbloated_theme/static/css/licenses/
+packages/latex/unbloat.css
+packages/latex/unbloated-core.json
+packages/latex/unbloated-tokens.sty
+packages/latex/licenses/
