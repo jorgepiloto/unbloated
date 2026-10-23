@@ -40,7 +40,7 @@ to another executable path if needed. Documentation needs no Python environment.
 
 ## Run Checks
 
-Install pre-commit 4.6.2 and run `pre-commit install` to enable commit and push
+Install pre-commit 4.6.2 and run `npm run hooks:install` to enable commit and push
 checks. To run browser tests, download the browsers and their operating system
 dependencies:
 

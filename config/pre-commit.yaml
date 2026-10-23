@@ -41,7 +41,7 @@ repos:
     rev: 83d9cd684c87d95d656c1458ef04895a7f1cbd8e # v8.30.1
     hooks:
       - id: gitleaks
-        entry: gitleaks dir --config .gitleaks.toml --redact --no-banner --log-level error .
+        entry: gitleaks dir --config config/gitleaks.toml --redact --no-banner --log-level error .
         always_run: true
   - repo: local
     hooks:

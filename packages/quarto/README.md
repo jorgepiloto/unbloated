@@ -24,7 +24,7 @@ quarto add --no-prompt /path/to/unbloated/packages/quarto
 
 Use `format: unbloated-revealjs` in the document's YAML front matter.
 `npm run pack:adapters` creates a distributable extension archive in
-`.artifacts/`. It includes the core CSS, provenance, and license notices, so
+`.cache/artifacts/`. It includes the core CSS, provenance, and license notices, so
 rendering needs neither npm nor a CDN connection.
 
 ## Author Slides

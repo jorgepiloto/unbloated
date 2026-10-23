@@ -40,7 +40,7 @@ builds its assets, and sets `HUGO_THEMESDIR=theme-source/packages`.
 ## Distribution
 
 `npm run pack:adapters` from the repository root writes a Hugo npm tarball into
-`.artifacts/`. The archive contains layouts, assets, static scripts, the theme
+`.cache/artifacts/`. The archive contains layouts, assets, static scripts, the theme
 manifest, and license notices. It is not published automatically.
 
 Extract the archive's `package/` directory into a site's `themes/hugo/` to use

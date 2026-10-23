@@ -10,7 +10,7 @@ const execFile = promisify(execFileCallback);
 
 /**
  * Pack verified bundles into Quarto/LaTeX archives, Hugo tarball, and Sphinx builds.
- * Write to .artifacts/; failures can leave already-created archives in place.
+ * Write to .cache/artifacts/; failures can leave already-created archives in place.
  * PYTHON selects the builder executable; relative paths resolve in packages/sphinx.
  * @param {{directory?: URL}} [options] Checkout root.
  * @returns {Promise<void>}
@@ -21,7 +21,7 @@ export async function packAdapters({ directory = root } = {}) {
   const { version } = JSON.parse(
     await readFile(new URL("package.json", directory)),
   );
-  const output = fileURLToPath(new URL(".artifacts/", directory));
+  const output = fileURLToPath(new URL(".cache/artifacts/", directory));
   await mkdir(output, { recursive: true });
   await execFile("tar", [
     "-czf",

@@ -32,7 +32,7 @@ LaTeX also receives `unbloated-tokens.sty`, generated from the built CSS custom
 properties. Its provenance adds `texSha256` for that translation.
 
 Generated bundles stay out of Git. Rebuild them after core changes; packaging
-rejects missing or stale bytes. `.artifacts/` contains the Sphinx wheel and source
+rejects missing or stale bytes. `.cache/artifacts/` contains the Sphinx wheel and source
 distribution, Hugo npm tarball, Quarto archive, and LaTeX archive. The archive's Quarto filename
 currently uses the core version; the extension version remains in `_extension.yml`.
 The workflows upload adapter distributions without publishing them to package

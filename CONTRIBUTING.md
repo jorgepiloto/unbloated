@@ -8,7 +8,7 @@ Install pre-commit and enable the commit and push hooks:
 
 ```sh
 python -m pip install pre-commit==4.6.2
-pre-commit install
+npm run hooks:install
 ```
 
 The hooks use the project's installed Prettier, ESLint, and Biome versions.
@@ -18,18 +18,23 @@ in isolated environments. The first run downloads those tools.
 Commit hooks check file names, whitespace, file size, JSON, YAML, TOML,
 JavaScript, CSS, workflow syntax and security, secrets, and reproducible builds.
 Gitleaks scans the current files with redacted output. It excludes dependencies
-and generated files through `.gitleaks.toml`; it does not scan Git history.
+and generated files through `config/gitleaks.toml`; it does not scan Git history.
 Push hooks also run `npm audit --audit-level=high`, which needs registry access.
 
 Run both hook stages locally:
 
 ```sh
-pre-commit run --all-files --show-diff-on-failure
-pre-commit run --all-files --hook-stage pre-push
+npm run hooks:check
+pre-commit run --config config/pre-commit.yaml --all-files --hook-stage pre-push
 ```
 
-Update remote hooks with `pre-commit autoupdate --freeze` to keep their
+Update remote hooks with `pre-commit autoupdate --config config/pre-commit.yaml --freeze` to keep their
 revisions pinned to commit hashes.
+
+After updating a checkout that used the old root hook config, run
+`npm run hooks:install` again to update the installed Git hooks. See
+[Tool Configuration](config/README.md) for config locations, editor setup, and
+generated output paths.
 
 Pull-request and Release workflows run the commit hooks in `code-style` and
 check workflow security with zizmor in `actions-style`. The local zizmor hook
@@ -211,7 +216,7 @@ local. This is an ownership check, not a general accessibility or CSS audit.
 
 `pack:adapters` refuses stale bundles and writes a Sphinx wheel and source
 distribution, Quarto extension archive, Hugo npm tarball, and LaTeX archive to
-`.artifacts/`. The artifact checker compares each bundled CSS file with the core
+`.cache/artifacts/`. The artifact checker compares each bundled CSS file with the core
 and checks the LaTeX translation and its digest.
 The Sphinx build hook also rejects missing assets or a mismatched digest, so
 building a wheel directly cannot silently omit the core.

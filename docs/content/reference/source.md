@@ -64,7 +64,7 @@ unless the HTTP handler converts them into responses.
 | `assertAdapterStyle(source, { from, core } = {})` | Returns `undefined` or throws a source-labelled PostCSS error. Rejects independent design values and core overrides. Optional built `core` text enables undefined-variable checks.        |
 | `checkAdapterStyles({ directory, core } = {})`    | Returns `Promise<void>`. Reads authored adapter styles, compiles SCSS in memory, and checks inline template declarations. It skips generated core copies and writes no sources.           |
 | `renderLatexTokens(css)`                          | Returns generated `unbloated-tokens.sty` as a string from the built core CSS. Validates the token block before emitting TeX. No filesystem side effects.                                  |
-| `packAdapters({ directory } = {})`                | Returns `Promise<void>`. Checks bundles before invoking tar, npm, and Python. Writes five distributions to `.artifacts/`; a later failure can leave earlier archives in place.            |
+| `packAdapters({ directory } = {})`                | Returns `Promise<void>`. Checks bundles before invoking tar, npm, and Python. Writes five distributions to `.cache/artifacts/`; a later failure can leave earlier archives in place.      |
 
 The adapter `directory` arguments default to this checkout's root and accept
 directory URLs with trailing slashes. `adapters.mjs` also exports `root` and an
@@ -77,7 +77,7 @@ contracts.
 `PYTHON` to an absolute executable path when selecting a virtual environment:
 Python packaging runs from `packages/sphinx`. The archive checker uses only
 Python's standard library. It requires exactly one distribution of each supported
-type under `.artifacts/`; remove old versions before validating a new set.
+type under `.cache/artifacts/`; remove old versions before validating a new set.
 
 | Package           | Source and Consumer Contract                                                                                                                                                                                                                                                                                                                  |
 | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -228,23 +228,28 @@ change the active tab. See [Tabs](../components/tabs.md) for the markup contract
 
 ## Repository Configuration
 
+Optional tool configs live in `config/`. See the repository's
+`config/README.md` for hook migration, formatter editor settings, and output
+locations. Discovery files remain at the root for their tools and editors.
+
 | File                                            | Responsibility                                                                               |
 | ----------------------------------------------- | -------------------------------------------------------------------------------------------- |
 | `package.json` and `package-lock.json`          | Package exports, published files, npm scripts, and exact development dependencies            |
 | `.npmrc` and `.nvmrc`                           | Disable implicit lifecycle scripts and select the Node.js development version                |
-| `.editorconfig` and `.prettierignore`           | Text conventions and formatter exclusions                                                    |
+| `.editorconfig` and `config/prettierignore`     | Text conventions and formatter exclusions                                                    |
 | `eslint.config.mjs`                             | Recommended JavaScript checks, Node and browser globals, and dynamic-evaluation restrictions |
 | `biome.json`                                    | CSS lint rules for shared styles, examples, and documentation adapters                       |
-| `.pre-commit-config.yaml`                       | File checks, formatting, linting, workflow validation, secret scans, builds, and push audits |
-| `.gitleaks.toml`                                | Default secret-detection rules with dependency and generated-output exclusions               |
+| `config/pre-commit.yaml`                        | File checks, formatting, linting, workflow validation, secret scans, builds, and push audits |
+| `config/gitleaks.toml`                          | Default secret-detection rules with dependency and generated-output exclusions               |
 | `docs/hugo.yaml`                                | Hugo settings, output, trusted HTML, and code rendering                                      |
 | `docs/data/social.json`                         | Header social destinations, accessible names, and local icon selection                       |
 | `docs/static/licenses/font-awesome-LICENSE.txt` | Attribution and license for the documentation icons                                          |
 | `docs/data/navigation.yaml`                     | Main sections, overview pages, and child-page links                                          |
 | `docs/hugo-lock.json`                           | Hugo version and verified Linux release archive checksums                                    |
-| `playwright.config.mjs`                         | Library browser projects and the reference server                                            |
-| `playwright.docs.config.mjs`                    | Documentation browser checks and the built-site preview server                               |
-| `playwright.adapters.config.mjs`                | Real-core Sphinx and Quarto consumer browser checks                                          |
+| `config/playwright/browser.config.mjs`          | Library browser projects and the reference server                                            |
+| `config/playwright/docs.config.mjs`             | Documentation browser checks and the built-site preview server                               |
+| `config/playwright/adapters.config.mjs`         | Real-core Sphinx and Quarto consumer browser checks                                          |
+| `config/playwright/projects.config.mjs`         | Published project documentation artifacts and their preview server                           |
 | `.github/workflows/`                            | Pull-request checks, daily checks, package builds, and tag-triggered publication             |
 | `.github/dependabot.yml`                        | Dependency updates and seven-day cooldowns                                                   |
 | `.github/CODEOWNERS`                            | Repository review ownership                                                                  |
@@ -252,23 +257,23 @@ change the active tab. See [Tabs](../components/tabs.md) for the markup contract
 
 ## Verification
 
-| Command                                            | What It Checks                                                                               |
-| -------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| `npm run format:check`                             | Prettier formatting for supported source and documentation files                             |
-| `npm run lint`                                     | JavaScript and CSS linting, including documentation adapters                                 |
-| `npm run build:check`                              | Token validation and independent reproducible builds                                         |
-| `npm test`                                         | Build output, unsafe tokens, source-only packaging, exports, licenses, Sass, and contrast    |
-| `npm run test:browser`                             | Library styling, focus, native controls, mobile layout, and reference-server routes          |
-| `npm run docs:build`                               | Hugo build, warnings, navigation, internal links, and heading references                     |
-| `npm run test:docs`                                | Built-site navigation, live component styles, tab keyboard behavior, and narrow layouts      |
-| `npm run build:adapters`                           | Core generation, ownership validation, and adapter staging                                   |
-| `npm run check:adapters`                           | Exact CSS bytes, provenance, licenses, and known core references                             |
-| `npm run test:adapters`                            | Bundle contracts and real distribution builders in isolated fixtures                         |
-| `npm run pack:adapters`                            | Validated adapter archives in `.artifacts/`                                                  |
-| `python3 scripts/check-adapter-artifacts.py`       | Exact bundled bytes and metadata inside all five archives                                    |
-| `npm run test:adapter-browser`                     | Generated Sphinx and Quarto consumers; requires their builders, staged bundles, and browsers |
-| `pre-commit run --all-files`                       | Commit-stage file, style, workflow, secret, and build checks                                 |
-| `pre-commit run --all-files --hook-stage pre-push` | Push-stage file checks and npm dependency audit                                              |
+| Command                                                                            | What It Checks                                                                               |
+| ---------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `npm run format:check`                                                             | Prettier formatting for supported source and documentation files                             |
+| `npm run lint`                                                                     | JavaScript and CSS linting, including documentation adapters                                 |
+| `npm run build:check`                                                              | Token validation and independent reproducible builds                                         |
+| `npm test`                                                                         | Build output, unsafe tokens, source-only packaging, exports, licenses, Sass, and contrast    |
+| `npm run test:browser`                                                             | Library styling, focus, native controls, mobile layout, and reference-server routes          |
+| `npm run docs:build`                                                               | Hugo build, warnings, navigation, internal links, and heading references                     |
+| `npm run test:docs`                                                                | Built-site navigation, live component styles, tab keyboard behavior, and narrow layouts      |
+| `npm run build:adapters`                                                           | Core generation, ownership validation, and adapter staging                                   |
+| `npm run check:adapters`                                                           | Exact CSS bytes, provenance, licenses, and known core references                             |
+| `npm run test:adapters`                                                            | Bundle contracts and real distribution builders in isolated fixtures                         |
+| `npm run pack:adapters`                                                            | Validated adapter archives in `.cache/artifacts/`                                            |
+| `python3 scripts/check-adapter-artifacts.py`                                       | Exact bundled bytes and metadata inside all five archives                                    |
+| `npm run test:adapter-browser`                                                     | Generated Sphinx and Quarto consumers; requires their builders, staged bundles, and browsers |
+| `npm run hooks:check`                                                              | Commit-stage file, style, workflow, secret, and build checks                                 |
+| `pre-commit run --config config/pre-commit.yaml --all-files --hook-stage pre-push` | Push-stage file checks and npm dependency audit                                              |
 
 Library unit tests live in `tests/build.test.mjs` and `tests/package.test.mjs`.
 Library browser tests live in `tests/browser/style.spec.mjs`. Documentation

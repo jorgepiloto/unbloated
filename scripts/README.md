@@ -13,7 +13,7 @@ tools, not browser runtime dependencies.
 | [adapters.mjs](adapters.mjs)                             | `npm run build:adapters` and `npm run check:adapters`             | The npm build first generates the core. The script stages exact CSS, provenance, and license files; `--check` compares without writing.                                                                   |
 | [latex-tokens.mjs](latex-tokens.mjs)                     | Imported by adapter staging                                       | Translates validated `:root` properties from built CSS into `unbloated-tokens.sty`; maps CSS units to TeX lengths without writing files.                                                                  |
 | [adapter-styles.mjs](adapter-styles.mjs)                 | `npm run lint:adapters`                                           | Requires the root PostCSS and Sass dependencies. Parses authored adapter CSS, compiled SCSS, and template styles without modifying them.                                                                  |
-| [pack-adapters.mjs](pack-adapters.mjs)                   | `npm run pack:adapters`                                           | Requires staged bundles, npm, tar, and Python with the `build` frontend. Writes five distributions to `.artifacts/`.                                                                                      |
+| [pack-adapters.mjs](pack-adapters.mjs)                   | `npm run pack:adapters`                                           | Requires staged bundles, npm, tar, and Python with the `build` frontend. Writes five distributions to `.cache/artifacts/`.                                                                                |
 | [check-adapter-artifacts.py](check-adapter-artifacts.py) | `python3 scripts/check-adapter-artifacts.py`                      | Uses Python's standard library to inspect all five archives without extracting them to disk. Requires current `dist/` and exactly one artifact of each supported type.                                    |
 | [serve.mjs](serve.mjs)                                   | `npm run preview`                                                 | Serves the reference page and generated CSS at `http://127.0.0.1:4173`; build the core first.                                                                                                             |
 | [project-docs.mjs](project-docs.mjs)                     | `npm run docs:project -- <project> <dev\|stable>`                 | Builds one allowlisted project at its own URL prefix under `.cache/project-docs/`; Sphinx requires its native documentation tools. Writes `documentation.json` for exact-artifact serving and validation. |
@@ -29,7 +29,7 @@ ports are fixed; stop a conflicting listener before starting them.
 Scripts fail with a nonzero exit status for rejected input, missing files, failed
 validation, or failed subprocesses. Packaging validates bundles before writing
 archives but is not transactional: a later failure can leave earlier artifacts.
-Remove obsolete distributions from `.artifacts/` when versions change so the
+Remove obsolete distributions from `.cache/artifacts/` when versions change so the
 archive checker can require one of each type.
 
 ## Environment and Paths

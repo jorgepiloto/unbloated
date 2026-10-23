@@ -63,7 +63,7 @@ def check_files(
 
 
 def main() -> None:
-    """Inspect five distributions under this checkout's ``.artifacts/``.
+    """Inspect five distributions under this checkout's ``.cache/artifacts/``.
 
     Require exactly one wheel, source distribution, Quarto archive, LaTeX archive, and Hugo
     npm tarball. Compare each with ``dist/unbloat.css`` and print one verified
@@ -86,7 +86,7 @@ def main() -> None:
         "unbloated-latex-*.tar.gz",
     )
     for pattern in patterns:
-        artifacts = list((root / ".artifacts").glob(pattern))
+        artifacts = list((root / ".cache/artifacts").glob(pattern))
         if len(artifacts) != 1:
             raise RuntimeError(f"Expected one {pattern}, found {artifacts}")
         artifact = artifacts[0]

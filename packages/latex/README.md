@@ -38,7 +38,7 @@ directory so the example's chapter paths resolve.
 
 ## Start a Book
 
-`npm run pack:adapters` produces `.artifacts/unbloated-latex-<core-version>.tar.gz`.
+`npm run pack:adapters` produces `.cache/artifacts/unbloated-latex-<core-version>.tar.gz`.
 The archive contains a `latex/` directory with the class, generated
 `unbloated-tokens.sty`, exact `unbloat.css`, provenance, license notices, examples,
 and checks. Extract it and place your main `.tex` file in that directory, or
