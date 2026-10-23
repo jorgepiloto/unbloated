@@ -1,11 +1,12 @@
 # Development Roadmap
 
-This roadmap records the HTML, CSS, JavaScript, Sphinx, Hugo, and Quarto review
-from 2026-10-23. It covers 31 confirmed findings: one P1, 27 P2, and three P3.
-Source changes now cover all 31 findings. Checked tasks have passed the available
-acceptance regressions. Unchecked tasks have implementations and regression
-fixtures, with outstanding verification listed below; they are not closed or
-approved for release.
+This roadmap records the HTML, CSS, JavaScript, Python/Sphinx, Hugo, Quarto, and
+LaTeX reviews from 2026-10-23. The original review identified 31 findings:
+one P1, 27 P2, and three P3. Implementation work addressed those original
+findings, but the follow-up review reopened F09, raised F18 to P2, and added
+F32-F36. Checked tasks have passed the available acceptance regressions.
+Unchecked tasks include both missing implementations and outstanding
+verification; they are not closed or approved for release.
 
 P1 means a high-priority blocker. P2 means a correctness, accessibility,
 integration, or verification defect. P3 means a lower-impact defect. Finding
@@ -265,14 +266,24 @@ source is introduced.
 
 ### F09: Apply Discoverability Flags Consistently
 
-- [x] P2: Define and enforce private/noindex behavior across generated outputs.
+- [ ] P2: Define and enforce private/noindex behavior across generated outputs,
+      including translated sitemap alternates.
 
 Evidence: `packages/hugo/layouts/_default/index.json:1-5` indexes all regular
 pages, including a fixture excluded by private/noindex flags from the sitemap.
 
+Reopened by the follow-up review: `packages/hugo/layouts/sitemap.xml:36-41`
+iterates unfiltered `.Translations`, even though primary entries are filtered.
+On Hugo 0.167.0, a public English page advertises its private French translation
+through a sitemap alternate while the French search index correctly excludes it.
+Reuse the existing discoverability predicate for alternate destinations.
+
 Done when the documented search, feed, collection, and sitemap rules agree.
 Make clear that these flags are not access control; genuinely nonpublic
-content must stay out of the public build.
+content must stay out of the public build. Add multilingual regressions for
+both `private` and `noindex`: excluded translations must occur neither as
+primary sitemap URLs nor as alternate destinations, while public translations
+remain discoverable.
 
 ### F14: Separate Plotly Container IDs From Data URLs
 
@@ -329,16 +340,23 @@ GitHub URL whose `theme.toml:10` default is empty.
 Done when default options do not advertise a dead documentation-host `/issues`
 link and repository URLs with trailing slashes produce the intended destination.
 
-### F18: Migrate Hugo Locale APIs Deliberately
+### F18: Support the Declared Hugo Locale API Range
 
-- [ ] P3: Replace deprecated SEO locale access within an explicit supported Hugo range.
+- [ ] P2: Make locale resolution build throughout the declared Hugo range.
 
 Evidence: `packages/hugo/layouts/partials/seo.html:119,174,192` uses
 `.Site.LanguageCode`, which Hugo 0.167.0 warns is deprecated.
 
+The follow-up review reproduced a supported-version build failure in the
+implemented compatibility partial, `packages/hugo/layouts/partials/language.html:1-5`.
+Hugo Extended 0.154.5 fails with `wrong number of args for return: want 0 got 1`;
+the same isolated consumer passes on 0.167.0. Refactor the version-dependent
+return handling rather than treating this only as an unverified minimum version.
+
 Done when the minimum and pinned/current supported versions build without
 relevant warnings. Account for the theme's declared 0.144.1 minimum before
-adopting an API available only in newer releases.
+adopting an API available only in newer releases. Run the same locale fixture
+on 0.144.1, 0.154.5, and 0.167.0, asserting configured language and direction.
 
 ## Workstream 4: Make Verification Match Published Behavior
 
@@ -413,7 +431,7 @@ into unconditional defects or dependencies.
 | Navigation and localization | Evaluate skip/bypass navigation, translatable labels, RTL, and page-title hierarchy. Multiple `h1` elements alone do not establish a WCAG failure.                                                                                |
 | Browser support             | Document adapter requirements for native CSS nesting, container units, and container queries. Add representative adapter fixtures before expanding browser matrices.                                                              |
 | Runtime support             | Exercise the advertised Node >=22.14.0 floor, Python 3.12 floor, and minimum Sphinx/Hugo versions, or narrow the declarations. Grammar checks and one installed runtime are not a compatibility matrix.                           |
-| Print and motion            | Check reduced motion, forced colors, adapter print styles, and AutoAPI summary tabs. Inactive summary panels remained hidden under print emulation in an independent fixture; validate complete output before choosing a fix.     |
+| Print and motion            | Check reduced motion, forced colors, and adapter print styles. Inactive documentation and AutoAPI tab content is now tracked as confirmed F35; retain the wider print assessment without duplicating that task.                   |
 | Optional downloads          | Verify advertised PDF files exist when Quarto/TinyTeX are unavailable. Either hide unavailable formats or require generation for deployed documentation.                                                                          |
 | Images and visualizations   | Make leading-image loading priority contextual, reserve dimensions where possible, and provide meaningful alternatives for charts/3D content. Test figure, column, and stretch structures.                                        |
 | Third-party scripts         | Pin supported Plotly/Three.js versions, avoid duplicate classic/module loads, and document offline/CSP behavior. The core's no-remote-assets contract does not describe every adapter.                                            |
@@ -479,9 +497,10 @@ regression coverage and directly related documentation updates. Record changed
 behavior and compatibility decisions. Keep unresolved access/environment limits
 explicit instead of reporting an all-green release.
 
-Implementation handoff: the 31 source fixes preserve the core/adapters architecture.
-Nineteen tasks are checked; twelve retain explicit verification work below.
-The follow-up assessment remains separate from the confirmed findings.
+Original implementation handoff: the 31 source fixes preserved the core/adapters
+architecture. At that handoff, nineteen tasks were checked and twelve retained
+explicit verification work below. The later follow-up reopened F09 and added
+F32-F36. Assessment-only recommendations remain separate from confirmed tasks.
 
 ## Implementation and Verification — 2026-10-23
 
@@ -529,7 +548,7 @@ Outstanding acceptance checks (implementations are present):
 | F07      | Confirm persistent prose-link decoration in the generated browser fixture.                                                                                                                                           |
 | F11      | Run checked/unchecked/mixed keyboard and forced-color browser checks.                                                                                                                                                |
 | F12      | Run enhanced tabs and both disabled/failed-script fallback cases.                                                                                                                                                    |
-| F18      | Build the same Hugo fixture on the declared 0.144.1 floor as well as the passing pinned 0.167.0 version.                                                                                                             |
+| F18      | Fix the confirmed Hugo 0.154.5 locale-partial failure, then build the same fixture on 0.144.1, 0.154.5, and pinned 0.167.0.                                                                                          |
 | F22      | Run keyboard/focus rendering checks for styled Sphinx links; generated markup and current-page semantics already pass.                                                                                               |
 | F24      | Run the image-plus-text/table/caption output visibility fixture.                                                                                                                                                     |
 | F28, F29 | Check Quarto image sizes and footer behavior through slide transitions, scroll view, and print/PDF with supported generator versions. HTML generation passes; native lifecycle differences remain version-dependent. |
@@ -548,3 +567,130 @@ Run `npm run test:browser`, build documentation then run `npm run test:docs`, an
 run `PYTHON=.venv/bin/python npm run test:adapter-browser` in an environment that
 supports browsers and local listeners. See the contribution guides for builder
 installation. Do not treat the remaining unchecked criteria as an all-green release.
+
+## Follow-Up Language and Publishing Review: 2026-10-23
+
+The user approved these roadmap additions after the read-only review.
+No implementation fixes were made in this follow-up. F09 is reopened and F18
+is raised to P2 based on new reproductions recorded in their existing sections.
+F32-F36 are new tasks; F35 replaces the specific tab-print concern previously
+listed only as an assessment.
+
+### F32: Keep Sphinx Prose Links Discoverable
+
+- [ ] P2: Restore persistent non-color distinction for inline Sphinx links.
+
+Evidence: `packages/sphinx/src/sphinx_unbloated_theme/theme/sphinx_unbloated_theme/static/css/style.css:398-410`
+removes link decoration and assigns the ordinary text-color alias. With the
+real core stylesheet and Sphinx adapter CSS, Chromium reports black text,
+black links, and `text-decoration-line: none`. F07 addresses the corresponding
+Hugo behavior, not this separate Sphinx rule.
+
+Done when generated Sphinx prose links remain identifiable without hover.
+Scope decoration-free rules to explicit navigation or button components,
+preserve visible keyboard focus, and cover unvisited and visited links in
+browser regressions. Do not infer a WCAG color-only failure from this alone.
+
+### F33: Give Sphinx Header Controls Usable Narrow Layouts
+
+- [ ] P2: Reflow configured social links, search, and version selection instead
+      of compressing them into one row.
+
+Evidence: the Sphinx theme's `static/css/style.css:90-182` keeps header
+components in a nonwrapping flex row. A 320-pixel Chromium fixture using the
+real core and adapter styles, five social links, search, and version selection
+reduced the search input's outer width to approximately 14.8 pixels and the
+version selector to 43.2 pixels. No page overflow occurred, so a scrollbar-only
+assertion misses the unusable input.
+
+Done when these controls remain readable, operable, and visibly focused at
+narrow widths and enlarged text sizes. Cover minimal and fully configured
+headers, long project/version labels, and keyboard navigation. Assert usable
+control geometry as well as containment; preserve native controls and labels.
+
+### F34: Match Documentation Versions at URL Boundaries
+
+- [ ] P3: Resolve the current version by deliberate URL/path boundaries and
+      represent an unmatched current page honestly.
+
+Evidence: the Sphinx theme's `static/js/version-switcher.js:29-47` matches
+`window.location.href.startsWith(url)` and otherwise leaves the first appended
+option selected. In Chromium, a page at `/v10/guide` selects a feed entry for
+`/v1` when its URL lacks a trailing slash.
+
+Done when `/v1` cannot match `/v10`, the longest genuinely matching version root
+wins, and unmatched pages do not silently claim the first version. Define and
+test directory roots with and without trailing slashes, exact-page destinations,
+query/fragment handling, feed ordering, and missing-current-version behavior.
+Preserve the existing same-origin URL validation and literal label insertion.
+
+### F35: Print All Documentation Tab Content
+
+- [ ] P2: Include inactive documentation and AutoAPI panels in print output,
+      with their headings, without changing screen selection.
+
+Evidence: `docs/assets/tabs.js:18-24,43-48` and the Sphinx theme's
+`static/js/autoapi.js:28,33-38` hide inactive panels and, for AutoAPI, rubric
+headings. Chromium print emulation with the real core and each adapter's CSS
+keeps the second panel at `display: none`. Neither stylesheet restores the
+omitted content for print.
+
+Done when every panel and its identifying heading appears in print/PDF
+regardless of the tab selected on screen. Hide print-useless tab controls,
+retain content order, and restore the original screen state after printing.
+Cover both tab implementations, alternate active tabs, disabled-script
+fallbacks, and repeated print transitions with persistent browser regressions.
+
+### F36: Skip Sphinx Exports After Failed Builds
+
+- [ ] P2: Guard notebook/script copying and PDF generation by build outcome
+      and supported builder, while keeping cleanup unconditional.
+
+Evidence: `packages/sphinx/doc/source/conf.py:205-245` does not inspect the
+build exception before PDF rendering; `:267-269` registers export hooks
+unconditionally. Script copying at `:126-154` also ignores build failure.
+Calling the actual PDF hook with an existing output notebook and
+`RuntimeError("original Sphinx build failure")` still invokes
+`quarto render ... --to pdf` in a mocked-subprocess reproduction.
+
+Failed builds can therefore export stale output and start unnecessary work;
+a secondary export failure can obscure the original error. This is separate
+from deciding whether optional PDF downloads must exist.
+
+Done when failed builds invoke neither exporter, non-HTML builders do not
+generate HTML-download artifacts, and cleanup still runs on every outcome.
+Retain intended exports for successful supported HTML builds. Add hook-level
+regressions for success, failure, unsupported builders, and export errors
+without requiring a full PDF toolchain for every unit test.
+
+### Preserved Practices and Follow-Up Evidence
+
+The review retained semantic HTML, low-specificity shared CSS, native controls,
+script-independent content, safe text insertion, deterministic assets, and
+adapter provenance/license checks. It does not propose a framework migration,
+new runtime dependency, visual redesign, or mandatory theme toggle.
+
+No new confirmed Quarto or LaTeX defect was found. Quarto local extension
+installation and Reveal.js rendering passed on 1.11.5 with isolated fixture CSS.
+The LaTeX checks passed in a disposable copy with TeX Live 2025,
+LuaHBTeX 1.22.0, and latexmk 4.87, including both document fixtures and
+wrong-engine rejection. These results do not certify PDF accessibility or
+close the existing Quarto real-core, footer, or print acceptance work.
+
+The follow-up passed ten core/search regressions after generating `dist/`,
+nine real-core Chromium reference checks, and six Python bundle regressions.
+Small browser fixtures reproduced F32-F35. These reproductions are review
+evidence, not persistent regression coverage or completed fixes.
+
+Unlike the earlier restricted environment, this invocation could launch
+Chromium and the loopback reference server. That does not close every prior
+browser task: the exact deployment artifact, full adapter suites, other browser
+engines, assistive technology, and complete zoom/touch matrices were not rerun.
+The local npm entry point invoked Windows CMD against a WSL UNC working
+directory and failed; direct Linux Node commands ran the selected checks.
+
+The Python review's full Sphinx builder tests could not discover the theme
+without installed package metadata. This is a validation limit, not a confirmed
+repository defect. Hugo semantic reproductions bypassed stylesheet processing;
+the Quarto checks used fixture CSS. Minimum generator versions, complete notebook
+builds, and the full PDF pipeline remain unverified by this follow-up.
