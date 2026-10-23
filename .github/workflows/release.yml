@@ -59,7 +59,7 @@ jobs:
         run: bash tests/check.sh
       - name: Test core CSS in isolated LaTeX consumers
         run: node --test tests/latex.integration.mjs
-      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: unbloated-latex-example
           path: packages/latex/build/*.pdf
@@ -93,7 +93,7 @@ jobs:
           python -m unittest discover -s packages/sphinx/tests/python
       - run: npx --no-install playwright install --with-deps chromium
       - run: npm run test:adapter-browser -- --grep Sphinx
-      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: adapter-packages
           path: .cache/artifacts/
@@ -150,7 +150,7 @@ jobs:
       - run: npm run test:project-docs
       - if: matrix.project == 'unbloated'
         run: npm run test:docs
-      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: documentation-${{ matrix.project }}-stable
           path: .cache/project-docs/${{ matrix.project }}/stable
@@ -170,7 +170,7 @@ jobs:
           npm run test:project-docs
           npm run test:docs
       - if: matrix.project == 'unbloated'
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: documentation-unbloated-versioned
           path: .cache/project-docs/unbloated/${{ env.RELEASE_VERSION }}
@@ -232,7 +232,7 @@ jobs:
       - run: npm ci --ignore-scripts
       - run: npm run build
       - run: npm pack --ignore-scripts
-      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: release-package
           path: unbloated-*.tgz
