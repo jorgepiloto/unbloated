@@ -95,9 +95,8 @@ jobs:
           if-no-files-found: error
           retention-days: 30
   doc-build:
-    needs: code-style
     runs-on: ubuntu-24.04
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
@@ -108,7 +107,9 @@ jobs:
           package-manager-cache: false
       - run: npm ci --ignore-scripts
       - run: npm run docs:setup
+      - run: npx --no-install playwright install --with-deps chromium
       - run: npm run docs:build -- --baseURL "$DOCUMENTATION_BASE_URL"
+      - run: npm run test:docs
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           name: documentation-html
@@ -120,6 +121,7 @@ jobs:
           printf 'RELEASE_VERSION=%s\n' "$(node -p 'JSON.parse(require("node:fs").readFileSync("package.json", "utf8")).version')" >> "$GITHUB_ENV"
       - name: Build versioned documentation
         run: npm run docs:build -- --baseURL "${DOCUMENTATION_ROOT_URL}/version/${RELEASE_VERSION}/"
+      - run: npm run test:docs
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           name: documentation-versioned
@@ -127,7 +129,6 @@ jobs:
           if-no-files-found: error
           retention-days: 30
   tests:
-    needs: [code-style, doc-build]
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
@@ -157,23 +158,19 @@ jobs:
       - run: npx --no-install playwright install --with-deps chromium firefox webkit
       - run: npm run build:check
       - run: npm test
-      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
-        with:
-          name: documentation-html
-          path: site
-      - run: npm run test:docs
-      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
-        with:
-          name: documentation-versioned
-          path: site-versioned
-      - run: npm run test:docs
-        env:
-          DOCS_ARTIFACT_DIR: site-versioned
       - run: npm run test:browser
       - run: npm audit signatures
       - run: npm audit --audit-level=high
   build-library:
-    needs: [tests, actions-style, latex-book, adapter-packages]
+    needs:
+      [
+        code-style,
+        actions-style,
+        doc-build,
+        tests,
+        latex-book,
+        adapter-packages,
+      ]
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:

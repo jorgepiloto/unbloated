@@ -41,10 +41,14 @@ can write to the `gh-pages` branch of `jorgepiloto/website`. Documentation deplo
 to that repository, not this package's GitHub Pages site. The deployment jobs
 update only their documentation subdirectory and preserve the rest of the website.
 
-Every workflow runs `doc-build` and uploads the `documentation-html` artifact.
+Every workflow runs `doc-build`, `tests`, `adapter-packages`, and `latex-book`
+as independent jobs. `doc-build` tests the generated static documentation before
+uploading the `documentation-html` artifact. Its browser checks serve the exact
+output without rebuilding it. `build-library` waits for all four jobs and, on
+pull requests and releases, the code and workflow style checks.
 Pull requests build documentation without deploying it. Night runs on `main`
-publish development documentation after the required validation and package build
-succeed. Tests serve the downloaded static artifact without rebuilding it.
+publish development documentation through `doc-deploy-dev` after `build-library`
+succeeds. Deployment downloads the checked documentation artifact.
 Development documentation lives at
 `https://jorgemartinez.space/projects/unbloated/version/dev/`.
 
@@ -66,12 +70,14 @@ to serialize website updates from this repository.
 4. Create a tag `v<version>` on the reviewed commit and push the tag. This
    triggers `release.yml`.
 5. Wait for the checks and build to pass, then approve the `npm` environment
-   deployment. The `code-style` job runs pre-commit before `tests`.
-   `actions-style` runs zizmor in parallel. The `tests` job verifies the tag
+   deployment. The independent `code-style` job runs pre-commit, and
+   `actions-style` runs zizmor. The `tests` job verifies the tag
    against `package.json`, checks that the commit belongs to `main`, and runs
-   the unit tests, browser tests, documentation checks, build checks, and dependency audits.
-   `build-library` waits for both `tests` and `actions-style`, then builds and
-   uploads the npm tarball.
+   the unit tests, browser tests, build checks, and dependency audits.
+   `doc-build` validates both stable and versioned documentation before uploading
+   their artifacts. `build-library` waits for documentation, tests, adapter
+   packaging, LaTeX compilation, and both style jobs, then builds and uploads the
+   npm tarball.
 6. Confirm that `release-npm` publishes the tarball through trusted publishing.
    After npm publication succeeds, `release-github` creates a GitHub release
    with generated release notes and attaches the same tarball. Only the npm
