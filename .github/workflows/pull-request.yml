@@ -37,6 +37,62 @@ jobs:
       - uses: zizmorcore/zizmor-action@cc914d7f3750a2d13d75c7f184a1060aa0e9d482 # v0.6.4
         with:
           advanced-security: false
+  latex-book:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Install TeX Live
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            latexmk lmodern texlive-luatex texlive-latex-extra texlive-fonts-recommended
+      - name: Compile and Check the Book
+        working-directory: packages/latex
+        run: bash tests/check.sh
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: unbloated-latex-example
+          path: packages/latex/build/*.pdf
+          if-no-files-found: error
+          retention-days: 7
+  adapter-packages:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "24"
+          package-manager-cache: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.12"
+      - run: npm ci --ignore-scripts
+      - run: python -m pip install build hatchling
+      - run: npm run test:adapters
+      - run: python -m unittest discover -s tests -p test_adapter_bundles.py
+      - run: npm run build:adapters
+      - run: npm run check:adapters
+      - run: npm run pack:adapters
+      - run: python scripts/check-adapter-artifacts.py
+      - name: Test installed Sphinx wheel
+        run: |
+          python -m pip install .artifacts/*.whl
+          python -m unittest discover -s packages/sphinx/tests/python
+      - run: npx --no-install playwright install --with-deps chromium
+      - run: npm run test:adapter-browser -- --grep Sphinx
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: adapter-packages
+          path: .artifacts/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 7
   doc-build:
     needs: code-style
     runs-on: ubuntu-24.04
@@ -85,7 +141,7 @@ jobs:
       - run: npm audit signatures
       - run: npm audit --audit-level=high
   build-library:
-    needs: [tests, actions-style]
+    needs: [tests, actions-style, latex-book, adapter-packages]
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:

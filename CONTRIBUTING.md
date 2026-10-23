@@ -139,9 +139,10 @@ The artifact checker compares the files inside each archive with the core.
 The Sphinx build hook also rejects missing assets or a mismatched digest, so
 building a wheel directly cannot silently omit the core.
 
-The `adapter-packages` workflow runs these checks, tests the installed Sphinx
-wheel, and uploads distributions on pull requests, main pushes, and core release
-tags. It does not publish adapters to PyPI or npm. Keep adapter versions
+The `adapter-packages` job in the pull-request, Night, and Release workflows
+runs these checks, tests the installed Sphinx wheel, and uploads distributions
+on pull requests, nightly runs, and core release tags. It does not publish
+adapters to PyPI or npm. Keep adapter versions
 independent; each generated provenance file records the bundled core version.
 Publish matching core source with releases and retain all bundled notices.
 
