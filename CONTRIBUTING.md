@@ -33,9 +33,9 @@ revisions pinned to commit hashes.
 
 Pull-request and Release workflows run the commit hooks in `code-style` and
 check workflow security with zizmor in `actions-style`. The local zizmor hook
-runs offline; the action also runs online audits. Tests wait for `code-style`;
-the package build waits for both tests and `actions-style`. Dependency audits
-also run in the CI test jobs.
+runs offline; the action also runs online audits. Validation jobs run
+independently; `build-library` waits for style, documentation, test, and adapter
+checks before packaging. Dependency audits also run in the CI test jobs.
 
 Edit design values in `src/tokens.json`, semantic element rules in
 `src/base.css`, and optional component rules in `src/components.css`. Keep
@@ -89,6 +89,34 @@ in each `doc-build` job. Generated documentation assets and `site/` stay out of 
 
 The package includes full source and build instructions for its LGPLv3 license.
 Keep the license banner in distributed CSS and Sass files.
+
+### Container Browser Checks
+
+On Linux hosts where native WebKit hangs during page initialization, run the
+full browser suite in the [Playwright Docker image](https://playwright.dev/docs/docker).
+Use the same Playwright version as the locked npm dependency. Prepare the core,
+npm dependencies, and pinned Hugo binary with the contributor setup above first.
+
+Run from the repository root:
+
+```sh
+playwright_version="$(node -p 'require("./package.json").devDependencies["@playwright/test"]')"
+mkdir -p .cache/browser-container
+docker run --rm --init --user "$(id -u):$(id -g)" --shm-size=1g \
+  --env HOME=/tmp \
+  --mount "type=bind,source=$PWD,target=/repo,readonly" \
+  --mount "type=bind,source=$PWD/.cache/browser-container,target=/results" \
+  --workdir /repo "mcr.microsoft.com/playwright:v${playwright_version}-noble" \
+  npm run test:browser -- --workers=3 --output=/results/run
+```
+
+The checkout is mounted read-only. Browser output goes into
+`.cache/browser-container/run/`; the child output directory lets Playwright
+clean previous results without removing the mount itself. The image supplies
+browsers and system libraries; the mounted checkout supplies its locked npm
+dependencies and Hugo binary. No engine is excluded and no rendering flags are
+overridden. Native browser execution remains available through
+`npm run test:browser`.
 
 ## Adapter Packages
 
