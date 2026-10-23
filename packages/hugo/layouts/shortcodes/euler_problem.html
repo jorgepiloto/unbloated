@@ -1,0 +1,9 @@
+{{ $title := .Get "title" }}
+{{ $statement := .Get "statement" }}
+
+<div class="pb-0 mb-5 alert alert-secondary" role="alert">
+  <p>{{ $title }}</p>
+  <p>
+    {{ $statement }}
+  </p>
+</div>

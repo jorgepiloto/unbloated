@@ -1,0 +1,8 @@
+AutoAPI templates adapted from Ansys Sphinx Theme.
+https://github.com/ansys/ansys-sphinx-theme
+
+Copyright 2021 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
+Licensed under the Apache License, Version 2.0. See LICENSE.
+
+Modified for Sphinx Unbloated Theme: semantic HTML summary tabs,
+NumPy docstring rendering, and the theme's typography and borders.

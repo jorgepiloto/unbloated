@@ -1,0 +1,6 @@
+{{- with .Get "file" -}}
+  {{- $filename := path.Join $.Page.File.Dir . -}}
+  {{- readFile $filename | safeHTML -}}
+{{- else -}}
+  {{ .Inner | safeHTML }}
+{{- end -}}

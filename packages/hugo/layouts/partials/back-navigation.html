@@ -1,0 +1,35 @@
+{{- if not .IsHome -}}
+  {{- $url := .Site.Home.RelPermalink -}}
+  {{- $title := "Home" -}}
+  {{- with .Parent -}}
+    {{- if not .IsHome -}}
+      {{- $url = .RelPermalink -}}
+      {{- $title = .LinkTitle -}}
+      {{- if eq .RelPermalink ("/posts/" | relURL) -}}
+        {{- $title = "Posts" -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+  {{- if and .IsPage (in (slice "projects" "applications") .Section) -}}
+    {{- $url = printf "/%s/" .Section | relURL -}}
+    {{- $title = .Section | humanize -}}
+  {{- else if eq .Kind "term" -}}
+    {{- with .Site.GetPage (printf "/posts/%s" .Data.Plural) -}}
+      {{- $url = .RelPermalink -}}
+      {{- $title = .LinkTitle -}}
+    {{- end -}}
+  {{- else if eq .Kind "taxonomy" -}}
+    {{- with .Site.GetPage "/posts" -}}
+      {{- $url = .RelPermalink -}}
+      {{- $title = "Posts" -}}
+    {{- end -}}
+  {{- end -}}
+  <nav class="page-navigation" aria-label="Page navigation">
+    <a class="back-button" href="{{ $url }}">
+      <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+        <path d="M19 12H5M12 19l-7-7 7-7" />
+      </svg>
+      <span>Back to {{ $title }}</span>
+    </a>
+  </nav>
+{{- end -}}

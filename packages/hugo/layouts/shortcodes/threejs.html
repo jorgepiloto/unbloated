@@ -1,0 +1,21 @@
+<!-- Three.js Shortcode with External Script, Fixed Size, and Centered Container -->
+
+{{ $version := .Get "version" }}
+{{ $id := .Get "id" }}
+{{ $src := .Get "src" }}
+
+<!-- Create a container for rendering the scene -->
+<div id="threejs-container-{{ $id }}" class="thumbnail"></div>
+
+<!-- Import Three.js -->
+<script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@{{ $version }}/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@{{ $version }}/examples/jsm/"
+    }
+  }
+</script>
+
+<!-- Load the script -->
+<script type="module" src="{{ $src }}"></script>

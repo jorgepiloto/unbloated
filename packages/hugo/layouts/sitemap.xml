@@ -1,0 +1,54 @@
+{{ printf "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>" | safeHTML }}
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  {{ $pages := .Data.Pages }}
+  {{ $pages = where $pages "Params.private" "!=" true }}
+  {{ $pages = where $pages "Params.noindex" "!=" true }}
+  {{ range $pages }}
+    {{- if .Permalink -}}
+    {{- $skip := false -}}
+    {{- if or (eq .Kind "taxonomy") (eq .Kind "term") -}}{{- $skip = true -}}{{- end -}}
+    {{- if not $skip -}}
+    {{- /* Compute lastmod with fallback to Date/PublishDate */ -}}
+    {{- $lastmod := .Lastmod -}}
+    {{- if $lastmod.IsZero -}}{{- $lastmod = .Date -}}{{- end -}}
+    {{- if $lastmod.IsZero -}}{{- $lastmod = .PublishDate -}}{{- end -}}
+    {{- /* Per-kind priority when the page does not override it */ -}}
+    {{- $prio := .Sitemap.Priority -}}
+    {{- if lt $prio 0.0 -}}
+        {{- if .IsHome -}}{{- $prio = 1.0 -}}
+        {{- else if eq .Kind "section" -}}{{- $prio = 0.8 -}}
+        {{- else if eq .Section "posts" -}}{{- $prio = 0.7 -}}
+        {{- else -}}{{- $prio = 0.6 -}}
+        {{- end -}}
+    {{- end -}}
+    {{- /* Per-kind changefreq default */ -}}
+    {{- $freq := .Sitemap.ChangeFreq -}}
+    {{- if not $freq -}}
+        {{- if .IsHome -}}{{- $freq = "weekly" -}}
+        {{- else if eq .Kind "section" -}}{{- $freq = "weekly" -}}
+        {{- else if eq .Section "posts" -}}{{- $freq = "monthly" -}}
+        {{- else -}}{{- $freq = "monthly" -}}
+        {{- end -}}
+    {{- end }}
+  <url>
+    <loc>{{ .Permalink }}</loc>{{ if not $lastmod.IsZero }}
+    <lastmod>{{ safeHTML ( $lastmod.Format "2006-01-02T15:04:05-07:00" ) }}</lastmod>{{ end }}
+    <changefreq>{{ $freq }}</changefreq>
+    <priority>{{ $prio }}</priority>{{ if .IsTranslated }}{{ range .Translations }}
+    <xhtml:link
+                rel="alternate"
+                hreflang="{{ .Language.Lang }}"
+                href="{{ .Permalink }}"
+                />{{ end }}
+    <xhtml:link
+                rel="alternate"
+                hreflang="{{ .Language.Lang }}"
+                href="{{ .Permalink }}"
+                />{{ end }}
+  </url>
+    {{- end -}}
+    {{- end -}}
+  {{ end }}
+</urlset>
+

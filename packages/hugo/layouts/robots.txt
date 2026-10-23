@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+# Do not index taxonomy pages or the client-side search page
+Disallow: /posts/tag/
+Disallow: /posts/category/
+Disallow: /tags/
+Disallow: /categories/
+Disallow: /search/
+Disallow: /search.html
+
+# Common crawler-friendly hints
+Sitemap: {{ "sitemap.xml" | absURL }}

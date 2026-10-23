@@ -1,0 +1,32 @@
+{{ define "main" }}
+<main>
+
+    {{ if eq .Section "posts" }}
+      <article>
+          <hr>
+          <header>
+              <h1>{{ .Title }}</h1>
+              {{ with .Params.Subtitle }}
+              <h2>{{ . }}</h2>
+              {{ end }}
+              <p>{{ .Params.Author }}</p>
+              <p>{{ .Date.Format "January 2, 2006" }}</p>
+              <p>
+                {{ range .GetTerms "tags" }}
+                <a class="tag" href="{{ .RelPermalink }}">{{ .LinkTitle | lower }}</a>
+                {{ end }}
+              </p>
+          </header>
+          <hr>
+          <section class="post-content page-content">
+            {{ .Content }}
+          </section>
+      </article>
+    {{ else }}
+      <section class="page-content">
+        {{ .Content }}
+      </section>
+    {{ end }}
+
+</main>
+{{ end }}

@@ -1,0 +1,118 @@
+[build-system]
+build-backend = "hatchling.build"
+requires = [ "hatchling" ]
+
+[project]
+name = "sphinx-unbloated-theme"
+description = "A minimal, clean Sphinx theme with a monospace aesthetic."
+readme = "README.rst"
+license = { file = "LICENSE" }
+authors = [
+  { name = "Jorge Martinez", email = "contact@jorgemartinez.space" },
+]
+requires-python = ">=3.12"
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Framework :: Sphinx",
+  "Framework :: Sphinx :: Theme",
+  "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+]
+dynamic = [ "version" ]
+dependencies = [
+  "sphinx>=9.0",
+]
+
+urls.Documentation = "https://jorgemartinez.space/projects/sphinx-unbloated-theme/version/stable/"
+urls.Source = "https://github.com/jorgemartinez/sphinx-unbloated-theme"
+urls.Tracker = "https://github.com/jorgemartinez/sphinx-unbloated-theme/issues"
+entry-points."sphinx.html_themes".sphinx_unbloated_theme = "sphinx_unbloated_theme"
+
+[dependency-groups]
+doc = [
+  "jupyterlab==4.6.0",
+  "jupytext==1.19.4",
+  "matplotlib==3.11.1",
+  "myst-parser==5.1.0",
+  "nbconvert==7.17.1",
+  "nbsphinx==0.9.8",
+  "numpydoc==1.11.0",
+  "plotly==7.0.0",
+  "sphinx-autoapi==3.8.1",
+  "sphinx-copybutton==0.5.2",
+]
+
+[tool.hatch.version]
+path = "src/sphinx_unbloated_theme/__init__.py"
+pattern = '__version__ = "(?P<version>[^"]+)"'
+
+[tool.hatch.build.targets.wheel]
+packages = [ "src/sphinx_unbloated_theme" ]
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "src/",
+  "AUTHORS",
+  "CHANGELOG.md",
+  "CODE_OF_CONDUCT.md",
+  "CONTRIBUTING.md",
+  "CONTRIBUTORS.md",
+  "LICENSE",
+  "README.rst",
+  "SECURITY.md",
+  "doc/source/changelog.rst",
+  "doc/source/_static/screenshots/",
+  "pyproject.toml",
+]
+
+[tool.towncrier]
+directory = "doc/source/changelog"
+filename = "doc/source/changelog.rst"
+template = "doc/source/changelog/template"
+start_string = ".. towncrier release notes start\n"
+title_format = "`{version} <https://github.com/jorgepiloto/sphinx-unbloated-theme/releases/tag/v{version}>`_ ({project_date})"
+issue_format = "`#{issue} <https://github.com/jorgepiloto/sphinx-unbloated-theme/pull/{issue}>`_"
+
+[[tool.towncrier.type]]
+directory = "added"
+name = "Added"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "changed"
+name = "Changed"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "fixed"
+name = "Fixed"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "documentation"
+name = "Documentation"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "test"
+name = "Test"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "dependencies"
+name = "Dependencies"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "maintenance"
+name = "Maintenance"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "miscellaneous"
+name = "Miscellaneous"
+showcontent = true

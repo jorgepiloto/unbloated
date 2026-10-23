@@ -1,0 +1,50 @@
+<!-- Plant care and identification -->
+{{ $name := .Get "name" }}
+{{ $scientific_name := .Get "scientific_name" }}
+{{ $type := .Get "type" }}
+{{ $growth_habit := .Get "growth_habit" }}
+{{ $image := .Get "image" }}
+
+<!-- Care requirements -->
+{{ $watering := .Get "watering" }}
+{{ $humidity := .Get "humidity" }}
+{{ $light := .Get "light" }}
+{{ $soil := .Get "soil" }}
+{{ $temperature := .Get "temperature" }}
+{{ $birthday := .Get "birthday" }}
+
+<div id="plant-info" style="container-type: inline-size; border: thin solid black; padding: 1rem; background-color: var(--lightgray); font-family: monospace;">
+  <div style="display: flex; flex-wrap: wrap;">
+    <div style="flex: 1;">
+      <h2 style="margin-bottom: 0rem !important;">{{ $name }}</h2>
+      <p style="margin-top: 0rem !important; margin-bottom: 2.75rem;"><em>{{ $scientific_name }}</em></p>
+
+      <pre style="margin-left: 0rem; padding-left: 0rem; font-size: 1rem; border: none !important;" class="field-line" data-label="Type" data-value="{{ $type }}"></pre>
+      <pre style="margin-left: 0rem; padding-left: 0rem; font-size: 1rem; border: none !important;" class="field-line" data-label="Habit" data-value="{{ $growth_habit }}"></pre>
+      <pre style="margin-left: 0rem; padding-left: 0rem; font-size: 1rem; border: none !important;" class="field-line" data-label="Watering" data-value="{{ $watering }}"></pre>
+      <pre style="margin-left: 0rem; padding-left: 0rem; font-size: 1rem; border: none !important;" class="field-line" data-label="Humidity" data-value="{{ $humidity }}"></pre>
+      <pre style="margin-left: 0rem; padding-left: 0rem; font-size: 1rem; border: none !important;" class="field-line" data-label="Light" data-value="{{ $light }}"></pre>
+      <pre style="margin-left: 0rem; padding-left: 0rem; font-size: 1rem; border: none !important;" class="field-line" data-label="Soil" data-value="{{ $soil }}"></pre>
+      <pre style="margin-left: 0rem; padding-left: 0rem; font-size: 1rem; border: none !important;" class="field-line" data-label="Temperature" data-value="{{ $temperature }}"></pre>
+      <pre style="margin-left: 0rem; padding-left: 0rem; font-size: 1rem; border: none !important;" class="field-line" data-label="Birthday" data-value="{{ $birthday }}"></pre>
+    </div>
+    <img src="{{ $image }}" alt="{{ $name }}" style="height: 25rem; margin: 1.5rem !important; margin-left: auto !important; margin-right: 0.5rem !important;" />
+  </div>
+</div>
+
+<script>
+  function fillWithDots() {
+    const fields = document.querySelectorAll('.field-line');
+    fields.forEach(field => {
+      const label = field.getAttribute('data-label');
+      const value = field.getAttribute('data-value');
+      const totalWidth = 28;
+      const dotCount = Math.max(2, totalWidth - label.length - value.length);
+      const dots = '.'.repeat(dotCount);
+      field.textContent = `${label}  ${dots} ${value}`;
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', fillWithDots);
+</script>
+

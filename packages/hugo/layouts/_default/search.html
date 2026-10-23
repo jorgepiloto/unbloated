@@ -1,0 +1,21 @@
+{{ define "main" }}
+<main>
+  <h2>Search Results</h2>
+  <div id="search-results"></div>
+</main>
+
+<script id="search-result-template" type="text/x-js-template">
+  <div class="search-result" id="summary-${key}">
+    <h4><a href="${link}">${title}</a></h4>
+    <p class="search-snippet">${snippet}</p>
+    ${ isset categories }<p class="search-meta">Categories: ${categories}</p>${ end }
+    ${ isset tags }<p class="search-meta">Tags: ${tags}</p>${ end }
+  </div>
+</script>
+{{ end }}
+
+{{ define "footerscripts" }}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.6.2/fuse.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" crossorigin="anonymous"></script>
+<script src="{{ "js/search.js" | absURL }}"></script>
+{{ end }}

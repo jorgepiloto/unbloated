@@ -1,0 +1,8 @@
+title: unbloated
+author: Jorge Martinez
+version: 1.0.1
+contributes:
+  format:
+    revealjs:
+      theme: [default, unbloated.scss]
+      include-after-body: custom.html

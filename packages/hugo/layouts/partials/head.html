@@ -1,0 +1,95 @@
+<!-- Required meta tags -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+
+<!-- SEO meta tags, Open Graph, Twitter Cards, JSON-LD -->
+{{- partial "seo.html" . }}
+
+<!-- Preconnect to CDN origins -->
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+
+<!-- Preload critical fonts -->
+<link rel="preload" href="/fonts/MonoRegular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/MonoBold.woff2" as="font" type="font/woff2" crossorigin>
+
+<!-- Website icon -->
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<!-- Custom CSS -->
+{{ with resources.Get "css/style.css" | postCSS | minify | fingerprint }}
+  <link rel="stylesheet" href="{{ .RelPermalink }}">
+{{ end }}
+{{ with .Params.application_css }}
+  {{ with resources.Get . | postCSS | minify | fingerprint }}
+    <link rel="stylesheet" href="{{ .RelPermalink }}">
+  {{ end }}
+{{ end }}
+
+<!-- Google tag (gtag.js) — deferred to avoid blocking first paint -->
+<script>
+  window.addEventListener('load', function() {
+    var s = document.createElement('script');
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=G-3EVWFESB3W';
+    s.async = true;
+    document.head.appendChild(s);
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    window.gtag = gtag;
+    gtag('js', new Date());
+    gtag('config', 'G-3EVWFESB3W');
+  });
+</script>
+
+<!-- Plotly -->
+{{ if .Params.plotly }}
+  <script src="https://cdn.plot.ly/plotly-latest.min.js" defer></script>
+{{ end }}
+
+<!-- KaTeX (LaTeX) scripts and style -->
+{{ if .Params.math }}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js" integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+        onload="renderMathInElement(document.body);"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+            delimiters: [
+                {left: "$$", right: "$$", display: true},
+                {left: "$", right: "$", display: false}
+            ]
+        });
+    });
+</script>
+{{ end }}
+
+<!-- Include three.js scripts if the post needs it -->
+{{ if .Params.threejs }}
+  <script src="https://cdn.jsdelivr.net/npm/three@0.125.2/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.125.2/examples/js/controls/OrbitControls.js"></script>
+{{ end}}
+
+<!-- Custom JS -->
+{{ $js := resources.Get "js/youarehere.js" | resources.Minify | resources.Fingerprint }}
+<script src="{{ $js.Permalink }}" defer></script>
+
+{{ if .HasShortcode "tabs" }}
+  {{ with resources.Get "js/tabs.js" | resources.Minify | resources.Fingerprint }}
+    <script src="{{ .RelPermalink }}" defer></script>
+  {{ end }}
+{{ end }}
+
+<title>
+{{- if .IsHome -}}
+  {{- .Site.Title }} — Aerospace Engineer & Software Developer
+{{- else if eq .Kind "term" -}}
+  {{- humanize .Data.Singular }}: {{ .Title }} — {{ .Site.Title -}}
+{{- else -}}
+  {{- .Title }} — {{ .Site.Title -}}
+{{- end -}}
+</title>

@@ -1,0 +1,26 @@
+{{ $caption := .Get "caption" }}
+{{ $src := .Get "src" }}
+
+{{ $image := .Page.Resources.GetMatch $src }}
+{{ if $image }}
+  {{ $small := $image.Process "resize 400x webp q80" }}
+  {{ $medium := $image.Process "resize 800x webp q80" }}
+  {{ $fallback := $image.Process "resize 800x q85" }}
+  {{ $orientation := cond (gt $fallback.Height $fallback.Width) "portrait" "landscape" }}
+  <figure class="image-with-caption image-with-caption--{{ $orientation }}">
+    <picture>
+      <source srcset="{{ $small.RelPermalink }} 400w, {{ $medium.RelPermalink }} 800w"
+              sizes="(max-width: 500px) 400px, 800px"
+              type="image/webp">
+      <img src="{{ $fallback.RelPermalink }}" alt="{{ $caption }}"
+           width="{{ $fallback.Width }}" height="{{ $fallback.Height }}"
+           loading="lazy">
+    </picture>
+    <figcaption class="caption">{{ $caption }}</figcaption>
+  </figure>
+{{ else }}
+  <figure class="image-with-caption">
+    <img src="{{ $src }}" alt="{{ $caption }}" loading="lazy">
+    <figcaption class="caption">{{ $caption }}</figcaption>
+  </figure>
+{{ end }}

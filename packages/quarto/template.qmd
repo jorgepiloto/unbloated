@@ -1,0 +1,199 @@
+---
+title: "Title"
+subtitle: "Subtitle"
+author: "Jorge Martinez"
+institute: "Aerospace Engineer and Senior Software Developer"
+format: 
+    unbloated-revealjs:
+        mainfont: "Berkeley Mono"
+        self-contained: true
+        footer: "Copyright © 2025 Jorge Martinez"
+        menu: false
+---
+
+## This is the title
+
+More than a year ago, I finalized the style of my personal website. It took me
+several iterations. I had to re-learn HTML, CSS, and read lots of Hugo
+docuemntation. However, the effort was worth it. Nowadays, it is very easy for
+me to maintain my website.
+
+However, it contained some CSS bugs and the rendering in small screen media
+could be improved.
+
+Therefore, I made the effort to fix these issues and truly consolidate the CSS
+style. This post serves as a gallery of the different components that this
+website ships with. Enjoy!
+
+# Heading 1
+## Heading 2
+### Heading 3
+#### Heading 4
+##### Heading 5
+###### Heading 6
+
+## Paragraphs and emphasis
+
+Of course, writing content is a basic task when maintaining a website. This is
+a simple example on how a paragaph renders. In addition, emphasis elements such
+as bold, and italic are shown.
+
+The emphasis, aka italics, with _asterisks_ or _underscores_.
+
+Strong emphasis, aka bold, with **asterisks** or **underscores**.
+
+The combined emphasis with **asterisks and _underscores_**.
+
+Strike through uses two tildes. ~~Scratch this.~~
+
+Inline literals using back-ticks `like this`.
+
+
+## Links
+
+Links are another popular component. Tooltips are supported.
+
+[This is a link to my website](https://jorgemartinez.space)
+
+[This link has a tooltip when you hover it](https://jorgemartinez.space "Jorge's website")
+
+<https://github.com/jorgepiloto>
+
+## Footnotes
+
+Footnotes are a good way to introduce annotations without affecting the inline
+content.[^1]
+
+[^1]: Do not forget that footnotes render at the bottom!
+
+
+## Code snippets
+
+```c
+/**
+ * Simple hello-world in the C programming language.
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+
+
+int main(int argc, char** argv) {
+    printf("Hello world\n");
+    return EXIT_SUCCESS;
+}
+```
+
+And this is some `inline code`.
+
+## Images
+
+Images keep aspect ratio and are always centered:
+
+![Some astrodynamics projects](https://jorgemartinez.space/img/projects-banner.jpeg)
+
+## Math
+
+Remember to use the `math: true` option in the post metadata to enable math
+rendering for the post. This prevents loading unnecessary CSS and JS if no
+mathematical content is expected.
+
+$$
+F(x) = \frac{1}{2 \pi i}\oint \frac{f(z)}{z - a} dz
+$$
+
+## Quotes
+
+Quotes are great. You can use them to introduce a problem statement or
+highlight something.
+
+> I never said this.
+
+Increase their complexity:
+
+> **Abstract**
+>
+> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pulvinar venenatis
+> nulla eget rutrum. In eu risus quis mi aliquet placerat eu eget purus. Nulla
+> viverra lacinia sapien, a accumsan magna ullamcorper vel. In tortor felis,
+> efficitur vulputate est ac, auctor tristique dolor. Integer dolor lorem,
+> condimentum nec lacus in, feugiat ullamcorper leo. Phasellus eu tortor nunc.
+> Nunc eleifend fermentum massa, bibendum faucibus dolor viverra eu. Vivamus
+> vitae enim dolor. Proin efficitur arcu id tellus consequat elementum. 
+
+
+## Lists
+
+**Ordered list**
+
+1. List item
+2. List item
+3. List item
+
+**Long ordered list**
+
+1. This is a very long list item that will eventually wrap onto the next line
+   and continue being a list item.
+2. This is a very long list item that will eventually wrap onto the next line
+   and continue being a list item.
+
+---
+
+## Lists
+
+**Unordered list**
+
+- List item
+- List item
+- List item
+
+---
+
+## Lists
+
+**Nested lists**
+
+1. List item
+    * a. Subitem
+    * b. Subitem
+2. List item
+3. List item
+
+---
+
+## Admonitions
+
+::: {.callout-note}
+Note that there are five types of callouts, including:
+`note`, `warning`, `important`, `tip`, and `caution`.
+:::
+
+::: {.callout-tip}
+## Tip with Title
+
+This is an example of a callout with a title.
+:::
+
+::: {.callout-caution collapse="true"}
+## Expand To Learn About Collapse
+
+This is an example of a 'folded' caution callout that can be expanded by the user. You can use `collapse="true"` to collapse it by default or `collapse="false"` to make a collapsible callout that is expanded by default.
+:::
+
+## Tables
+
+Tables are also supported:
+
+| Sorting Algorithm  | Best Time Complexity | Worst Time Complexity  | Space Complexity |
+|--------------------|----------------------|------------------------|------------------|
+| Bubble Sort        | O(n)                 | O(n²)                  | O(1)             |
+| Selection Sort     | O(n²)                | O(n²)                  | O(1)             |
+| Insertion Sort     | O(n)                 | O(n²)                  | O(1)             |
+| Merge Sort         | O(n log n)           | O(n log n)             | O(n)             |
+| Quick Sort         | O(n log n)           | O(n²)                  | O(log n)         |
+| Heap Sort          | O(n log n)           | O(n log n)             | O(1)             |
+| Counting Sort      | O(n + k)             | O(n + k)               | O(k)             |
+| Radix Sort         | O(nk)                | O(nk)                  | O(n + k)         |
+| Bucket Sort        | O(n + k)             | O(n²)                  | O(n + k)         |
+
+: Sorting algorithms time and space complexity

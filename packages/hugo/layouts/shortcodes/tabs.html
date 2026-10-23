@@ -1,0 +1,15 @@
+{{- $inner := .Inner -}}
+{{- $tabs := .Scratch.Get "tabs" -}}
+{{- $groupID := printf "tabs-%s-%d" (md5 .Page.RelPermalink) .Ordinal -}}
+{{- $rightAligned := findRE "[0-9]+" (printf "%v" (.Get "tabRightAlign" | default "")) -}}
+<div class="tabs" id="{{ $groupID }}"{{ with .Get "sync" }} data-tab-sync="{{ . }}"{{ end }}>
+  <div class="tabs-list" role="tablist" aria-label="{{ .Get "label" | default "Tabs" }}">
+    {{- range $i, $tab := $tabs }}
+      <button type="button" role="tab"{{ if in $rightAligned (printf "%d" (add 1 $i)) }} class="tab-align-right"{{ end }}
+              id="{{ $tab.id }}-tab" aria-controls="{{ $tab.id }}"
+              aria-selected="{{ if eq $i 0 }}true{{ else }}false{{ end }}"
+              tabindex="{{ if eq $i 0 }}0{{ else }}-1{{ end }}">{{ $tab.name }}</button>
+    {{- end }}
+  </div>
+  {{ $inner }}
+</div>

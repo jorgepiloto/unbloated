@@ -1,0 +1,14 @@
+{%- extends "layout.html" -%}
+
+{%- block htmltitle %}
+  {# Set the documentation root before the browser loads relative assets. #}
+  <base href="{{ documentation_root|e }}">
+  {{ super() }}
+{%- endblock %}
+
+{%- block body %}
+<section class="not-found">
+  <h1>Error 404 - Page not found</h1>
+  <p>If you were expecting some content on this page, please <a href="{{ theme_github_url }}/issues">open an issue</a> on GitHub.</p>
+</section>
+{%- endblock %}

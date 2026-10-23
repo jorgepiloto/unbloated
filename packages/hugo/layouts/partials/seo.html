@@ -1,0 +1,219 @@
+{{- /*
+    SEO partial: description, canonical, robots, Open Graph, Twitter Cards
+    and JSON-LD structured data. Rendered from head.html on every page.
+*/ -}}
+
+{{- $siteDesc := .Site.Params.description -}}
+{{- $desc := "" -}}
+{{- with .Description -}}
+    {{- $desc = . -}}
+{{- else -}}
+    {{- with .Params.summary -}}
+        {{- $desc = . -}}
+    {{- else -}}
+        {{- if .IsPage -}}
+            {{- $desc = .Summary | plainify | truncate 200 -}}
+        {{- else -}}
+            {{- $desc = $siteDesc -}}
+        {{- end -}}
+    {{- end -}}
+{{- end -}}
+{{- $desc = $desc | plainify | chomp -}}
+{{- $desc = replace $desc "\n" " " -}}
+{{- $desc = replace $desc "\r" " " -}}
+{{- $desc = replaceRE "\\s+" " " $desc -}}
+{{- $desc = replaceRE "^\\s+|\\s+$" "" $desc -}}
+{{- if not $desc -}}{{- $desc = $siteDesc -}}{{- end -}}
+
+{{- $author := or .Params.author .Site.Params.author -}}
+
+{{- $siteKeywords := .Site.Params.keywords | default (slice) -}}
+{{- $pageKeywords := .Params.keywords | default (slice) -}}
+{{- $tagKeywords := .Params.tags | default (slice) -}}
+{{- $catKeywords := .Params.categories | default (slice) -}}
+{{- $keywords := union $siteKeywords (union $pageKeywords (union $tagKeywords $catKeywords)) -}}
+
+{{- /*
+    An explicit frontmatter image controls the social preview. Otherwise, posts
+    use the first image in their rendered content so previews match what readers
+    see first. Remaining pages retain the resource/site fallbacks.
+*/ -}}
+{{- $img := "" -}}
+{{- with .Params.image -}}
+    {{- $img = . -}}
+{{- end -}}
+{{- if and (not $img) .IsPage (eq .Section "posts") -}}
+    {{- $imageTags := findRE `(?is)<img\s[^>]*src=["'][^"']+["'][^>]*>` .Content 1 -}}
+    {{- if gt (len $imageTags) 0 -}}
+        {{- $img = replaceRE `(?is)^.*?src=["']([^"']+)["'].*$` "$1" (index $imageTags 0) -}}
+        {{- $img = $img | htmlUnescape -}}
+    {{- end -}}
+{{- end -}}
+{{- if not $img -}}
+    {{- with .Params.images -}}
+        {{- $img = index . 0 -}}
+    {{- else -}}
+        {{- with .Resources.GetMatch "*.{png,jpg,jpeg,webp,gif}" -}}
+            {{- $img = .RelPermalink -}}
+        {{- else -}}
+            {{- with .Site.Params.images -}}
+                {{- $img = index . 0 -}}
+            {{- end -}}
+        {{- end -}}
+    {{- end -}}
+{{- end -}}
+{{- $imgAbs := "" -}}
+{{- if $img -}}
+    {{- if or (hasPrefix $img "http://") (hasPrefix $img "https://") -}}
+        {{- $imgAbs = $img -}}
+    {{- else if hasPrefix $img "//" -}}
+        {{- $imgAbs = printf "https:%s" $img -}}
+    {{- else if hasPrefix $img "/" -}}
+        {{- $imgAbs = $img | absURL -}}
+    {{- else -}}
+        {{- $resource := .Resources.GetMatch $img -}}
+        {{- with $resource -}}
+            {{- $imgAbs = .Permalink -}}
+        {{- else -}}
+            {{- $imgAbs = urls.JoinPath $.Permalink $img -}}
+        {{- end -}}
+    {{- end -}}
+{{- end -}}
+
+<meta name="description" content="{{ $desc }}">
+{{- with $author }}
+<meta name="author" content="{{ . }}">
+{{- end }}
+{{- with $keywords }}
+<meta name="keywords" content="{{ delimit . ", " }}">
+{{- end }}
+
+{{- /* Canonical URL, override when a page sets `canonical` */ -}}
+{{- $canonical := .Permalink -}}
+{{- with .Params.canonical -}}{{- $canonical = . -}}{{- end }}
+<link rel="canonical" href="{{ $canonical }}">
+
+{{- /* Robots: hide taxonomy list and 404 from search indexes */ -}}
+{{- $noindex := false -}}
+{{- if or (eq .Kind "taxonomy") (eq .Kind "term") -}}{{- $noindex = true -}}{{- end -}}
+{{- if eq .Kind "404" -}}{{- $noindex = true -}}{{- end -}}
+{{- if eq .Layout "404" -}}{{- $noindex = true -}}{{- end -}}
+{{- if eq .RelPermalink "/404.html" -}}{{- $noindex = true -}}{{- end -}}
+{{- if .Params.private -}}{{- $noindex = true -}}{{- end -}}
+{{- if .Params.noindex -}}{{- $noindex = true -}}{{- end }}
+<meta name="robots" content="{{ if $noindex }}noindex, follow{{ else }}index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1{{ end }}">
+<meta name="googlebot" content="{{ if $noindex }}noindex, follow{{ else }}index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1{{ end }}">
+
+{{- /* Open Graph */ -}}
+{{- $ogType := "website" -}}
+{{- if .IsPage -}}
+    {{- if eq .Section "posts" -}}
+        {{- $ogType = "article" -}}
+    {{- end -}}
+{{- end }}
+<meta property="og:site_name" content="{{ .Site.Title }}">
+<meta property="og:title" content="{{ if .IsHome }}{{ .Site.Title }} — Aerospace Engineer & Software Developer{{ else }}{{ .Title }} — {{ .Site.Title }}{{ end }}">
+<meta property="og:description" content="{{ $desc }}">
+<meta property="og:type" content="{{ $ogType }}">
+<meta property="og:url" content="{{ $canonical }}">
+<meta property="og:locale" content="{{ replace .Site.LanguageCode "-" "_" }}">
+{{- with $imgAbs }}
+<meta property="og:image" content="{{ . }}">
+<meta property="og:image:alt" content="{{ $desc }}">
+{{- end }}
+{{- if eq $ogType "article" }}
+{{- with .Date }}<meta property="article:published_time" content="{{ .Format "2006-01-02T15:04:05Z07:00" }}">{{ end }}
+{{- with .Lastmod }}<meta property="article:modified_time" content="{{ .Format "2006-01-02T15:04:05Z07:00" }}">{{ end }}
+{{- with $author }}<meta property="article:author" content="{{ . }}">{{ end }}
+{{- range .Params.tags }}
+<meta property="article:tag" content="{{ . }}">
+{{- end }}
+{{- range .Params.categories }}
+<meta property="article:section" content="{{ . }}">
+{{- end }}
+{{- end }}
+
+{{- /* Twitter Card */ -}}
+<meta name="twitter:card" content="{{ if $imgAbs }}summary_large_image{{ else }}summary{{ end }}">
+<meta name="twitter:title" content="{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }} — {{ .Site.Title }}{{ end }}">
+<meta name="twitter:description" content="{{ $desc }}">
+{{- with $imgAbs }}
+<meta name="twitter:image" content="{{ . }}">
+<meta name="twitter:image:alt" content="{{ $desc }}">
+{{- end }}
+
+{{- /* Alternate feeds for the section and site */ -}}
+<link rel="alternate" type="application/rss+xml" title="{{ .Site.Title }}" href="{{ "index.xml" | absURL }}">
+
+{{- /* JSON-LD structured data — build a Go value, jsonify once, mark safe */ -}}
+{{- if .IsHome }}
+{{- $person := dict
+    "@context" "https://schema.org"
+    "@type" "Person"
+    "name" .Site.Params.author
+    "url" .Site.BaseURL
+    "jobTitle" .Site.Params.jobTitle
+    "image" $imgAbs
+    "sameAs" (slice
+        (printf "https://github.com/%s" .Site.Params.github)
+        (printf "https://www.linkedin.com/in/%s" .Site.Params.linkedin)
+        (printf "https://www.youtube.com/@%s" .Site.Params.youtube))
+    "knowsAbout" .Site.Params.keywords
+-}}
+{{- with .Site.Params.email -}}{{- $person = merge $person (dict "email" (printf "mailto:%s" .)) -}}{{- end -}}
+{{- with .Site.Params.location -}}{{- $person = merge $person (dict "address" (dict "@type" "PostalAddress" "addressCountry" .)) -}}{{- end }}
+<script type="application/ld+json">
+{{ $person | jsonify (dict "indent" "  ") | safeJS }}
+</script>
+{{- $website := dict
+    "@context" "https://schema.org"
+    "@type" "WebSite"
+    "name" .Site.Title
+    "url" .Site.BaseURL
+    "description" $desc
+    "inLanguage" .Site.LanguageCode
+    "author" (dict "@type" "Person" "name" .Site.Params.author)
+    "potentialAction" (dict
+        "@type" "SearchAction"
+        "target" (dict "@type" "EntryPoint" "urlTemplate" (printf "%ssearch/?s={search_term_string}" .Site.BaseURL))
+        "query-input" "required name=search_term_string")
+}}
+<script type="application/ld+json">
+{{ $website | jsonify (dict "indent" "  ") | safeJS }}
+</script>
+{{- else if eq $ogType "article" }}
+{{- $article := dict
+    "@context" "https://schema.org"
+    "@type" "BlogPosting"
+    "headline" .Title
+    "description" $desc
+    "mainEntityOfPage" (dict "@type" "WebPage" "@id" $canonical)
+    "url" $canonical
+    "inLanguage" .Site.LanguageCode
+    "author" (dict "@type" "Person" "name" (or $author "Jorge Martinez") "url" .Site.BaseURL)
+    "publisher" (dict "@type" "Person" "name" .Site.Params.author "url" .Site.BaseURL)
+-}}
+{{- with $imgAbs -}}{{- $article = merge $article (dict "image" .) -}}{{- end -}}
+{{- with .Date -}}{{- if not .IsZero -}}{{- $article = merge $article (dict "datePublished" (.Format "2006-01-02T15:04:05Z07:00")) -}}{{- end -}}{{- end -}}
+{{- with .Lastmod -}}{{- if not .IsZero -}}{{- $article = merge $article (dict "dateModified" (.Format "2006-01-02T15:04:05Z07:00")) -}}{{- end -}}{{- end -}}
+{{- with .Params.tags -}}{{- $article = merge $article (dict "keywords" (delimit . ", ")) -}}{{- end }}
+<script type="application/ld+json">
+{{ $article | jsonify (dict "indent" "  ") | safeJS }}
+</script>
+{{- end }}
+
+{{- /* Breadcrumbs (skip on the home page) */ -}}
+{{- if and (not .IsHome) .Permalink -}}
+{{- $trail := slice (dict "@type" "ListItem" "position" 1 "name" "Home" "item" .Site.BaseURL) -}}
+{{- if and .Section (ne .Section "") -}}
+    {{- $secURL := printf "%s%s/" (trim .Site.BaseURL "/") (printf "/%s" .Section) -}}
+    {{- $trail = $trail | append (dict "@type" "ListItem" "position" (add (len $trail) 1) "name" (humanize .Section) "item" $secURL) -}}
+{{- end -}}
+{{- if .IsPage -}}
+    {{- $trail = $trail | append (dict "@type" "ListItem" "position" (add (len $trail) 1) "name" .Title "item" .Permalink) -}}
+{{- end -}}
+{{- $breadcrumbs := dict "@context" "https://schema.org" "@type" "BreadcrumbList" "itemListElement" $trail }}
+<script type="application/ld+json">
+{{ $breadcrumbs | jsonify (dict "indent" "  ") | safeJS }}
+</script>
+{{- end -}}

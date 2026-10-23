@@ -1,0 +1,16 @@
+AutoAPI
+[Bb]lockquotes?
+Jupytext
+Matplotlib
+NumPy
+PyPI
+Quarto
+Sphinx
+TinyTeX
+Unbloated
+docstrings?
+monospace
+multiline
+nbsphinx
+numpydoc
+toctree

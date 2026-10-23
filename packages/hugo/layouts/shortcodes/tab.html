@@ -1,0 +1,9 @@
+{{- $tabs := .Parent.Scratch.Get "tabs" | default (slice) -}}
+{{- $index := len $tabs -}}
+{{- $groupID := printf "tabs-%s-%d" (md5 .Page.RelPermalink) .Parent.Ordinal -}}
+{{- $tabID := printf "%s-panel-%d" $groupID $index -}}
+{{- $tabName := trim (.Get "tabName") " \t\r\n" -}}
+{{- .Parent.Scratch.Add "tabs" (slice (dict "name" $tabName "id" $tabID)) -}}
+<div class="tab-panel" id="{{ $tabID }}" role="tabpanel" aria-labelledby="{{ $tabID }}-tab" tabindex="0">
+  {{ .Inner | markdownify }}
+</div>

@@ -1,0 +1,76 @@
+{{ define "main" }}
+<main>
+    <section class="page-content">
+
+    <!-- List all categories -->
+    {{ if eq .Title "Categories" }}
+
+        <h2>Categories</h2>
+        <section class="page-content">
+          {{ .Content }}
+        </section>
+
+        {{ $AllPosts := .Site.GetPage "section" "posts" }}
+        <div class="collection">
+        {{ range where $AllPosts.Sections "Title" "not in" (slice "Categories" "Tags") }}
+            <a class="tag" href="{{ .Permalink }}">{{ .Title }}</a>
+        {{ end }}
+        </div>
+
+    <!-- List all tags -->
+    {{ else if eq .Title "Tags" }}
+
+        <h2>Tags</h2>
+        <section class="page-content">
+          {{ .Content }}
+        </section>
+
+        <div class="collection">
+        {{ range $key, $value := .Site.Taxonomies.tags }}
+            <a class="tag" href="{{ $value.Page.Permalink }}">{{ $key }}</a>
+        {{ end }}
+        </div>
+
+    <!-- List all posts -->
+    {{ else }}
+
+        {{ $ThisCategory := .Title }}
+        {{ if eq $ThisCategory "All posts" }}
+            <h2>All posts</h2>
+        {{ else }}
+            <h2>{{ $ThisCategory }} posts</h2>
+        {{ end }}
+
+        <section class="page-content">
+          {{ .Content }}
+        </section>
+
+        {{ $allPosts := where .Site.RegularPages "Section" "posts" }}
+        {{ $postsPerYear := $allPosts.GroupByDate "2006" "year" }}
+
+        {{ range $postsPerYear }}
+          {{ $filteredPosts := slice }}
+          {{ range .Pages }}
+            {{ $LowerThisCategory := lower $ThisCategory }}
+            {{ $UpperThisCategory := strings.FirstUpper $ThisCategory }}
+            {{ if or (eq $ThisCategory "All posts") (in .Params.categories $LowerThisCategory) (in .Params.categories $UpperThisCategory) }}
+              {{ $filteredPosts = $filteredPosts | append . }}
+            {{ end }}
+          {{ end }}
+
+          {{ if gt (len $filteredPosts) 0 }}
+            <h3>Year {{ .Key }}</h3>
+            <ul class="posts">
+              {{ range $filteredPosts.ByDate.Reverse }}
+                <li>
+                  {{ .Date.Format "2006-01-02" }} - <a href="{{ .Permalink }}">{{ .Title }}{{ if .Params.Subtitle}} - {{ .Params.Subtitle }}{{ end }}</a>
+                </li>
+              {{ end }}
+            </ul>
+          {{ end }}
+        {{ end }}
+    {{ end }}
+
+    </section>
+</main>
+{{ end }}

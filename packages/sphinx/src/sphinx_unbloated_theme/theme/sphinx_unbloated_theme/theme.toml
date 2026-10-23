@@ -1,0 +1,15 @@
+[theme]
+inherit = "basic"
+stylesheets = ["css/style.css"]
+sidebars = []
+pygments_style = { default = "friendly" }
+
+[options]
+site_description = ""
+footer_text = ""
+github_url = ""
+linkedin_url = ""
+youtube_url = ""
+rss_url = ""
+sponsor_url = ""
+versions_url = ""
