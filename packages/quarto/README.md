@@ -1,5 +1,8 @@
 # Unbloated: A Reveal.js Theme for Quarto
 
+Documentation destinations: [stable](https://jorgemartinez.space/projects/quarto-unbloated-theme/version/stable/)
+and [development](https://jorgemartinez.space/projects/quarto-unbloated-theme/version/dev/).
+
 This adapter uses the Unbloated CSS library for its visual design values.
 Reveal.js-specific sizing and layout remain in `unbloated.scss`.
 
@@ -74,8 +77,8 @@ nodes stay in their slides.
 Browser layout, native footer handling, scroll view, and print/PDF checks pass
 on Quarto 1.9.37 and 1.11.5. The extension currently declares no minimum Quarto
 version; these checks do not establish compatibility with every version or
-presentation configuration. See [ROADMAP.md](../../ROADMAP.md) for verification
-evidence and limits.
+presentation configuration. See [Rendering Regressions](../../CONTRIBUTING.md#rendering-regressions) for
+verification commands and requirements.
 Use a browser supporting the core CSS and Reveal output, including the adapter's
 container-relative image limits. PDF output needs Quarto's browser/PDF tooling.
 

@@ -1,5 +1,8 @@
 # Unbloated Hugo Theme
 
+Documentation destinations: [stable](https://jorgemartinez.space/projects/unbloated-hugo-theme/version/stable/)
+and [development](https://jorgemartinez.space/projects/unbloated-hugo-theme/version/dev/).
+
 This adapter extracts the presentation layer of Jorge's website. Its stylesheet
 uses the Unbloated core's design variables; the Hugo templates supply the
 existing navigation, post layouts, search, and shortcodes.
@@ -225,4 +228,5 @@ From the monorepo root, run `npm run build:adapters`,
 `node --test tests/hugo.test.mjs tests/search.test.mjs`, and the Hugo cases in
 `npm run test:browser`. The persistent consumer fixtures use the real bundled
 core and local script substitutes; they do not certify live CDN availability.
-See [ROADMAP.md](../../ROADMAP.md) for open rendering and print acceptance work.
+See [Rendering Regressions](../../CONTRIBUTING.md#rendering-regressions) for
+consumer browser checks and build requirements.

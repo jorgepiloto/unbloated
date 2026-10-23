@@ -65,6 +65,12 @@ body {
   background: var(--unbloat-color-inverse-surface);
 }
 
+.main-navigation a:focus-visible,
+.subnav a:focus-visible,
+.page-navigation a:focus-visible {
+  outline-color: var(--unbloat-color-text);
+}
+
 .site-layout {
   flex: 1;
   min-width: 0;
@@ -120,6 +126,7 @@ main {
 .page-content {
   container-type: inline-size;
   display: flow-root;
+  overflow-wrap: anywhere;
 }
 
 .page-content > h1 {

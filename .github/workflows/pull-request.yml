@@ -2,8 +2,6 @@ name: pull-request
 on:
   pull_request:
     branches: [main]
-env:
-  DOCUMENTATION_BASE_URL: https://jorgemartinez.space/projects/unbloated/version/dev/
 permissions:
   contents: read
 concurrency:
@@ -104,7 +102,21 @@ jobs:
           retention-days: 7
   doc-build:
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        project:
+          - unbloated
+          - sphinx-unbloated-theme
+          - unbloated-hugo-theme
+          - quarto-unbloated-theme
+          - unbloated-book
+    env:
+      DOCS_PROJECT: ${{ matrix.project }}
+      DOCS_CHANNEL: dev
+      DOCS_SOURCE_REF: ${{ github.sha }}
+      DOCS_ARTIFACT_DIR: .cache/project-docs/${{ matrix.project }}/dev
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
@@ -115,13 +127,33 @@ jobs:
           package-manager-cache: false
       - run: npm ci --ignore-scripts
       - run: npm run docs:setup
+      - name: Prepare Sphinx Python environment
+        if: matrix.project == 'sphinx-unbloated-theme'
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.12"
+      - name: Install Sphinx dependencies
+        if: matrix.project == 'sphinx-unbloated-theme'
+        run: |
+          npm run build:adapters
+          python -m pip install "pip>=25.1"
+          python -m pip install --group packages/sphinx/pyproject.toml:doc ./packages/sphinx
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends pandoc lmodern texlive-luatex texlive-latex-extra texlive-fonts-recommended
+      - name: Install Quarto for Sphinx PDF downloads
+        if: matrix.project == 'sphinx-unbloated-theme'
+        uses: quarto-dev/quarto-actions/setup@8a96df13519ee81fd526f2dfca5962811136661b # v2
+        with:
+          version: "1.11.5"
       - run: npx --no-install playwright install --with-deps chromium
-      - run: npm run docs:build -- --baseURL "$DOCUMENTATION_BASE_URL"
-      - run: npm run test:docs
+      - run: npm run docs:project -- "$DOCS_PROJECT" "$DOCS_CHANNEL"
+      - run: npm run test:project-docs
+      - if: matrix.project == 'unbloated'
+        run: npm run test:docs
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
-          name: documentation-html
-          path: site
+          name: documentation-${{ matrix.project }}-dev
+          path: .cache/project-docs/${{ matrix.project }}/dev
           if-no-files-found: error
           retention-days: 7
   tests:

@@ -68,6 +68,8 @@
     "lint:js": "eslint . --max-warnings=0",
     "lint:css": "biome lint src examples docs/assets/site.css packages --error-on-warnings",
     "lint": "npm run lint:js && npm run lint:css && npm run lint:adapters",
+    "docs:project": "node scripts/project-docs.mjs",
+    "test:project-docs": "playwright test --config playwright.projects.config.mjs",
     "docs:build": "node scripts/docs.mjs build",
     "docs:dev": "node scripts/docs.mjs serve",
     "docs:preview": "node scripts/docs.mjs preview",

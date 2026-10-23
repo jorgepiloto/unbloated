@@ -65,6 +65,14 @@ export async function prepareDocs() {
   await build();
   await mkdir(new URL("docs/assets/", root), { recursive: true });
   await mkdir(new URL("docs/data/", root), { recursive: true });
+  await mkdir(new URL("docs/static/licenses/unbloated/", root), {
+    recursive: true,
+  });
+  for (const name of ["LICENSE", "COPYING", "NOTICE"])
+    await copyFile(
+      new URL(name, root),
+      new URL(`docs/static/licenses/unbloated/${name}`, root),
+    );
   await copyFile(
     new URL("dist/unbloat.css", root),
     new URL("docs/assets/unbloat.css", root),

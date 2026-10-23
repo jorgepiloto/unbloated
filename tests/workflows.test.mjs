@@ -3,6 +3,7 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
+import { documentationProjects } from "../scripts/project-docs.mjs";
 
 function job(source, name) {
   const block = source
@@ -54,9 +55,15 @@ for (const workflow of ["night", "pull-request", "release"]) {
     assert.match(documentation, /playwright install --with-deps chromium/);
     assert.match(
       documentation,
-      /npm run docs:build[^\n]*\n\s+- run: npm run test:docs\n\s+- uses: actions\/upload-artifact/,
+      /npm run docs:project[^\n]*\n\s+- run: npm run test:project-docs/,
     );
     assert.doesNotMatch(documentation, /actions\/download-artifact/);
+    for (const project of Object.keys(documentationProjects))
+      assert.ok(
+        documentation.includes(`- ${project}\n`),
+        `${project} must have its own documentation build`,
+      );
+    assert.match(documentation, /fail-fast: false/);
     assert.doesNotMatch(
       job(source, "tests"),
       /test:docs|documentation-html|documentation-versioned/,
@@ -78,13 +85,24 @@ test("development publication waits for validation and uses the checked artifact
   assert.deepEqual(dependencies(deploy), ["build-library"]);
   assert.doesNotMatch(deploy, /always\(\)|continue-on-error/);
   assert.match(deploy, /if: github.ref == 'refs\/heads\/main'/);
-  assert.match(
-    job(source, "doc-build"),
-    /name: documentation-html\n\s+path: site/,
+  assert.ok(
+    job(source, "doc-build").includes(
+      "name: documentation-${{ matrix.project }}-dev",
+    ),
   );
   assert.match(job(source, "tests"), /npm run lint/);
-  assert.match(deploy, /name: documentation-html\n\s+path: documentation-html/);
-  assert.match(deploy, /publish_dir: documentation-html/);
+  assert.match(deploy, /pattern: documentation-\*/);
+  for (const project of Object.keys(documentationProjects)) {
+    assert.ok(
+      deploy.includes(
+        `publish_dir: documentation/documentation-${project}-dev`,
+      ),
+    );
+    assert.ok(
+      deploy.includes(`destination_dir: projects/${project}/version/dev`),
+    );
+  }
+  assert.doesNotMatch(deploy, /destination_dir: projects\s*$/m);
 });
 
 test("both release documentation artifacts are validated before publication", async () => {
@@ -93,12 +111,35 @@ test("both release documentation artifacts are validated before publication", as
     "utf8",
   );
   const validation = job(source, "doc-build");
-  assert.match(validation, /name: documentation-html\n\s+path: site/);
-  assert.match(validation, /name: documentation-versioned\n\s+path: site/);
+  assert.ok(
+    validation.includes("name: documentation-${{ matrix.project }}-stable"),
+  );
+  assert.match(validation, /name: documentation-unbloated-versioned/);
+  assert.equal(
+    [...validation.matchAll(/npm run test:project-docs/g)].length,
+    2,
+  );
   assert.equal([...validation.matchAll(/npm run test:docs/g)].length, 2);
-  assert.match(
-    validation,
-    /name: Build versioned documentation\n\s+run: npm run docs:build[^\n]*\n\s+- run: npm run test:docs\n\s+- uses: actions\/upload-artifact[^]*name: documentation-versioned/,
+  const deploy = job(source, "doc-deploy-stable");
+  for (const project of Object.keys(documentationProjects)) {
+    assert.ok(
+      deploy.includes(
+        `publish_dir: documentation/documentation-${project}-stable`,
+      ),
+    );
+    assert.ok(
+      deploy.includes(`destination_dir: projects/${project}/version/stable`),
+    );
+  }
+  assert.ok(
+    deploy.includes(
+      "publish_dir: documentation/documentation-unbloated-versioned",
+    ),
+  );
+  assert.deepEqual(dependencies(deploy), ["release-github", "doc-build"]);
+  assert.doesNotMatch(
+    deploy,
+    /always\(\)|continue-on-error|destination_dir: projects\s*$/m,
   );
 });
 

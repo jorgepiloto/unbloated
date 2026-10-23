@@ -22,7 +22,6 @@ project = "Sphinx Unbloated Theme"
 copyright = f"{datetime.now().year}, Jorge Martinez"
 author = "Jorge Martinez"
 release = version = __version__
-cname = os.getenv("DOCUMENTATION_CNAME", "localhost")
 
 # Sphinx extensions
 extensions = [
@@ -64,8 +63,8 @@ html_baseurl = os.getenv("DOCUMENTATION_BASE_URL", "")
 html_theme_options = {
     "site_description": "A Sphinx theme with monospace text and black and white headers.",
     "footer_text": f"&copy; {datetime.now().year} Jorge Martinez. Built with the Sphinx Unbloated Theme.",
-    "github_url": "https://github.com/jorgepiloto/sphinx-unbloated-theme",
-    "versions_url": f"https://{cname}/versions.json",
+    "github_url": "https://github.com/jorgepiloto/unbloated",
+    "versions_url": os.getenv("DOCUMENTATION_VERSIONS_URL", ""),
 }
 
 # Source settings

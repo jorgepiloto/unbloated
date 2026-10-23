@@ -67,6 +67,22 @@ own GPL license and third-party notices. Its author metadata lives in
 `pyproject.toml`; contribution history lives in Git.
 
 Browser builds and automated tests establish only their tested configurations.
-[ROADMAP.md](../ROADMAP.md) records remaining acceptance checks and known defects;
+[Rendering Regressions](../CONTRIBUTING.md#rendering-regressions) documents the
+consumer checks and their requirements;
 the presence of a documented option does not certify accessibility or release
 readiness across every generator, browser, or output format.
+
+## Documentation Sites
+
+The workflows publish separate dev and stable documentation under each adapter's project name:
+
+| Adapter | Project Name             | Stable Documentation                                                                                |
+| ------- | ------------------------ | --------------------------------------------------------------------------------------------------- |
+| Sphinx  | `sphinx-unbloated-theme` | [Sphinx documentation](https://jorgemartinez.space/projects/sphinx-unbloated-theme/version/stable/) |
+| Hugo    | `unbloated-hugo-theme`   | [Hugo guide](https://jorgemartinez.space/projects/unbloated-hugo-theme/version/stable/)             |
+| Quarto  | `quarto-unbloated-theme` | [Quarto guide](https://jorgemartinez.space/projects/quarto-unbloated-theme/version/stable/)         |
+| LaTeX   | `unbloated-book`         | [LaTeX guide](https://jorgemartinez.space/projects/unbloated-book/version/stable/)                  |
+
+Replace `stable` with `dev` for development documentation. The core keeps its
+existing `unbloated` project section. Publication runs through the gated workflows
+described in [Release Setup](../docs/content/releasing.md).

@@ -5,7 +5,7 @@ import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 
 /**
- * Read an existing artifact and infer its mount path from its core CSS URL.
+ * Read a project's declared prefix, or infer a legacy artifact's core CSS URL.
  * DOCS_ARTIFACT_DIR selects the downloaded directory; no source is rebuilt.
  * @param {string} [artifactDirectory] Directory relative to cwd, defaulting to site.
  * @returns {Promise<{directory: URL, prefix: string}>} Directory and URL prefix.
@@ -16,6 +16,21 @@ export async function docsArtifact(
 ) {
   const directory = pathToFileURL(resolve(artifactDirectory) + "/");
   const html = await readFile(new URL("index.html", directory), "utf8");
+  try {
+    const metadata = JSON.parse(
+      await readFile(new URL("documentation.json", directory), "utf8"),
+    );
+    const url = new URL(metadata.baseURL);
+    if (
+      !["http:", "https:"].includes(url.protocol) ||
+      url.pathname !== metadata.prefix ||
+      !/^\/(?:[a-zA-Z0-9._~-]+\/)*$/.test(metadata.prefix)
+    )
+      throw new Error("Invalid documentation artifact prefix.");
+    return { directory, prefix: metadata.prefix };
+  } catch (error) {
+    if (error.code !== "ENOENT") throw error;
+  }
   const href = /href="([^"]*\/unbloat\.[a-f0-9]+\.css)"/.exec(html)?.[1];
   if (!href)
     throw new Error(

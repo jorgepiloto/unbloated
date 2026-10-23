@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Build, validate, and deploy independent dev/stable documentation sites for each
+  extension, preserving the core site and versioned release snapshots.
+
 - Integrate the LaTeX adapter with core CSS-derived TeX styles, exact bundles,
   provenance, license checks, distribution packaging, and consumer regressions.
 - Restore Sphinx prose-link decoration and reflow header controls at narrow widths.

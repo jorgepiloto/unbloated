@@ -28,6 +28,7 @@ no build side effects; both default to this checkout and return `Promise<void>`.
 | `src/components.css`                 | The six optional `unbloat-` appearance classes                                                        |
 | `scripts/build.mjs`                  | Token validation, CSS and Sass generation, output checks, and reproducibility checks                  |
 | `scripts/serve.mjs`                  | Loopback reference server with fixed routes and restrictive response headers                          |
+| `scripts/project-docs.mjs`           | Per-project dev/stable builds, native Sphinx sources, package guide sites, and artifact manifests     |
 | `scripts/docs.mjs`                   | Documentation asset preparation, verified Hugo setup, builds, and local servers                       |
 | `scripts/latex-tokens.mjs`           | Validated CSS-to-TeX token translation, length mapping, and core digest for the LaTeX adapter         |
 | `scripts/adapters.mjs`               | Exact adapter CSS, core provenance, and license staging/checking                                      |
@@ -44,6 +45,12 @@ no build side effects; both default to this checkout and return `Promise<void>`.
 
 The [Components](../components/_index.md) pages describe the CSS selectors and
 their states, and [Design Tokens](tokens.md) documents the JSON schema and defaults.
+
+Each adapter has its own documentation project, registered in `docs/projects.json`.
+`npm run docs:project -- <project> <dev|stable>` builds a publishable artifact;
+`DOCS_ARTIFACT_DIR=.cache/project-docs/<project>/<channel> npm run test:project-docs`
+validates its prefix, links, downloads, bundled core, and layout without rebuilding.
+See [Release Setup](../releasing.md#configure-documentation-deployment) for destinations.
 
 ## Adapter APIs and Packages
 
@@ -284,7 +291,8 @@ verbatim samples, and attribution.
 
 Use Title Case headings, meaningful link labels, and executable examples with
 explicit working directories and prerequisites. Record incomplete acceptance
-checks in `ROADMAP.md`; documenting a feature does not close its regression work.
+checks in the contributor guide; documenting a feature does not establish
+passing regression coverage.
 
 ## Change the Documentation
 

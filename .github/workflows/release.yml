@@ -2,9 +2,6 @@ name: release
 on:
   push:
     tags: ["v*"]
-env:
-  DOCUMENTATION_ROOT_URL: https://jorgemartinez.space/projects/unbloated
-  DOCUMENTATION_BASE_URL: https://jorgemartinez.space/projects/unbloated/version/stable/
 permissions:
   contents: read
 concurrency:
@@ -105,7 +102,21 @@ jobs:
           retention-days: 30
   doc-build:
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        project:
+          - unbloated
+          - sphinx-unbloated-theme
+          - unbloated-hugo-theme
+          - quarto-unbloated-theme
+          - unbloated-book
+    env:
+      DOCS_PROJECT: ${{ matrix.project }}
+      DOCS_CHANNEL: stable
+      DOCS_SOURCE_REF: ${{ github.sha }}
+      DOCS_ARTIFACT_DIR: .cache/project-docs/${{ matrix.project }}/stable
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
@@ -116,25 +127,53 @@ jobs:
           package-manager-cache: false
       - run: npm ci --ignore-scripts
       - run: npm run docs:setup
+      - name: Prepare Sphinx Python environment
+        if: matrix.project == 'sphinx-unbloated-theme'
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.12"
+      - name: Install Sphinx dependencies
+        if: matrix.project == 'sphinx-unbloated-theme'
+        run: |
+          npm run build:adapters
+          python -m pip install "pip>=25.1"
+          python -m pip install --group packages/sphinx/pyproject.toml:doc ./packages/sphinx
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends pandoc lmodern texlive-luatex texlive-latex-extra texlive-fonts-recommended
+      - name: Install Quarto for Sphinx PDF downloads
+        if: matrix.project == 'sphinx-unbloated-theme'
+        uses: quarto-dev/quarto-actions/setup@8a96df13519ee81fd526f2dfca5962811136661b # v2
+        with:
+          version: "1.11.5"
       - run: npx --no-install playwright install --with-deps chromium
-      - run: npm run docs:build -- --baseURL "$DOCUMENTATION_BASE_URL"
-      - run: npm run test:docs
+      - run: npm run docs:project -- "$DOCS_PROJECT" "$DOCS_CHANNEL"
+      - run: npm run test:project-docs
+      - if: matrix.project == 'unbloated'
+        run: npm run test:docs
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
-          name: documentation-html
-          path: site
+          name: documentation-${{ matrix.project }}-stable
+          path: .cache/project-docs/${{ matrix.project }}/stable
           if-no-files-found: error
           retention-days: 30
-      - name: Read release version
+      - name: Read core release version
+        if: matrix.project == 'unbloated'
+        run: printf 'RELEASE_VERSION=%s\n' "$(node -p 'require("./package.json").version')" >> "$GITHUB_ENV"
+      - name: Build versioned core documentation
+        if: matrix.project == 'unbloated'
+        run: npm run docs:project -- unbloated "$RELEASE_VERSION"
+      - name: Validate versioned core documentation
+        if: matrix.project == 'unbloated'
+        env:
+          DOCS_ARTIFACT_DIR: .cache/project-docs/unbloated/${{ env.RELEASE_VERSION }}
         run: |
-          printf 'RELEASE_VERSION=%s\n' "$(node -p 'JSON.parse(require("node:fs").readFileSync("package.json", "utf8")).version')" >> "$GITHUB_ENV"
-      - name: Build versioned documentation
-        run: npm run docs:build -- --baseURL "${DOCUMENTATION_ROOT_URL}/version/${RELEASE_VERSION}/"
-      - run: npm run test:docs
-      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+          npm run test:project-docs
+          npm run test:docs
+      - if: matrix.project == 'unbloated'
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
-          name: documentation-versioned
-          path: site
+          name: documentation-unbloated-versioned
+          path: .cache/project-docs/unbloated/${{ env.RELEASE_VERSION }}
           if-no-files-found: error
           retention-days: 30
   tests:
@@ -243,29 +282,58 @@ jobs:
     steps:
       - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
         with:
-          name: documentation-html
-          path: documentation-html
-      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
-        with:
-          name: documentation-versioned
-          path: documentation-versioned
+          pattern: documentation-*
+          merge-multiple: false
+          path: documentation
       - name: Read release version
         env:
           RELEASE_TAG: ${{ github.ref_name }}
         run: printf 'RELEASE_VERSION=%s\n' "${RELEASE_TAG#v}" >> "$GITHUB_ENV"
-      - name: Deploy versioned documentation
+      - name: Deploy versioned core documentation
         uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453 # v4.1.0
         with:
           personal_token: ${{ secrets.WEBSITE_DEPLOY_TOKEN }}
           external_repository: jorgepiloto/website
-          publish_dir: documentation-versioned
+          publish_dir: documentation/documentation-unbloated-versioned
           publish_branch: gh-pages
           destination_dir: projects/unbloated/version/${{ env.RELEASE_VERSION }}
-      - name: Deploy stable documentation
+      - name: Deploy unbloated stable documentation
         uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453 # v4.1.0
         with:
           personal_token: ${{ secrets.WEBSITE_DEPLOY_TOKEN }}
           external_repository: jorgepiloto/website
-          publish_dir: documentation-html
+          publish_dir: documentation/documentation-unbloated-stable
           publish_branch: gh-pages
           destination_dir: projects/unbloated/version/stable
+      - name: Deploy sphinx-unbloated-theme stable documentation
+        uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453 # v4.1.0
+        with:
+          personal_token: ${{ secrets.WEBSITE_DEPLOY_TOKEN }}
+          external_repository: jorgepiloto/website
+          publish_dir: documentation/documentation-sphinx-unbloated-theme-stable
+          publish_branch: gh-pages
+          destination_dir: projects/sphinx-unbloated-theme/version/stable
+      - name: Deploy unbloated-hugo-theme stable documentation
+        uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453 # v4.1.0
+        with:
+          personal_token: ${{ secrets.WEBSITE_DEPLOY_TOKEN }}
+          external_repository: jorgepiloto/website
+          publish_dir: documentation/documentation-unbloated-hugo-theme-stable
+          publish_branch: gh-pages
+          destination_dir: projects/unbloated-hugo-theme/version/stable
+      - name: Deploy quarto-unbloated-theme stable documentation
+        uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453 # v4.1.0
+        with:
+          personal_token: ${{ secrets.WEBSITE_DEPLOY_TOKEN }}
+          external_repository: jorgepiloto/website
+          publish_dir: documentation/documentation-quarto-unbloated-theme-stable
+          publish_branch: gh-pages
+          destination_dir: projects/quarto-unbloated-theme/version/stable
+      - name: Deploy unbloated-book stable documentation
+        uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453 # v4.1.0
+        with:
+          personal_token: ${{ secrets.WEBSITE_DEPLOY_TOKEN }}
+          external_repository: jorgepiloto/website
+          publish_dir: documentation/documentation-unbloated-book-stable
+          publish_branch: gh-pages
+          destination_dir: projects/unbloated-book/version/stable

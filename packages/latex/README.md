@@ -1,5 +1,8 @@
 # Unbloated: A LaTeX Adapter
 
+Documentation destinations: [stable](https://jorgemartinez.space/projects/unbloated-book/version/stable/)
+and [development](https://jorgemartinez.space/projects/unbloated-book/version/dev/).
+
 `unbloated-book` adapts the shared core CSS to LuaLaTeX technical books. It
 extends the standard `book` class with core typography, grayscale colors,
 spacing, heading sizes, and borders, plus chapter-based equations and theorem

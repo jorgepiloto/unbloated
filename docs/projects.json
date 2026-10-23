@@ -1,0 +1,31 @@
+{
+  "unbloated": {
+    "title": "Unbloated",
+    "description": "Monospace grayscale CSS library for engineers",
+    "builder": "core"
+  },
+  "sphinx-unbloated-theme": {
+    "title": "Sphinx Unbloated Theme",
+    "description": "Sphinx documentation using the shared Unbloated core",
+    "builder": "sphinx",
+    "directory": "packages/sphinx"
+  },
+  "unbloated-hugo-theme": {
+    "title": "Unbloated for Hugo",
+    "description": "Hugo layouts, configuration, and shortcodes backed by Unbloated",
+    "builder": "guide",
+    "directory": "packages/hugo"
+  },
+  "quarto-unbloated-theme": {
+    "title": "Unbloated for Quarto",
+    "description": "Installation and slide authoring with the Unbloated Reveal.js format",
+    "builder": "guide",
+    "directory": "packages/quarto"
+  },
+  "unbloated-book": {
+    "title": "Unbloated for LaTeX",
+    "description": "Technical books using styles translated from the Unbloated core CSS",
+    "builder": "guide",
+    "directory": "packages/latex"
+  }
+}

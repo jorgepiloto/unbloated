@@ -41,25 +41,41 @@ can write to the `gh-pages` branch of `jorgepiloto/website`. Documentation deplo
 to that repository, not this package's GitHub Pages site. The deployment jobs
 update only their documentation subdirectory and preserve the rest of the website.
 
-Every workflow runs `doc-build`, `tests`, `adapter-packages`, and `latex-book`
-as independent jobs. `doc-build` tests the generated static documentation before
-uploading the `documentation-html` artifact. Its browser checks serve the exact
-output without rebuilding it. `build-library` waits for all four jobs and, on
-pull requests and releases, the code and workflow style checks.
-Pull requests build documentation without deploying it. Night runs on `main`
-publish development documentation through `doc-deploy-dev` after `build-library`
-succeeds. Deployment downloads the checked documentation artifact.
-Development documentation lives at
-`https://jorgemartinez.space/projects/unbloated/version/dev/`.
+Every workflow runs a `doc-build` matrix with a separate build and artifact for
+the core and each extension. `docs/projects.json` defines the project names,
+source directories, and site titles. The publication destinations are:
 
-After `release-github` succeeds, `doc-deploy-stable` publishes documentation at
-`https://jorgemartinez.space/projects/unbloated/version/stable/` and
-`https://jorgemartinez.space/projects/unbloated/version/<version>/`, with the
-leading `v` removed from the release tag. The release workflow builds separate
-stable and versioned artifacts so asset and navigation URLs use the correct
-prefix. Tests serve both exact artifacts at those prefixes before release.
-Deployment jobs share the `website-documentation` concurrency group
-to serialize website updates from this repository.
+| Project  | Development                                     | Stable                                             |
+| -------- | ----------------------------------------------- | -------------------------------------------------- |
+| Core CSS | `/projects/unbloated/version/dev/`              | `/projects/unbloated/version/stable/`              |
+| Sphinx   | `/projects/sphinx-unbloated-theme/version/dev/` | `/projects/sphinx-unbloated-theme/version/stable/` |
+| Hugo     | `/projects/unbloated-hugo-theme/version/dev/`   | `/projects/unbloated-hugo-theme/version/stable/`   |
+| Quarto   | `/projects/quarto-unbloated-theme/version/dev/` | `/projects/quarto-unbloated-theme/version/stable/` |
+| LaTeX    | `/projects/unbloated-book/version/dev/`         | `/projects/unbloated-book/version/stable/`         |
+
+All paths are under `https://jorgemartinez.space`. Sphinx uses its existing native
+documentation, including API pages, notebooks, and PDF downloads. Hugo, Quarto,
+and LaTeX render their canonical package guides with the existing shared CSS
+and documentation layout. Their footers show their own extension versions.
+
+Each matrix entry validates the exact artifact's identity, URL prefix, internal
+links, downloads, core CSS/license bytes, keyboard navigation, and mobile layout before
+uploading `documentation-<project>-dev` or `documentation-<project>-stable`.
+Core documentation also runs its component and interaction suite. Tests serve
+built files without rebuilding them and verify that artifact bytes stay intact.
+
+The matrix, general tests, adapter packaging, and LaTeX compilation run
+independently. `build-library` waits for every matrix entry and the other checks,
+including style jobs on pull requests and releases. Pull requests do not deploy.
+Night runs on `main` deploy all five dev artifacts after `build-library` succeeds.
+Release runs deploy all five stable artifacts after `release-github` succeeds.
+The core also retains its existing `/projects/unbloated/version/<release>/`
+snapshot, tested separately before publication.
+
+One deployment job publishes the project directories sequentially under the
+shared `website-documentation` concurrency group. Each upload replaces only its
+own version directory, preserving other projects and channels. The workflow does
+not replace the website's entire `projects/` directory.
 
 ## Publish a Version
 
@@ -74,8 +90,8 @@ to serialize website updates from this repository.
    `actions-style` runs zizmor. The `tests` job verifies the tag
    against `package.json`, checks that the commit belongs to `main`, and runs
    the unit tests, browser tests, build checks, and dependency audits.
-   `doc-build` validates both stable and versioned documentation before uploading
-   their artifacts. `build-library` waits for documentation, tests, adapter
+   `doc-build` validates every stable project site and the versioned core snapshot
+   before uploading their separate artifacts. `build-library` waits for documentation, tests, adapter
    packaging, LaTeX compilation, and both style jobs, then builds and uploads the
    npm tarball.
 6. Confirm that `release-npm` publishes the tarball through trusted publishing.

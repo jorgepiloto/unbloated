@@ -1,0 +1,11 @@
+{{- /* Package guides retain source links without changing examples inside code fences. */ -}}
+{{- $url := urls.Parse .Destination -}}
+{{- $href := .Destination -}}
+{{- if and (not $url.IsAbs) (not $url.Host) $url.Path -}}
+  {{- $path := path.Clean (path.Join .Page.Site.Params.sourceDirectory $url.Path) -}}
+  {{- $href = printf "https://github.com/jorgepiloto/unbloated/blob/%s/%s" .Page.Site.Params.sourceRef $path -}}
+  {{- with $url.RawQuery -}}{{- $href = printf "%s?%s" $href . -}}{{- end -}}
+  {{- with $url.Fragment -}}{{- $href = printf "%s#%s" $href . -}}{{- end -}}
+{{- end -}}
+<a href="{{ $href | safeURL }}"{{ with .Title }} title="{{ . }}"{{ end }}>{{ .Text }}</a>
+{{- /* Trim trailing whitespace for inline links. */ -}}

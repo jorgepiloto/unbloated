@@ -11,6 +11,7 @@ LICENSE
 COPYING
 NOTICE
 docs/data/package.json
+docs/static/licenses/unbloated/
 .cache/
 docs/resources/
 docs/.hugo_build.lock
@@ -36,3 +37,5 @@ packages/latex/unbloat.css
 packages/latex/unbloated-core.json
 packages/latex/unbloated-tokens.sty
 packages/latex/licenses/
+
+docs/project/layouts/

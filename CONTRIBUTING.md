@@ -118,6 +118,40 @@ dependencies and Hugo binary. No engine is excluded and no rendering flags are
 overridden. Native browser execution remains available through
 `npm run test:browser`.
 
+## Project Documentation
+
+Every extension has its own documentation site. Project identifiers and sources
+live in `docs/projects.json`. Build and validate one site from the repository root:
+
+```sh
+npm run docs:setup
+npm run docs:project -- unbloated-hugo-theme dev
+DOCS_ARTIFACT_DIR=.cache/project-docs/unbloated-hugo-theme/dev npm run test:project-docs
+```
+
+Replace the project with `unbloated`, `sphinx-unbloated-theme`,
+`quarto-unbloated-theme`, or `unbloated-book`, and use `stable` for a release
+preview. Output stays under `.cache/project-docs/<project>/<channel>/`.
+`documentation.json` records the project, channel, version, and deployment URL.
+The artifact server accepts this manifest and retains compatibility with older
+core artifacts identified by their fingerprinted CSS.
+
+Sphinx builds its native sources and requires the package's `doc` dependency
+group, Pandoc, Quarto, and LuaLaTeX for notebook/PDF downloads. Use an absolute
+virtual-environment executable path through `PYTHON`; do not resolve its symlink
+to the system Python. Its CI matrix entry installs these tools before building.
+`DOCUMENTATION_VERSIONS_URL` optionally supplies a Sphinx version-selector feed;
+it defaults to empty rather than requesting a global or localhost feed.
+The other extension sites render their package READMEs without duplicating guide
+content. Relative source links resolve to the monorepo; code examples retain
+literal Hugo shortcode syntax. `DOCS_SOURCE_REF` selects the source revision in
+those links, defaulting to `main`; CI uses the checked-out commit.
+
+Dev and stable artifacts publish to each project's own version directory. See
+[Release Setup](docs/content/releasing.md#configure-documentation-deployment) for
+all destination paths and deployment gates. Updating this code configures future
+workflow runs; local preview commands do not publish to the website.
+
 ## Adapter Packages
 
 The [LaTeX adapter](packages/latex/README.md) participates in the same staging,

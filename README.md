@@ -71,6 +71,8 @@ successful [workflow runs](https://github.com/jorgepiloto/unbloated/actions);
 published releases attach the same tarball to the
 [GitHub release](https://github.com/jorgepiloto/unbloated/releases).
 
+Each extension also has its own [documentation section](packages/README.md#documentation-sites), with separate dev and stable versions.
+
 ## Troubleshooting
 
 [Open an issue](https://github.com/jorgepiloto/unbloated/issues/new) with the

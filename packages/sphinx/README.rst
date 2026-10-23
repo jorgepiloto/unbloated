@@ -23,6 +23,11 @@ The Sphinx Unbloated Theme is an HTML theme for
 `Sphinx <https://www.sphinx-doc.org/>`_. It inherits Sphinx's ``basic`` theme
 and uses vanilla CSS and JavaScript. Sphinx is its only runtime dependency.
 
+Documentation destinations: `stable
+<https://jorgemartinez.space/projects/sphinx-unbloated-theme/version/stable/>`_
+and `development
+<https://jorgemartinez.space/projects/sphinx-unbloated-theme/version/dev/>`_.
+
 The theme bundles the Unbloated CSS library with Sphinx-specific layout styles,
 Jinja2 templates, and configuration options. Colors, heading sizes, font stacks,
 and shadow values come from the core library. Node.js is a contributor build
@@ -177,8 +182,8 @@ Its issue link appears only for an HTTPS GitHub repository destination.
 Prose links remain underlined. Header controls reflow at narrow widths, and the
 version selector uses path-boundary matching with an explicit unmatched state.
 AutoAPI print output includes all summary panels and their rubric headings
-without changing screen selection. The monorepo's ``ROADMAP.md`` and
-``anti-slop/`` reports record browser acceptance evidence and its limits.
+without changing screen selection. The monorepo's ``CONTRIBUTING.md`` documents the browser and
+rendering checks and their requirements.
 
 Troubleshooting
 ===============
