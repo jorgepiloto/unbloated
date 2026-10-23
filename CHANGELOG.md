@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Add a standalone LuaLaTeX class and example for technical books.
 - Make Sphinx, Quarto, and Hugo adapters consume the same generated core CSS.
 - Add bundle provenance, source ownership checks, package checks, and adapter CI.
 - Replace adapter palettes and font defaults with core variables.

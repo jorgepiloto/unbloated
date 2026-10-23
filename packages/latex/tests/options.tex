@@ -1,0 +1,38 @@
+% SPDX-License-Identifier: LGPL-3.0-only
+\documentclass[12pt,letterpaper,oneside,openany]{unbloated-book}
+\makeatletter
+\AtBeginDocument{
+  \ifdim\paperwidth=8.5in\else
+    \ClassError{unbloated-book}{Letter paper option was not applied}{}
+  \fi
+  \ifnum\@ptsize=2\else
+    \ClassError{unbloated-book}{12pt option was not applied}{}
+  \fi
+  \if@twoside
+    \ClassError{unbloated-book}{Oneside option was not applied}{}
+  \fi
+  \if@openright
+    \ClassError{unbloated-book}{Openany option was not applied}{}
+  \fi
+}
+\makeatother
+\begin{document}
+\chapter{Class Options}
+This document checks the paper size, font size, and chapter options.
+\textbf{\textit{Bold italic text uses a real font face.}}
+\begin{theorem}
+The sum of two even integers is even.
+\end{theorem}
+\begin{proof}
+Write the integers as \(2a\) and \(2b\). Their sum is \(2(a+b)\).
+\end{proof}
+\begin{lemma}
+The product of two odd integers is odd.
+\end{lemma}
+\begin{proposition}
+The sum of two odd integers is even.
+\end{proposition}
+\begin{corollary}
+The square of an even integer is even.
+\end{corollary}
+\end{document}

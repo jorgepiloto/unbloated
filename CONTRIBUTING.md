@@ -82,6 +82,12 @@ Keep the license banner in distributed CSS and Sass files.
 
 ## Adapter Packages
 
+The standalone [LaTeX package](packages/latex/README.md) uses LuaLaTeX rather
+than the CSS adapter pipeline below. Run `bash tests/check.sh` from
+`packages/latex` to compile its example and check class options and engine
+errors. Keep generated PDFs and TeX auxiliary files in its ignored `build/`
+directory.
+
 The CSS library at the repository root owns the design values and shared
 semantic styles. `packages/sphinx`, `packages/quarto`, and `packages/hugo` own
 platform markup, navigation, slide geometry, and layout-specific spacing.

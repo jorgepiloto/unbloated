@@ -1,0 +1,41 @@
+% SPDX-License-Identifier: LGPL-3.0-only
+\documentclass[11pt,a4paper]{unbloated-book}
+
+\title{Notes on Numerical Integration}
+\author{Unbloated Contributors}
+\date{}
+\hypersetup{
+  pdftitle={Notes on Numerical Integration},
+  pdfauthor={Unbloated Contributors},
+  pdflang={en}
+}
+
+\begin{document}
+\frontmatter
+\maketitle
+\tableofcontents
+
+\chapter{Preface}
+This short book introduces the midpoint rule and its implementation.
+The examples use semantic headings, numbered equations, and references
+that remain valid when chapters move.
+
+\mainmatter
+\input{example/chapters/integration}
+\input{example/chapters/implementation}
+
+\appendix
+\chapter{Notation}
+\label{app:notation}
+The interval endpoints are \(a\) and \(b\). Split this interval into
+\(n\) equal parts with step size \(h=(b-a)/n\).
+
+\backmatter
+\begin{thebibliography}{9}
+\bibitem{calculus}
+OpenStax.
+\emph{Calculus Volume 2}.
+Rice University, 2016.
+\href{https://openstax.org/details/books/calculus-volume-2}{Publisher's edition}.
+\end{thebibliography}
+\end{document}

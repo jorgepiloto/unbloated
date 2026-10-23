@@ -41,6 +41,10 @@ Sphinx projects and generated sites do not need Node.js at runtime. See
 [Adapter Packages](CONTRIBUTING.md#adapter-packages) for builds and ownership
 rules, and the [Hugo adapter](packages/hugo/README.md) for website setup.
 
+[`packages/latex`](packages/latex/README.md) provides a standalone LuaLaTeX
+class for technical books. It uses TeX-distributed monospace fonts and doesn't
+yet consume the shared CSS design tokens.
+
 ## Documentation
 
 The [documentation](https://jorgemartinez.space/projects/unbloated/version/stable/) covers:

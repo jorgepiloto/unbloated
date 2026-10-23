@@ -1,0 +1,37 @@
+% SPDX-License-Identifier: LGPL-3.0-only
+\chapter{Numerical Integration}
+\label{ch:integration}
+
+\section{The Midpoint Rule}
+For a continuous function \(f\), approximate its integral by sampling
+the midpoint of each subinterval~\cite{calculus}.
+Appendix~\ref{app:notation} collects the notation.
+
+\begin{definition}[Composite midpoint rule]
+For \(n\geq 1\) and \(h=(b-a)/n\), define
+\begin{equation}
+  M_n(f) = h\sum_{k=0}^{n-1}
+    f\left(a+\left(k+\frac{1}{2}\right)h\right).
+  \label{eq:midpoint}
+\end{equation}
+\end{definition}
+
+\begin{theorem}[Exactness for affine functions]
+\label{thm:affine}
+If \(f(x)=cx+d\), then \(M_n(f)=\int_a^b f(x)\,\mathrm{d}x\).
+\end{theorem}
+\begin{proof}
+On each subinterval, the average of an affine function equals its
+value at the midpoint. Multiplying by \(h\) gives the exact integral
+on that subinterval. Summing proves the result.
+\end{proof}
+
+\begin{example}
+For \(f(x)=x\) on \([0,1]\), Equation~\eqref{eq:midpoint} gives
+\(M_n(f)=1/2\) for every positive integer \(n\).
+\end{example}
+
+\begin{exercise}
+Apply the midpoint rule to \(f(x)=x^2\) on \([0,1]\) with \(n=2\).
+Compare the result with the exact integral \(1/3\).
+\end{exercise}

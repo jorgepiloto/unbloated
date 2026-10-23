@@ -1,0 +1,40 @@
+% SPDX-License-Identifier: LGPL-3.0-only
+\chapter{Implementation}
+\label{ch:implementation}
+
+\section{A Reference Implementation}
+Listing~\ref{lst:midpoint} implements Equation~\eqref{eq:midpoint}.
+It rejects nonpositive subinterval counts before computing the step size.
+
+\begin{lstlisting}[language=Python,caption={Composite midpoint rule.},label={lst:midpoint}]
+def midpoint(f, a, b, n):
+    if n < 1:
+        raise ValueError("n must be positive")
+    h = (b - a) / n
+    return h * sum(f(a + (k + 0.5) * h) for k in range(n))
+\end{lstlisting}
+
+\section{Checking the Result}
+Theorem~\ref{thm:affine} provides an exact test case.
+Table~\ref{tab:convergence} instead uses \(f(x)=x^2\) to show how the
+approximation changes when the number of subintervals doubles.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Midpoint estimates for the integral of \(x^2\) on \([0,1]\).}
+  \label{tab:convergence}
+  \begin{tabular}{rrr}
+    \toprule
+    \(n\) & Estimate & Absolute error \\
+    \midrule
+    1 & 0.250000 & 0.083333 \\
+    2 & 0.312500 & 0.020833 \\
+    4 & 0.328125 & 0.005208 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{remark}
+These values check the implementation for one integrand. They do not
+establish an error bound for arbitrary continuous functions.
+\end{remark}
