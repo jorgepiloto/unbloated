@@ -9,6 +9,9 @@ It uses four HTML elements:
 ``<header>``
     Shows the project name (``project`` in ``conf.py``) in white on black.
     Set ``site_description`` to add a description below it.
+    Social links, search, and optional version selection wrap into rows as space
+    narrows. On narrow screens the search and version labels sit above their
+    fields; native controls retain visible keyboard focus.
 
 ``<nav>``
     Styled native links lead to the top-level sections and the current section's
@@ -16,6 +19,7 @@ It uses four HTML elements:
 
 ``<main>``
     Contains the document and uses the available width, up to 800 px.
+    Prose links remain underlined before and after visiting them.
 
 ``<footer>``
     Shows ``footer_text`` in white on black. The default is the copyright

@@ -393,3 +393,50 @@ test("both tab panels remain readable when enhancement is unavailable", async ({
     }
   }
 });
+
+test("printing exposes both tab panels and headings while preserving screen selection", async ({
+  browser,
+}) => {
+  for (const disabled of [false, true]) {
+    const context = await browser.newContext({ javaScriptEnabled: !disabled });
+    try {
+      const page = await context.newPage();
+      await page.goto(`${localURL}components/tabs/`);
+      for (const selected of ["Complete", "Tokens"]) {
+        if (!disabled)
+          await page.getByRole("tab", { name: selected, exact: true }).click();
+        for (let transition = 0; transition < 2; transition += 1) {
+          await page.emulateMedia({ media: "print" });
+          await expect(page.locator("[data-demo-tabs]")).toBeHidden();
+          for (const panel of ["#panel-complete", "#panel-tokens"]) {
+            await expect(page.locator(panel)).toBeVisible();
+            await expect(
+              page.locator(`${panel} .tab-panel-title`),
+            ).toBeVisible();
+          }
+          await page.pdf({
+            path: test
+              .info()
+              .outputPath(`tabs-${disabled}-${selected}-${transition}.pdf`),
+          });
+          await page.emulateMedia({ media: "screen" });
+          if (!disabled) {
+            await expect(
+              page.getByRole("tab", { name: selected, exact: true }),
+            ).toHaveAttribute("aria-selected", "true");
+            await expect(
+              page.locator(
+                selected === "Complete" ? "#panel-tokens" : "#panel-complete",
+              ),
+            ).toBeHidden();
+          } else {
+            await expect(page.locator("#panel-complete")).toBeVisible();
+            await expect(page.locator("#panel-tokens")).toBeVisible();
+          }
+        }
+      }
+    } finally {
+      await context.close();
+    }
+  }
+});

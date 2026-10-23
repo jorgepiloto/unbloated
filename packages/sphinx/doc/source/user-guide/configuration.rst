@@ -94,6 +94,15 @@ Available Options
     Invalid entries are skipped. If no valid entries remain or the feed fails
     to load, the dropdown is hidden.
 
+    Current-version matching ignores queries and fragments. Destinations ending
+    in ``.html``, ``.htm``, or ``.xhtml`` match an exact page; other paths are
+    directory roots, with or without a trailing slash. The longest matching root
+    wins, so ``/v1`` cannot match ``/v10``. Equal roots keep feed order. Navigation
+    preserves the destination's original query and fragment.
+
+    If no entry matches the current page, a disabled ``Current page (unlisted)``
+    option is selected. Valid versions remain available for navigation.
+
     .. code-block:: python
 
        html_theme_options = {
@@ -171,6 +180,8 @@ source directory. To give each class its own page, set
 
 Use the arrow keys, Home, and End to switch summary tabs. All summary groups
 remain visible when JavaScript is turned off.
+Print output includes every summary panel and its rubric heading while hiding
+tab controls. Returning to screen media preserves the selected tab.
 
 To use your own templates, set ``autoapi_template_dir`` to your template
 directory instead.

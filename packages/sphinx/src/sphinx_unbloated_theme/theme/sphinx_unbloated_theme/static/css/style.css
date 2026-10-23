@@ -73,7 +73,7 @@ body > .document {
 header {
   color: var(--white);
   background-color: var(--black);
-  padding: 1.5rem 0 0 1rem;
+  padding: 1.5rem 1rem 1rem;
 
   /* Keep the site title separate from page headings. */
   & h1.title {
@@ -89,12 +89,32 @@ header {
 
   & div.components {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
+    gap: 0.75rem 1rem;
+
+    & > * {
+      min-inline-size: 0;
+      max-inline-size: 100%;
+    }
   }
 
   & p.social {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    margin: 0;
     font-size: 1.2rem;
+
+    & a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-inline-size: 2.75rem;
+      min-block-size: 2.75rem;
+      text-decoration: none;
+    }
   }
 
   & a {
@@ -111,11 +131,12 @@ header {
 
 header div.version-switcher {
   display: flex;
+  flex: 1 1 15rem;
   align-items: center;
   gap: 0.4rem;
-  padding-right: 1rem;
 
   & span.version-label {
+    flex-shrink: 0;
     font-size: 0.85rem;
     color: var(--white);
   }
@@ -135,9 +156,11 @@ header div.version-switcher {
     padding: 0.2rem 1.6rem 0.2rem 0.4rem;
     cursor: pointer;
     appearance: auto;
-    text-align: right;
-    direction: rtl;
-    width: calc(100% - 4rem);
+    text-align: start;
+    flex: 1;
+    min-inline-size: 0;
+    min-block-size: 2.75rem;
+    width: 100%;
   }
 }
 
@@ -153,8 +176,7 @@ header form.header-search {
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  flex: 1;
-  padding: 0 1rem;
+  flex: 1 1 16rem;
 
   & label {
     color: var(--white);
@@ -165,6 +187,8 @@ header form.header-search {
 
   & input[type="search"] {
     flex: 1;
+    min-inline-size: 0;
+    min-block-size: 2.75rem;
     font-family: var(--font-family-code);
     font-size: 0.85rem;
     color: var(--white);
@@ -214,6 +238,10 @@ nav {
     &.active {
       background-color: var(--black);
       color: var(--white);
+    }
+
+    &:focus-visible {
+      outline-color: var(--black);
     }
   }
 }
@@ -391,7 +419,7 @@ a.headerlink {
 /* Links */
 
 a {
-  text-decoration: none;
+  text-decoration: underline;
   color: var(--blue);
 
   &:hover {
@@ -667,6 +695,13 @@ main dl:has(> dt.sig-object) dl.field-list {
 }
 
 @media (max-width: 500px) {
+  header form.header-search,
+  header div.version-switcher {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    flex-basis: 100%;
+  }
+
   main dl:has(> dt.sig-object) dl.field-list {
     grid-template-columns: minmax(0, 1fr);
     gap: 0.25rem;
@@ -677,6 +712,17 @@ main dl:has(> dt.sig-object) dl.field-list {
     & > dd:last-child {
       margin-bottom: 0;
     }
+  }
+}
+
+@media print {
+  .autoapi-tabs {
+    display: none;
+  }
+
+  .autoapi-summary-panel[hidden],
+  .autoapi-summary-panel > .rubric[hidden] {
+    display: block;
   }
 }
 

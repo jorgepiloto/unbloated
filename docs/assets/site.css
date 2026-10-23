@@ -234,6 +234,21 @@ table {
   padding-block-start: var(--unbloat-space-3);
 }
 
+.tab-panel-title {
+  display: none;
+}
+
+@media print {
+  [data-demo-tabs] {
+    display: none;
+  }
+
+  [role="tabpanel"][hidden],
+  .tab-panel-title {
+    display: block;
+  }
+}
+
 /* Keep readable text on mobile; only the outer margin and content spacing shrink. */
 @media (width <= 50rem) {
   body {

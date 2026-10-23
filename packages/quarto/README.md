@@ -53,10 +53,14 @@ flag is not a Quarto option.
 
 Images are capped relative to their column (`min(100%, 800px)`) and preserve
 authored width attributes. Captions and figures use Quarto's normal markup.
-Footers use Quarto's native lifecycle: configure a global `footer`, add a slide's
-`.footer` div for an override, or use `{footer=false}` on a heading to suppress it.
-The extension does not relocate footer nodes. Verify slide, scroll, and PDF output
-with your installed Quarto version; native footer behavior can vary by version.
+Configure a global `footer`, add a slide's `.footer` div for an override, or use
+`{footer=false}` on a heading to suppress it. Normal slides use Quarto's native
+footer lifecycle. For scroll view, the after-body script copies the configured
+global footer into slides without an override or suppression. After Reveal's
+`pdf-ready` event, it places a copy of each page's local or default footer inside
+that PDF page, outside the clipped slide frame. CSS hides the fixed screen footer
+in both views. Empty global footers produce no copies, and authored local footer
+nodes stay in their slides.
 
 ## Source and Compatibility
 
@@ -64,13 +68,14 @@ with your installed Quarto version; native footer behavior can vary by version.
 | ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
 | `_extensions/unbloated/_extension.yml`                                  | Independent extension version and the `unbloated-revealjs` format. Registers the default Reveal theme, SCSS, core CSS, and after-body include. |
 | `_extensions/unbloated/unbloated.scss`                                  | Maps core properties to Reveal variables and supplies slide geometry, code, images, tables, captions, and footer styling.                      |
-| `_extensions/unbloated/custom.html`                                     | Retained after-body include; footers use the generator's native lifecycle.                                                                     |
+| `_extensions/unbloated/custom.html`                                     | Copies global footers into scroll slides and local/default footers into PDF pages, preserving authored nodes and native screen behavior.       |
 | `_extensions/unbloated/unbloat.css`, `unbloated-core.json`, `licenses/` | Generated exact core bundle, provenance, and notices; do not edit.                                                                             |
 
-The source has HTML-generation evidence on Quarto 1.9.37 and 1.11.5; this is not
-a declared minimum-version guarantee. The extension currently declares no
-minimum Quarto version. Browser layout, native footer handling, scroll view, and
-print/PDF checks are tracked separately in [ROADMAP.md](../../ROADMAP.md).
+Browser layout, native footer handling, scroll view, and print/PDF checks pass
+on Quarto 1.9.37 and 1.11.5. The extension currently declares no minimum Quarto
+version; these checks do not establish compatibility with every version or
+presentation configuration. See [ROADMAP.md](../../ROADMAP.md) for verification
+evidence and limits.
 Use a browser supporting the core CSS and Reveal output, including the adapter's
 container-relative image limits. PDF output needs Quarto's browser/PDF tooling.
 

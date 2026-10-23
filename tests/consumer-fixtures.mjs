@@ -91,6 +91,12 @@ categories: [topic]
 | --- | --- |
 | ${"Identifier".repeat(100)} | Result |
 
+[After table](#after-table)
+
+### After table
+
+All content after the wide table remains reachable.
+
 {{< card_plant name="Fern" type="Perennial" growth_habit="Upright" watering="Weekly" humidity="High" light="Indirect" soil="Rich" temperature="20°C" birthday="2020" >}}
 {{< card_plant name="Moss" type="Perennial" growth_habit="Low" watering="Weekly" humidity="High" light="Indirect" soil="Rich" temperature="20°C" birthday="2021" >}}
 {{< plotly json="/prefix/plot.json?a=1&b=2" >}}

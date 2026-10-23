@@ -46,7 +46,7 @@ and [script contracts](../scripts/README.md).
 | `sphinx/doc/`, `sphinx/examples/`, `sphinx/tests/`           | Sphinx documentation, executable scientific demonstrations, and builder/browser regressions.             |
 | `hugo/layouts/`                                              | Go templates, metadata, discovery filters, feeds, sitemaps, and shortcodes.                              |
 | `hugo/assets/`, `hugo/static/`                               | Host-processed CSS and tabs; static search and legacy navigation scripts.                                |
-| `quarto/_extensions/unbloated/`                              | Format manifest, Reveal SCSS, generated core bundle, and native-footer include.                          |
+| `quarto/_extensions/unbloated/`                              | Format manifest, Reveal SCSS, generated core bundle, and scoped footer preparation for scroll/print.     |
 | `quarto/template.qmd`                                        | Starter slide document.                                                                                  |
 | `latex/unbloated-book.cls`, `latex/example/`, `latex/tests/` | LuaLaTeX class, technical book example, and compilation checks.                                          |
 

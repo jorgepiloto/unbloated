@@ -174,9 +174,11 @@ directory. Set ``html_baseurl`` with the deployment prefix and add
 ``html_additional_pages = {"404": "404.html"}`` for the hosted error page.
 Its issue link appears only for an HTTPS GitHub repository destination.
 
-Known version-selection, header, prose-link, and print acceptance work is recorded
-in the monorepo's ``ROADMAP.md``. Do not infer complete browser or print coverage
-from a successful Sphinx build.
+Prose links remain underlined. Header controls reflow at narrow widths, and the
+version selector uses path-boundary matching with an explicit unmatched state.
+AutoAPI print output includes all summary panels and their rubric headings
+without changing screen selection. The monorepo's ``ROADMAP.md`` and
+``anti-slop/`` reports record browser acceptance evidence and its limits.
 
 Troubleshooting
 ===============

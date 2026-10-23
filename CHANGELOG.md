@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- Restore Sphinx prose-link decoration and reflow header controls at narrow widths.
+- Match documentation versions at URL boundaries and show unmatched pages honestly.
+- Print all documentation and AutoAPI tab content without changing screen selection.
+- Preserve Quarto footer ownership with global footer copies in scroll slides
+  and local/default footer copies anchored inside PDF pages.
+- Add browser regressions for header geometry, visited links, version navigation,
+  repeated print transitions, and generated PDFs.
 - Remove redundant top-level Hugo license copies and Sphinx author/contributor
   lists; retain bundled license texts, attribution, and manifest author metadata.
 - Add source, script, and platform directory guides; document script APIs,

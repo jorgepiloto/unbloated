@@ -1,1 +1,58 @@
-<!-- Footers use Quarto’s native Reveal.js lifecycle. -->
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const deck = window.Reveal;
+    if (!deck) return;
+
+    function copyFooter(footer, className) {
+      const copy = footer.cloneNode(true);
+      copy.className = className;
+      copy.removeAttribute("style");
+      copy.removeAttribute("id");
+      for (const element of copy.querySelectorAll("[id]"))
+        element.removeAttribute("id");
+      return copy;
+    }
+
+    function defaultFooter() {
+      const footer = document.querySelector(".footer-default");
+      return footer && (footer.textContent.trim() || footer.children.length)
+        ? footer
+        : null;
+    }
+
+    function prepareScrollFooters() {
+      const footer = defaultFooter();
+      if (!footer) return;
+      for (const slide of deck.getSlides()) {
+        if (
+          slide.dataset.footer === "false" ||
+          slide.querySelector(".footer, .unbloated-slide-footer")
+        )
+          continue;
+        slide.append(copyFooter(footer, "unbloated-slide-footer"));
+      }
+    }
+
+    function preparePrintFooters() {
+      for (const page of deck
+        .getSlidesElement()
+        .querySelectorAll(".pdf-page")) {
+        const slide = page.querySelector("section");
+        if (
+          !slide ||
+          slide.dataset.footer === "false" ||
+          page.querySelector(":scope > .unbloated-print-footer")
+        )
+          continue;
+        const footer = slide.querySelector(".footer") || defaultFooter();
+        if (footer) page.append(copyFooter(footer, "unbloated-print-footer"));
+      }
+    }
+
+    deck.on("pdf-ready", preparePrintFooters);
+    if (deck.isReady()) {
+      prepareScrollFooters();
+      preparePrintFooters();
+    } else deck.on("ready", prepareScrollFooters);
+  });
+</script>

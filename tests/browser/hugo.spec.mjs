@@ -100,6 +100,20 @@ test("wide tables and prose links stay reachable at narrow and enlarged sizes", 
   await expect(link).toHaveCSS("text-decoration-line", "underline");
   await link.focus();
   await expect(link).toHaveCSS("outline-style", "solid");
+  const afterTable = page.getByRole("link", {
+    name: "After table",
+    exact: true,
+  });
+  await afterTable.focus();
+  await afterTable.press("Enter");
+  await expect(page).toHaveURL(/#after-table$/);
+  const target = page.getByRole("heading", {
+    name: "After table",
+    exact: true,
+  });
+  const box = await target.boundingBox();
+  expect(box.y).toBeGreaterThanOrEqual(-1);
+  expect(box.y).toBeLessThan(800);
 });
 
 test("search parses URL parameters, preserves literal text, and uses the prefixed index", async ({

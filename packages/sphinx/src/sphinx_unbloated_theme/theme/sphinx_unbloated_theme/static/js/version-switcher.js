@@ -29,6 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
       if (!Array.isArray(versions)) throw new Error("Invalid version list");
       select.replaceChildren();
       let currentURL = "";
+      let currentRootLength = -1;
       versions.forEach(function (version) {
         if (!version || typeof version.name !== "string") return;
         const url = versionURL(version.url);
@@ -37,15 +38,29 @@ document.addEventListener("DOMContentLoaded", function () {
         option.value = url;
         option.textContent = version.name;
         select.appendChild(option);
-        if (
-          window.location.href.startsWith(url) &&
-          url.length > currentURL.length
-        )
+        const path = new URL(url).pathname;
+        const root = path.replace(/\/+$/, "");
+        const currentPath = window.location.pathname;
+        // HTML destinations match one page; other paths identify directory roots.
+        const matches = /\.(?:html?|xhtml)$/i.test(path)
+          ? currentPath === path
+          : currentPath === root || currentPath.startsWith(root + "/");
+        if (matches && root.length > currentRootLength) {
           currentURL = url;
+          currentRootLength = root.length;
+        }
       });
       if (!select.options.length)
         throw new Error("No valid documentation versions");
       if (currentURL) select.value = currentURL;
+      else {
+        const current = document.createElement("option");
+        current.value = "";
+        current.textContent = "Current page (unlisted)";
+        current.disabled = true;
+        select.prepend(current);
+        select.value = "";
+      }
       select.addEventListener("change", function () {
         const url = versionURL(select.value);
         if (url) window.location.assign(url);
