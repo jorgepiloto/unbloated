@@ -4,13 +4,57 @@ on:
     - cron: "0 8 * * *"
       timezone: Europe/Madrid
   workflow_dispatch:
+env:
+  DOCUMENTATION_BASE_URL: https://jorgemartinez.space/projects/unbloated/version/dev/
 permissions:
   contents: read
 concurrency:
   group: night-${{ github.ref }}
   cancel-in-progress: true
 jobs:
+  doc-build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "24"
+          package-manager-cache: false
+      - run: npm ci --ignore-scripts
+      - run: npm run docs:setup
+      - run: npm run docs:build -- --baseURL "$DOCUMENTATION_BASE_URL"
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: documentation-html
+          path: site
+          if-no-files-found: error
+          retention-days: 7
+  doc-deploy-dev:
+    needs: doc-build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    concurrency:
+      group: website-documentation
+      cancel-in-progress: false
+    steps:
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
+        with:
+          name: documentation-html
+          path: documentation-html
+      - name: Deploy development documentation
+        uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453 # v4.1.0
+        with:
+          personal_token: ${{ secrets.WEBSITE_DEPLOY_KEY }}
+          external_repository: jorgepiloto/website
+          publish_dir: documentation-html
+          publish_branch: gh-pages
+          destination_dir: projects/unbloated/version/dev
   tests:
+    needs: doc-build
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
@@ -28,7 +72,10 @@ jobs:
       - run: npx --no-install playwright install --with-deps chromium firefox webkit
       - run: npm run build:check
       - run: npm test
-      - run: npm run docs:build
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
+        with:
+          name: documentation-html
+          path: site
       - run: npm run test:docs
       - run: npm run test:browser
       - run: npm audit signatures

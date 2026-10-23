@@ -35,6 +35,26 @@ npm can exchange a short-lived GitHub OIDC token. npm provenance links the
 publication to the public repository and workflow. Keep the repository public
 for provenance generation.
 
+## Configure Documentation Deployment
+
+Add the repository secret `WEBSITE_DEPLOY_KEY` with a personal access token that
+can write to the `gh-pages` branch of `jorgepiloto/website`. Documentation deploys
+to that repository, not this package's GitHub Pages site. The deployment jobs
+update only their documentation subdirectory and preserve the rest of the website.
+
+Every workflow runs `doc-build` and uploads the `documentation-html` artifact.
+Pull requests build documentation without deploying it. Night runs on `main`
+publish development documentation at
+`https://jorgemartinez.space/projects/unbloated/version/dev/`.
+
+After `release-github` succeeds, `doc-deploy-stable` publishes documentation at
+`https://jorgemartinez.space/projects/unbloated/version/stable/` and
+`https://jorgemartinez.space/projects/unbloated/version/<version>/`, with the
+leading `v` removed from the release tag. The release workflow builds separate
+stable and versioned artifacts so asset and navigation URLs use the correct
+prefix. Deployment jobs share the `website-documentation` concurrency group
+to serialize website updates from this repository.
+
 ## Publish a Version
 
 1. Update `package.json`, the lockfile, and `CHANGELOG.md` on a reviewed branch.
