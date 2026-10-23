@@ -88,17 +88,17 @@ test("Sass tokens compile and allow consumer overrides", () => {
   assert.match(result.css, /font-family: "Example Mono", monospace/);
 });
 
-test("README includes the required sections", async () => {
+test("README follows the required section layout", async () => {
   const readme = await readFile(new URL("README.md", root), "utf8");
-  for (const section of [
+  const sections = [...readme.matchAll(/^## (.+)$/gm)].map((match) => match[1]);
+  assert.deepEqual(sections, [
     "About",
-    "Prerequisites",
-    "Getting Started",
-    "User Guide",
+    "Installation",
+    "Documentation",
+    "Troubleshooting",
     "License",
-  ]) {
-    assert.ok(readme.includes(`## ${section}\n`), section);
-  }
+    "Changelog",
+  ]);
 });
 
 test("default text, muted text, and inverse text have readable contrast", () => {
