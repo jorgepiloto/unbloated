@@ -37,6 +37,14 @@ for (const changed of [false, true]) {
           )
           .replace("--unbloat-space-3: 1rem", "--unbloat-space-3: 1.25rem")
           .replace("--unbloat-border-width: 1px", "--unbloat-border-width: 2px")
+          .replace(
+            "--unbloat-color-inverse-text: #ffffff",
+            "--unbloat-color-inverse-text: #f8f8f8",
+          )
+          .replace(
+            "--unbloat-color-inverse-surface: #000000",
+            "--unbloat-color-inverse-surface: #111111",
+          )
       : core;
     await writeFile(join(directory, "unbloat.css"), css);
     await writeFile(
@@ -53,21 +61,33 @@ for (const changed of [false, true]) {
     \ifdim\dimexpr#2-#1\relax<0.01pt\else\errmessage{Core dimension too small}\fi
   \else\errmessage{Core dimension too large}\fi
 }
-\newcommand{\CheckHeading}{\AssertDimension{\f@size pt}{${changed ? "30" : "24"}pt}}
+\newcommand{\AssertColor}[1]{%
+  \convertcolorspec{named}{.}{HTML}\ActualColor
+  \edef\ExpectedColor{#1}%
+  \ifx\ActualColor\ExpectedColor\else\errmessage{Core color was not applied}\fi
+}
+\newcommand{\CheckHeading}{%
+  \AssertDimension{\f@size pt}{${changed ? "30" : "24"}pt}%
+  \AssertColor{${changed ? "F8F8F8" : "FFFFFF"}}%
+}
 \AtBeginDocument{%
   \AssertDimension{\f@size pt}{${changed ? "13.2" : "12"}pt}%
   \AssertDimension{\baselineskip}{${changed ? "23.76" : "19.2"}pt}%
   \AssertDimension{\parskip}{${changed ? "15" : "12"}pt}%
   \AssertDimension{\lightrulewidth}{${changed ? "1.5" : "0.75"}bp}%
-  \convertcolorspec{named}{.}{HTML}\ActualColor
-  \def\ExpectedColor{${changed ? "222222" : "000000"}}%
-  \ifx\ActualColor\ExpectedColor\else\errmessage{Core text color was not applied}\fi
+  \AssertColor{${changed ? "222222" : "000000"}}%
 }
 \makeatother
 \begin{document}
 \chapter*{\CheckHeading Shared Core}
+\AssertColor{${changed ? "222222" : "000000"}}
 This isolated document uses the generated adapter without Node or shell escape.
 A formula \(x^2 + y^2 = z^2\) retains TeX mathematics.
+\section*{\AssertColor{${changed ? "F8F8F8" : "FFFFFF"}} Inverse Section}
+\begin{definition}
+\AssertColor{${changed ? "222222" : "000000"}}
+A definition retains the normal foreground after an inverse heading.
+\end{definition}
 \begin{lstlisting}
 int count = 42;
 \end{lstlisting}

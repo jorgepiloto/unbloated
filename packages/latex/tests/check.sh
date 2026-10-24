@@ -4,13 +4,13 @@ set -euo pipefail
 
 cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.."
 
-for source in example/book.tex tests/options.tex; do
+for source in example/book.tex tests/options.tex tests/layout.tex; do
   latexmk -lualatex -no-shell-escape -interaction=nonstopmode \
     -halt-on-error -file-line-error -Werror -outdir=build "$source"
 done
 
 if grep -En 'undefined|multiply defined|Missing character:|Overfull|LaTeX Font Warning:' \
-  build/book.log build/options.log; then
+  build/book.log build/options.log build/layout.log; then
   printf '%s\n' 'LaTeX output contains unresolved references or typography errors.' >&2
   exit 1
 else

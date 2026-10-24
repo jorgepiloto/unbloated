@@ -37,6 +37,8 @@ test("LaTeX rejects missing, duplicate, unsupported, and executable CSS tokens",
       "--unbloat-space-3: 1rem; --unbloat-space-3: 2rem;",
     ),
     css.replace("--unbloat-space-3: 1rem;", ""),
+    css.replace("--unbloat-color-inverse-text: #ffffff;", ""),
+    css.replace("--unbloat-color-inverse-surface: #000000;", ""),
     css.replace("--unbloat-space-3: 1rem;", "--unbloat-space-3: 1em;"),
     css.replace(
       "--unbloat-space-3: 1rem;",

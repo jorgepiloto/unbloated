@@ -1,0 +1,60 @@
+% SPDX-License-Identifier: LGPL-3.0-only
+\documentclass[11pt,a4paper,twoside,openright]{unbloated-book}
+\title{A Technical Book with a Long Title That Wraps Across Several Lines}
+\author{Layout Fixture\thanks{Title metadata footnotes remain present.}}
+\date{24 October 2026}
+\hypersetup{pdftitle={Book layout regression fixture},pdflang={en}}
+
+\newcount\fixtureparagraph
+\newcommand{\RepeatedParagraphs}{%
+  \fixtureparagraph=0
+  \loop
+    This paragraph exercises a statement that continues onto another page.
+    Its text must remain within the reading area, and the leading rule must
+    continue alongside the text. Equations such as \(h=(b-a)/n\) retain
+    their normal mathematical notation.\par
+    \advance\fixtureparagraph by 1
+  \ifnum\fixtureparagraph<12\repeat
+}
+
+\begin{document}
+\frontmatter
+\maketitle
+\tableofcontents
+\mainmatter
+\setcounter{chapter}{99}
+\setcounter{page}{999}
+\chapter[Wrapped Chapter]{A Long Chapter Heading That Wraps Without Separating the Chapter Number from Its Title}
+\label{ch:layout}
+\section{A Long Section Heading That Wraps onto Multiple Lines Inside Its Inverse Surface}
+\label{sec:layout}
+\subsection{An Ordinary Subheading}
+The chapter and section headings use inverse colors. This text and the
+subheading retain the normal text color.
+
+\begin{definition}[A Statement Spanning Pages]
+\label{def:layout}
+The definition includes a footnote\footnote{This footnote must remain in the PDF.}
+and enough text to exercise page splitting.
+\RepeatedParagraphs
+\end{definition}
+
+\begin{exercise}[A Task Spanning Pages]
+\label{ex:layout}
+Read Definition~\ref{def:layout} and Section~\ref{sec:layout}.
+\RepeatedParagraphs
+\end{exercise}
+
+\section*{An Unnumbered Section}
+Chapter~\ref{ch:layout} and Exercise~\ref{ex:layout} retain their labels.
+\lstinputlisting[firstline=26,lastline=75,language=TeX,
+  firstnumber=998,caption={A listing with a multiline caption and line numbers
+  that reach four digits without leaving the frame.}]{unbloated-book.cls}
+
+\appendix
+\chapter{Appendix Heading}
+The appendix uses a letter instead of a chapter number.
+\backmatter
+\chapter{An Unnumbered Back-Matter Heading}
+This chapter must not acquire an appendix label.
+\end{document}

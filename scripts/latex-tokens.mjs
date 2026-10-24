@@ -36,7 +36,15 @@ export function renderLatexTokens(css) {
   }
   validateTokens(tokens);
   for (const [group, names] of Object.entries({
-    color: ["text", "surface", "surface-muted", "muted", "border"],
+    color: [
+      "text",
+      "surface",
+      "surface-muted",
+      "muted",
+      "border",
+      "inverse-text",
+      "inverse-surface",
+    ],
     font: ["family", "size"],
     "line-height": ["body", "heading"],
     heading: ["size-1", "size-2", "size-3", "size-4", "size-5", "size-6"],

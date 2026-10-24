@@ -1,5 +1,8 @@
 % SPDX-License-Identifier: LGPL-3.0-only
-\documentclass[12pt,letterpaper,oneside,openany]{unbloated-book}
+\documentclass[12pt,letterpaper,oneside,openany,notitlepage]{unbloated-book}
+\title{A Title Without a Separate Title Page}
+\author{First Author \and Second Author}
+\date{}
 \makeatletter
 \AtBeginDocument{
   \ifdim\paperwidth=8.5in\else
@@ -14,9 +17,13 @@
   \if@openright
     \ClassError{unbloated-book}{Openany option was not applied}{}
   \fi
+  \if@titlepage
+    \ClassError{unbloated-book}{Notitlepage option was not applied}{}
+  \fi
 }
 \makeatother
 \begin{document}
+\maketitle
 \chapter{Class Options}
 This document checks the paper size, font size, and chapter options.
 \textbf{\textit{Bold italic text uses a real font face.}}

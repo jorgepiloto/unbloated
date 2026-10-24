@@ -13,7 +13,10 @@ numbering, code listings, and tables.
 Install TeX Live 2023 or newer, or a corresponding MacTeX distribution, with
 LuaLaTeX and `latexmk`. A minimal TeX installation needs `fontspec`, Latin Modern
 fonts, `iftex`, `geometry`, `microtype`, `ragged2e`, `amsmath`, `amssymb`, `amsfonts`, `amsthm`, `graphicx`,
-`booktabs`, `listings`, `titlesec`, `xcolor`, `fix-cm`, and `hyperref`, including their dependencies.
+`booktabs`, `listings`, `titlesec`, `xcolor`, `fix-cm`, `fancyhdr`, `tocloft`,
+`mdframed`, `array`, `caption`, `threeparttable`, and `hyperref`, including their
+dependencies. The CI installation supplies these through `texlive-latex-extra`
+and the other TeX Live packages listed in the workflow.
 
 Prepare the adapter from the repository root with Node.js and the locked
 contributor dependencies:
@@ -83,22 +86,65 @@ No web fonts or network access are needed during compilation.
 Load language support such as `babel` in your preamble if needed; the class
 doesn't select a language.
 
+## Page Layout
+
+The cover, chapter openings, and section headings use rectangular inverse
+surfaces from the core: white text on black with the default tokens. The cover
+uses the same heading scale as chapters and aligns the title, author, and date
+to the text block. An empty `\date{}` omits the date; `notitlepage` keeps the
+title within the document instead of creating a separate title page.
+Chapter labels sit above their titles; lower-level headings stay on the normal
+page surface. Long titles wrap inside their panels.
+
+The contents page uses bold chapter entries, indented sections, and aligned
+page numbers without dot leaders. Running headers use upright chapter titles
+and a thin divider. Folios sit at the outside foot of two-sided pages or the
+right foot of one-sided pages. Inserted blank versos have no header or folio;
+the class preserves the standard right-hand chapter starts. Use an optional
+short title, such as `\chapter[Short Title]{A Longer Chapter Title}`, when a
+chapter title would be too long for a running header.
+
 ## Technical Content
 
 Use `amsmath` environments and `\label`, `\ref`, and `\eqref` for mathematics.
 The class supplies `theorem`, `lemma`, `proposition`, `corollary`, `definition`,
 and `example`, sharing a chapter-based counter. `exercise` has its own
 chapter-based counter; `remark` is unnumbered. Use `proof` for proofs.
+Statements use upright prose and bold labels. Definitions and exercises have
+a leading rule and core padding; their callouts can span pages. Footnotes
+inside those callouts appear at the end of the callout. Theorems, examples,
+remarks, and proofs remain unboxed.
 
 Use `lstlisting` or `\lstinputlisting` for code. Listings use monochrome
 formatting and don't invoke an external highlighter. The `listings` package
 has limited Unicode support inside code, even though LuaLaTeX supports Unicode
 in ordinary text.
+Line numbers sit inside the listing frame. Captions use bold labels, ordinary
+text, and shared spacing, with left alignment even for short captions.
 
 Use `\includegraphics` for figures and `booktabs` rules for tables. Supply
 captions and labels rather than hard-coding numbers. The class doesn't select
 a bibliography backend: the example uses `thebibliography`, and you can load
 `biblatex` or another system required by your publisher.
+Wrap a caption and its `tabular` in `threeparttable` to align the caption to
+the table's intrinsic width, as in the example:
+
+```tex
+\begin{table}[htbp]
+  \centering
+  \begin{threeparttable}
+    \caption{Midpoint estimates.}
+    \begin{tabular}{rr}
+      \toprule
+      \(n\) & Estimate \\
+      \midrule
+      1 & 0.250000 \\
+      2 & 0.312500 \\
+      \bottomrule
+    \end{tabular}
+  \end{threeparttable}
+\end{table}
+```
 
 ## Shared Core CSS
 
@@ -107,14 +153,15 @@ built `dist/unbloat.css`. Adapter staging copies that exact CSS and generates
 `unbloated-tokens.sty` from it. The class loads this style and applies its values.
 Updating the core CSS and rebuilding adapters changes the LaTeX styles.
 
-| Core CSS Values                                   | LaTeX Mapping                                                                            |
-| ------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| Text, surface, muted, and border colors           | Page/text colors, listing surfaces/comments/numbers, and listing borders.                |
-| Font size and body line height                    | Body font size and baseline spacing.                                                     |
-| Heading sizes 1 through 6 and heading line height | Chapter, section, subsection, subsubsection, paragraph, and subparagraph typography.     |
-| Spacing scale                                     | Paragraph gaps, heading gaps, table cell padding, and listing padding/number separation. |
-| Border width and square corners                   | Table/listing rule widths and rectangular frames.                                        |
-| Generic `monospace` font family                   | Latin Modern Mono, including real bold and italic faces available in TeX Live.           |
+| Core CSS Values                                   | LaTeX Mapping                                                                           |
+| ------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| Text, surface, muted, and border colors           | Page/text colors, listing surfaces/comments/numbers, and listing borders.               |
+| Inverse text and surface colors                   | Cover, chapter, and section panels.                                                     |
+| Font size and body line height                    | Body font size and baseline spacing.                                                    |
+| Heading sizes 1 through 6 and heading line height | Chapter, section, subsection, subsubsection, paragraph, and subparagraph typography.    |
+| Spacing scale                                     | Paragraph/heading gaps, contents entries, table padding, captions, and listing gutters. |
+| Border width and square corners                   | Table/listing rules, running-header dividers, callout leading rules, and square panels. |
+| Generic `monospace` font family                   | Latin Modern Mono, including real bold and italic faces available in TeX Live.          |
 
 One CSS `rem` maps to the base font size selected by the `book` class, captured
 before core font scaling. One CSS `px` maps to `0.75bp`, or 1/96 inch. The web
@@ -145,6 +192,9 @@ the standard `book` class, rejects engines other than LuaLaTeX, and loads the
 packages and defaults described above. Chapter sources live under
 `example/chapters/`; [example/book.tex](example/book.tex) is the entry document.
 [tests/options.tex](tests/options.tex) exercises alternate book options, and
+[tests/layout.tex](tests/layout.tex) covers wrapped headings and contents,
+three-digit chapter numbers, callouts and listings spanning pages, footnotes,
+and four-digit listing numbers.
 [tests/check.sh](tests/check.sh) runs the compilation checks below.
 
 From `packages/latex`, run:
@@ -153,16 +203,17 @@ From `packages/latex`, run:
 bash tests/check.sh
 ```
 
-After staging the core, the check builds the A4 example and a 12-point US Letter,
-single-sided document.
+After staging the core, the check builds the A4 example, the layout fixture,
+and a 12-point US Letter, single-sided document with `notitlepage`.
 It rejects unresolved references, missing glyphs, overfull boxes, and font
 warnings, and checks that pdfLaTeX is rejected.
 Generated PDFs and auxiliary files stay in `build/`.
 
 From the repository root, `node --test tests/latex.integration.mjs` compiles
 isolated consumers with default and modified core CSS. It verifies the actual
-body color, font size, baseline spacing, paragraph gaps, chapter size, and table
-rule width. The independent `adapter-latex` CI job stages the adapter, runs the
+body color, font size, baseline spacing, paragraph gaps, chapter size, table
+rule width, inverse heading foregrounds, and normal text-color restoration.
+The independent `adapter-latex` CI job stages the adapter, runs the
 example checks, and runs these consumer tests. Adapter packaging CI validates
 the LaTeX archive alongside the Sphinx, Hugo, and Quarto distributions.
 
