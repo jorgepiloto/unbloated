@@ -64,6 +64,15 @@ for (const workflow of ["night", "pull-request", "release"]) {
         `${project} must have its own documentation build`,
       );
     assert.match(documentation, /fail-fast: false/);
+    assert.match(
+      documentation,
+      /Install TeX for rendered documentation\n\s+if: matrix.project == 'sphinx-unbloated-theme' \|\| matrix.project == 'unbloated-book'/,
+    );
+    assert.match(documentation, /install -y[^\n]*latexmk/);
+    assert.match(
+      documentation,
+      /Install Quarto for rendered documentation\n\s+if: matrix.project == 'sphinx-unbloated-theme' \|\| matrix.project == 'quarto-unbloated-theme'/,
+    );
     assert.doesNotMatch(
       job(source, "tests"),
       /test:docs|documentation-html|documentation-versioned/,

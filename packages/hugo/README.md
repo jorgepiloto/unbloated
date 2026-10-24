@@ -7,6 +7,13 @@ This adapter extracts the presentation layer of Jorge's website. Its stylesheet
 uses the Unbloated core's design variables; the Hugo templates supply the
 existing navigation, post layouts, search, and shortcodes.
 
+The published guide includes a **Rendered Example** link to a site built with
+the actual theme. Its [example configuration](example/hugo.json) and content include a home page, article,
+contents collection, search page, and tab shortcodes. Documentation builds
+use the root's PostCSS CLI and publish the generated pages and assets under
+the same dev or stable prefix as the guide. Search retains the theme's CDN
+dependencies described below.
+
 ## Build
 
 From the Unbloated repository root:

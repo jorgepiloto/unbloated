@@ -1,0 +1,62 @@
+---
+title: "Numerical Integration"
+subtitle: "Unbloated Reveal.js Example"
+format:
+  unbloated-revealjs:
+    footer: "Unbloated for Quarto"
+    embed-resources: true
+    html-math-method: mathml
+    menu: false
+    controls: true
+    highlight-style: none
+    code-line-numbers: false
+---
+
+## The Midpoint Rule
+
+Approximate an integral by sampling the midpoint of each subinterval.
+
+$$
+M_n(f) = h \sum_{k=0}^{n-1} f\left(a + \left(k+\frac{1}{2}\right)h\right),
+\qquad h = \frac{b-a}{n}.
+$$
+
+This is the same example used in the Unbloated technical book.
+
+## Reference Implementation
+
+```python
+def midpoint(f, a, b, n):
+    if n < 1:
+        raise ValueError("n must be positive")
+    h = (b - a) / n
+    return h * sum(f(a + (k + 0.5) * h) for k in range(n))
+```
+
+## Checking the Result
+
+::: {.columns}
+::: {.column width="45%"}
+For the integral of $x^2$ on $[0,1]$:
+
+| $n$ | Estimate | Absolute error |
+| ---: | ---: | ---: |
+| 1 | 0.250000 | 0.083333 |
+| 2 | 0.312500 | 0.020833 |
+| 4 | 0.328125 | 0.005208 |
+:::
+
+::: {.column width="55%"}
+::: {.callout-note}
+These values check one integrand. They do not establish an error bound for
+arbitrary continuous functions.
+:::
+:::
+:::
+
+## Continue Reading {footer=false}
+
+- [OpenStax Calculus Volume 2](https://openstax.org/details/books/calculus-volume-2)
+- [Adapter guide](../)
+
+Use the arrow keys or the slide controls to move through this presentation.

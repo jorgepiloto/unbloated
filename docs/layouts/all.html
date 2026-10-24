@@ -15,6 +15,10 @@
     {{ if and $section $isOverview }}
       {{ partial "section-navigation.html" (dict "page" . "section" $section) }}
     {{ end }}
+    {{ with .Site.Params.example }}
+      <h2>Rendered Example</h2>
+      <p class="rendered-example"><a href="{{ .path | relURL }}">{{ .label }}</a></p>
+    {{ end }}
     {{ .Content }}
     {{ if and .IsSection (not .Content) (not $isOverview) }}
       <ul>

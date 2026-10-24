@@ -7,6 +7,7 @@ import { promisify } from "node:util";
 import { root } from "./build.mjs";
 import { prepareAdapters } from "./adapters.mjs";
 import { prepareDocs, runDocs } from "./docs.mjs";
+import { buildProjectExample } from "./project-examples.mjs";
 
 const execFile = promisify(callback);
 export const documentationProjects = JSON.parse(
@@ -133,6 +134,7 @@ async function buildGuide(target, version) {
         description: configuration.description,
         sourceDirectory: configuration.directory,
         sourceRef: process.env.DOCS_SOURCE_REF || "main",
+        example: configuration.example,
       },
       markup: { highlight: { codeFences: false } },
     }),
@@ -149,8 +151,8 @@ async function buildGuide(target, version) {
 /**
  * Build one project's exact publishable artifact, including its identity and URL.
  * Sphinx uses its existing native docs, notebook execution, and PDF exports.
- * Other adapters render their canonical package guide with the existing docs shell.
- * PYTHON selects Sphinx's environment; Quarto/TeX are required by its PDF exports.
+ * Other adapters publish their canonical guide and a freshly rendered native example.
+ * PYTHON selects Sphinx's environment; examples require Quarto, TeX, or Hugo/PostCSS.
  * @param {string} project Identifier from docs/projects.json.
  * @param {string} channel dev, stable, or a numeric core release version.
  * @returns {Promise<object>} Project, channel, URL, version, and generated directory.
@@ -198,13 +200,19 @@ export async function buildProjectDocumentation(project, channel) {
     );
     process.stdout.write(stdout);
     process.stderr.write(stderr);
-  } else await buildGuide(target, version);
+  } else {
+    await buildGuide(target, version);
+    await buildProjectExample(target, version);
+  }
   const manifest = {
     project,
     channel,
     baseURL: target.baseURL,
     prefix: new URL(target.baseURL).pathname,
     version,
+    examples: target.configuration.example
+      ? [target.configuration.example]
+      : [],
   };
   await writeFile(
     new URL("documentation.json", target.directory),

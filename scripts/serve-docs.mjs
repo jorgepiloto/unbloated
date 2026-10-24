@@ -24,6 +24,10 @@ export function documentationHandler({ directory, prefix }) {
     ".png": "image/png",
     ".ico": "image/x-icon",
     ".xml": "application/xml",
+    ".pdf": "application/pdf",
+    ".woff": "font/woff",
+    ".woff2": "font/woff2",
+    ".ttf": "font/ttf",
   };
   return async (request, response) => {
     response.setHeader("X-Content-Type-Options", "nosniff");

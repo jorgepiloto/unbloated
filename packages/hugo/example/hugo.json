@@ -1,0 +1,24 @@
+{
+  "title": "Unbloated Hugo Example",
+  "locale": "en-US",
+  "theme": "hugo",
+  "markup": { "highlight": { "codeFences": false } },
+  "params": {
+    "description": "A rendered example of the Unbloated Hugo theme.",
+    "lastposts": 10,
+    "footer": "Unbloated Hugo theme example",
+    "author": "Jorge Martinez",
+    "email": "contact@jorgemartinez.space",
+    "github": "jorgepiloto",
+    "linkedin": "jorgepiloto",
+    "youtube": "ingenierodeaviones"
+  },
+  "outputs": { "home": ["HTML", "RSS", "JSON"] },
+  "security": { "funcs": { "getenv": ["^HUGO_", "^CI$", "^VERSION$"] } },
+  "menus": {
+    "main": [
+      { "name": "Home", "pageRef": "/", "weight": 1 },
+      { "name": "Posts", "pageRef": "/posts", "weight": 2 }
+    ]
+  }
+}

@@ -14,18 +14,33 @@
     "title": "Unbloated for Hugo",
     "description": "Hugo layouts, configuration, and shortcodes backed by Unbloated",
     "builder": "guide",
-    "directory": "packages/hugo"
+    "directory": "packages/hugo",
+    "example": {
+      "label": "Browse the Example Site",
+      "path": "example/",
+      "type": "hugo"
+    }
   },
   "quarto-unbloated-theme": {
     "title": "Unbloated for Quarto",
     "description": "Installation and slide authoring with the Unbloated Reveal.js format",
     "builder": "guide",
-    "directory": "packages/quarto"
+    "directory": "packages/quarto",
+    "example": {
+      "label": "Open the Slideshow",
+      "path": "example/",
+      "type": "quarto"
+    }
   },
   "unbloated-book": {
     "title": "Unbloated for LaTeX",
     "description": "Technical books using styles translated from the Unbloated core CSS",
     "builder": "guide",
-    "directory": "packages/latex"
+    "directory": "packages/latex",
+    "example": {
+      "label": "Read the Example Book (PDF)",
+      "path": "example/book.pdf",
+      "type": "pdf"
+    }
   }
 }

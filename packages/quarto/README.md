@@ -6,6 +6,11 @@ and [development](https://jorgemartinez.space/projects/quarto-unbloated-theme/ve
 This adapter uses the Unbloated CSS library for its visual design values.
 Reveal.js-specific sizing and layout remain in `unbloated.scss`.
 
+The published guide includes a **Rendered Example** link to a working slideshow.
+Its source is [example/slides.qmd](example/slides.qmd). Documentation builds
+render it with this extension and embed its scripts and styles in the HTML.
+Equations use native MathML, so the slideshow needs no runtime CDN connection.
+
 ## Build and Install
 
 From the Unbloated repository root:

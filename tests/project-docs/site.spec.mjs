@@ -14,7 +14,11 @@ const expected = projectDocumentation(
 );
 
 test.beforeEach(async ({ page }) => {
-  await page.route("https://**", (route) => route.abort());
+  await page.route("**/*", (route) =>
+    new URL(route.request().url()).hostname === "127.0.0.1"
+      ? route.continue()
+      : route.abort(),
+  );
 });
 
 test("project identity, deployment prefix, local links, downloads, and exact core CSS are valid", async ({
@@ -35,7 +39,13 @@ test("project identity, deployment prefix, local links, downloads, and exact cor
   }
   const links = new Set();
   for (const name of files.filter(
-    (name) => name.endsWith(".html") && name !== "404.html",
+    (name) =>
+      name.endsWith(".html") &&
+      name !== "404.html" &&
+      !(
+        expected.configuration.builder === "guide" &&
+        name.startsWith("example/")
+      ),
   )) {
     await page.goto(name);
     await expect(page.locator("main")).toBeVisible();
@@ -97,6 +107,121 @@ test("project identity, deployment prefix, local links, downloads, and exact cor
   expect(
     (await readdir(artifact.directory, { recursive: true })).sort(),
   ).toEqual(files.sort());
+});
+
+test("guide publishes its native rendered example and supporting assets", async ({
+  page,
+  request,
+}) => {
+  const example = expected.configuration.example;
+  test.skip(!example, "This project already publishes native documentation.");
+  expect(metadata.examples).toEqual([example]);
+  await page.goto("./");
+  const link = page.locator(".rendered-example a");
+  await expect(link).toHaveText(example.label);
+  const destination = new URL(example.path, page.url());
+  await expect(link).toHaveAttribute("href", destination.pathname);
+  if (example.type === "pdf") {
+    const response = await request.get(destination.href);
+    expect(response.ok()).toBe(true);
+    expect(response.headers()["content-type"]).toBe("application/pdf");
+    const pdf = await response.body();
+    expect(pdf.subarray(0, 5).toString()).toBe("%PDF-");
+    expect(pdf.length).toBeGreaterThan(10_000);
+    return;
+  }
+  // Native theme permalinks use the publication host; serve the same local bytes.
+  await page.route(`${expected.baseURL}**`, async (route) => {
+    const url = new URL(route.request().url());
+    const response = await request.get(
+      `http://127.0.0.1:4174${url.pathname}${url.search}`,
+    );
+    await route.fulfill({ response });
+  });
+  const errors = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await link.click();
+  if (example.type === "quarto") {
+    await page.waitForFunction(() => window.Reveal?.isReady());
+    await expect(page.locator(".reveal h1")).toHaveText(
+      "Numerical Integration",
+    );
+    await page.keyboard.press("ArrowRight");
+    await page.waitForFunction(() => window.Reveal.getIndices().h === 1);
+    await expect(page.locator("section.present math").first()).toBeVisible();
+    await page.locator(".navigate-right").click();
+    await page.waitForFunction(() => window.Reveal.getIndices().h === 2);
+    await expect(page.locator("section.present pre")).toBeVisible();
+    expect(
+      await page
+        .locator('script[src^="http"], link[rel="stylesheet"][href^="http"]')
+        .count(),
+    ).toBe(0);
+  } else {
+    await expect(
+      page.getByRole("heading", { name: "Unbloated Hugo Example" }),
+    ).toBeVisible();
+    await page
+      .getByRole("link", { name: "Numerical Integration", exact: true })
+      .click();
+    await expect(page.locator("main table")).toBeVisible();
+    await expect(page.locator("main pre")).toHaveCSS(
+      "background-color",
+      "rgb(237, 237, 237)",
+    );
+    await expect(page.locator("main pre code")).toHaveCSS(
+      "color",
+      "rgb(0, 0, 0)",
+    );
+    const steps = page.getByRole("tab", { name: "Steps", exact: true });
+    await steps.click();
+    await expect(steps).toHaveAttribute("aria-selected", "true");
+    await steps.press("Home");
+    await expect(
+      page.getByRole("tab", { name: "Python", exact: true }),
+    ).toHaveAttribute("aria-selected", "true");
+    await page.setViewportSize({ width: 320, height: 900 });
+    await page.addStyleTag({ content: "html {font-size: 200%;}" });
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBe(true);
+    await page.getByRole("link", { name: "Posts", exact: true }).click();
+    await expect(
+      page.getByRole("link", { name: "Numerical Integration", exact: true }),
+    ).toBeVisible();
+    await page.goto("example/search/");
+    await expect(page.locator("#search-results")).toContainText(
+      "Please enter a word or phrase above",
+    );
+    await page.locator("#search-query").fill("midpoint");
+    await page.locator("#search-query").press("Enter");
+    await expect(page.locator("#search-results")).toContainText(
+      "Could not load search index",
+    );
+  }
+  expect(errors).toEqual([]);
+  for (const url of await page
+    .locator('link[rel="stylesheet"], script[src]')
+    .evaluateAll((elements) =>
+      elements
+        .map((element) => element.href || element.src)
+        .filter((value) =>
+          new URL(value).pathname.startsWith(
+            location.pathname.split("/example/")[0] + "/example/",
+          ),
+        ),
+    )) {
+    const pathname = new URL(url).pathname;
+    expect(
+      (await request.get(`http://127.0.0.1:4174${pathname}`)).ok(),
+      url,
+    ).toBe(true);
+  }
+  await page.screenshot({
+    path: test.info().outputPath(`${metadata.project}-example.png`),
+  });
 });
 
 test("project homepage keeps readable content and keyboard navigation on narrow screens", async ({

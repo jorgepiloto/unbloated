@@ -50,9 +50,13 @@ test("stable and versioned artifact checks serve exact bytes only at the built p
     const css = "/* exact uploaded bytes */";
     await writeFile(join(root, "index.html"), html);
     await writeFile(join(root, "unbloat.abc123.css"), css);
+    await writeFile(join(root, "book.pdf"), "%PDF-1.5\nFixture");
     const artifact = await docsArtifact(root);
     assert.equal(artifact.prefix, prefix);
     const handler = documentationHandler(artifact);
+    const pdf = await request(handler, prefix + "book.pdf");
+    assert.equal(pdf.headers["Content-Type"], "application/pdf");
+    assert.equal(pdf.body.toString(), "%PDF-1.5\nFixture");
     assert.equal((await request(handler, prefix)).body.toString(), html);
     assert.equal(
       (await request(handler, prefix + "unbloat.abc123.css")).body.toString(),

@@ -8,6 +8,10 @@ extends the standard `book` class with core typography, grayscale colors,
 spacing, heading sizes, and borders, plus chapter-based equations and theorem
 numbering, code listings, and tables.
 
+The published guide includes a **Rendered Example** link to the compiled book
+PDF. Documentation builds compile `example/book.tex` from the current checkout
+and include the PDF in the same dev or stable artifact as the guide.
+
 ## Build the Example
 
 Install TeX Live 2023 or newer, or a corresponding MacTeX distribution, with

@@ -48,6 +48,32 @@ test("each adapter has an isolated development and stable documentation prefix",
   );
 });
 
+test("every guide adapter declares a local rendered example with checked-in source", async () => {
+  for (const configuration of Object.values(documentationProjects)) {
+    if (configuration.builder !== "guide") continue;
+    assert.ok(
+      configuration.example,
+      `${configuration.directory} needs an example`,
+    );
+    const { path, type } = configuration.example;
+    assert.ok(path.startsWith("example/") && !path.includes(".."));
+    assert.ok(["pdf", "hugo", "quarto"].includes(type));
+    const source =
+      type === "pdf"
+        ? "example/book.tex"
+        : type === "quarto"
+          ? "example/slides.qmd"
+          : "example/hugo.json";
+    assert.ok(
+      (
+        await readFile(
+          new URL(`../${configuration.directory}/${source}`, import.meta.url),
+        )
+      ).length,
+    );
+  }
+});
+
 test("native documentation artifacts retain their declared prefix and reject invalid manifests", async (t) => {
   const directory = await mkdtemp(join(tmpdir(), "unbloated-project-docs-"));
   t.after(() => rm(directory, { recursive: true, force: true }));

@@ -138,10 +138,13 @@ jobs:
           npm run build:adapters
           python -m pip install "pip>=25.1"
           python -m pip install --group packages/sphinx/pyproject.toml:doc ./packages/sphinx
+      - name: Install TeX for rendered documentation
+        if: matrix.project == 'sphinx-unbloated-theme' || matrix.project == 'unbloated-book'
+        run: |
           sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends pandoc lmodern texlive-luatex texlive-latex-extra texlive-fonts-recommended
-      - name: Install Quarto for Sphinx PDF downloads
-        if: matrix.project == 'sphinx-unbloated-theme'
+          sudo apt-get install -y --no-install-recommends pandoc latexmk lmodern texlive-luatex texlive-latex-extra texlive-fonts-recommended
+      - name: Install Quarto for rendered documentation
+        if: matrix.project == 'sphinx-unbloated-theme' || matrix.project == 'quarto-unbloated-theme'
         uses: quarto-dev/quarto-actions/setup@8a96df13519ee81fd526f2dfca5962811136661b # v2
         with:
           version: "1.11.5"

@@ -82,17 +82,23 @@ body {
 
     .components {
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
+      gap: var(--unbloat-space-2);
 
       .social {
         font-size: 1.2rem;
       }
 
       .search {
+        min-width: 0;
+        max-width: 100%;
         margin-left: auto;
         margin-right: 1.5rem;
 
         > input {
+          min-width: 0;
+          max-width: 100%;
           font-family: var(--font-family-regular);
           font-size: 1rem;
           border-radius: 0rem;
