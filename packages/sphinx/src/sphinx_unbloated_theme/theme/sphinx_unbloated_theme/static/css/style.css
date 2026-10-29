@@ -518,7 +518,8 @@ main .autoapi-page > h1 {
 
   & button {
     font: inherit;
-    padding: 0.2rem 0.5rem;
+    line-height: normal;
+    padding: 2px 6px;
     border: var(--border);
     box-shadow: var(--shadow);
     background-color: var(--white);
@@ -839,7 +840,7 @@ div.download-buttons {
     box-shadow: var(--shadow);
     transition: background-color 0.3s ease;
     color: var(--black);
-    padding: 0.4rem 0.6rem;
+    padding: 2px 6px;
     cursor: pointer;
 
     &:hover {
@@ -905,6 +906,7 @@ td {
 nav a,
 .download-buttons a {
   text-align: center;
-  padding: 0.4rem 0.6rem;
+  line-height: normal;
+  padding: 2px 6px;
   box-sizing: border-box;
 }

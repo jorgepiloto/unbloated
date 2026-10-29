@@ -204,7 +204,7 @@ a.back-button,
   border-bottom: var(--border);
 
   > button {
-    padding: 0.35rem 0.75rem;
+    padding: 2px 6px;
     cursor: pointer;
 
     &.tab-align-right {
