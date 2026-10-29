@@ -1,0 +1,75 @@
+- name: bug
+  description: Defects or glitches reported by users or developers
+  color: "d42a34"
+
+- name: fix
+  description: Changes that resolve defects or errors
+  color: "d42a34"
+
+- name: vulnerability
+  description: Security vulnerabilities and their fixes
+  color: "d42a34"
+
+- name: style
+  description: Improvements to code or documentation style
+  color: "dcbeff"
+
+- name: style:code
+  description: Code formatting and linting configuration
+  color: "dcbeff"
+
+- name: tests
+  description: Test coverage, fixtures, and test infrastructure
+  color: "ffd8b1"
+
+- name: docs
+  description: Documentation and project guides
+  color: "0677ba"
+
+- name: docs:examples
+  description: Usage examples for the library and adapters
+  color: "0677ba"
+
+- name: dependencies
+  description: Project dependencies and dependency updates
+  color: "fabed4"
+
+- name: dependencies:npm
+  description: npm manifests and lockfiles
+  color: "fabed4"
+
+- name: dependencies:pyproject
+  description: Python package dependencies and configuration
+  color: "fabed4"
+
+- name: dependencies:ci
+  description: GitHub Actions dependencies
+  color: "fabed4"
+
+- name: dependencies:pre-commit
+  description: Pre-commit hook dependencies and configuration
+  color: "fabed4"
+
+- name: ci
+  description: GitHub Actions workflows and repository automation
+  color: "a9a9a9"
+
+- name: release
+  description: Release preparation and publishing
+  color: "ffffff"
+
+- name: good first issue
+  description: Issues suitable for newcomers
+  color: "62ca50"
+
+- name: enhancement
+  description: New features and improvements to existing features
+  color: "ffd827"
+
+- name: maintenance
+  description: General project maintenance
+  color: "f78c37"
+
+- name: blocked
+  description: Work that depends on another task being resolved
+  color: "000000"

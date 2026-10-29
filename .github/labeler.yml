@@ -1,0 +1,69 @@
+fix:
+  - head-branch: ["^fix([/-]|$)"]
+
+enhancement:
+  - head-branch: ["^feat([/-]|$)"]
+
+docs:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "docs/**"
+          - "packages/*/doc/**"
+          - "**/*.md"
+          - "**/*.rst"
+
+docs:examples:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "examples/**"
+          - "packages/*/example/**"
+          - "packages/*/examples/**"
+          - "packages/sphinx/doc/source/examples.rst"
+
+style:code:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "config/pre-commit.yaml"
+          - "config/prettierignore"
+          - "eslint.config.*"
+          - "biome.json"
+          - "biome.jsonc"
+          - ".editorconfig"
+          - ".prettierrc*"
+
+tests:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "tests/**"
+          - "packages/*/tests/**"
+          - "config/playwright/**"
+
+dependencies:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/package.json"
+          - "**/package-lock.json"
+          - "**/pyproject.toml"
+          - "config/pre-commit.yaml"
+          - ".github/dependabot.yml"
+
+dependencies:npm:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/package.json"
+          - "**/package-lock.json"
+
+dependencies:pyproject:
+  - changed-files:
+      - any-glob-to-any-file: ["**/pyproject.toml"]
+
+dependencies:ci:
+  - head-branch: ["^dependabot/github_actions/"]
+
+dependencies:pre-commit:
+  - changed-files:
+      - any-glob-to-any-file: ["config/pre-commit.yaml"]
+
+ci:
+  - changed-files:
+      - any-glob-to-any-file: [".github/**"]
